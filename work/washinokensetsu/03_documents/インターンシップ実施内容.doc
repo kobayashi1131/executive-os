@@ -1,0 +1,44 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<title>インターンシップ実施内容</title>
+<style>
+  body { font-family: 'Yu Gothic', 'Meiryo', sans-serif; font-size: 11pt; line-height: 1.8; }
+  h1 { font-size: 16pt; border-bottom: 2px solid #333; padding-bottom: 4px; }
+  h2 { font-size: 13pt; margin-top: 20px; }
+  table { border-collapse: collapse; margin-top: 8px; }
+  td, th { border: 1px solid #999; padding: 6px 10px; vertical-align: top; }
+  th { background-color: #eee; }
+  .note { font-size: 10pt; color: #444; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<h1>インターンシップ実施内容（予定）</h1>
+
+<p>
+会社名：有限会社わしの建設<br>
+実施期間：2026年8月24日 〜 2026年9月10日（この期間内で実施日数：8日間）
+</p>
+
+<h2>実施予定項目</h2>
+
+<table>
+<tr><th>No.</th><th>内容</th></tr>
+<tr><td>1</td><td>オリエンテーション（会社説明・安全教育・服装・守秘義務の説明）</td></tr>
+<tr><td>2</td><td>現場見学：資材の搬入・管理の様子を見る</td></tr>
+<tr><td>3</td><td>現場見学：別種類の現場（リフォーム系）を見て、現場ごとの違いを知る</td></tr>
+<tr><td>4</td><td>現場見学：お客様への現場確認・説明への同席</td></tr>
+<tr><td>5</td><td>現場見学：協力会社（外注先）とのやり取りへの同行</td></tr>
+<tr><td>6</td><td>事務所での業務見学：見積作成の流れ、案件管理の仕組み</td></tr>
+<tr><td>7</td><td>事務所での業務見学：見積後のお客様フォロー対応への同席</td></tr>
+<tr><td>8</td><td>まとめ：振り返り・気づきの整理、発表とフィードバック</td></tr>
+</table>
+
+<p class="note">
+※現場見学は見学・同行が基本で、実作業（工具使用・高所作業など）は行いません。<br>
+※具体的な日程は、現場の状況（天候・進捗）を見ながら順次決めていきます。
+</p>
+
+</body>
+</html>
