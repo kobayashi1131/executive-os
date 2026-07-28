@@ -1,0 +1,27 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependencies / build artifacts
+node_modules/
+vendor/
+dist/
+build/
+*.log
+
+# Editor
+.idea/
+*.swp
+.vscode/
+
+# Nested repo (managed separately, pushed to its own GitHub remote)
+work/washinokensetsu/04_system/
