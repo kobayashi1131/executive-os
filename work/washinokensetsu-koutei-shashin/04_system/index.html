@@ -72,8 +72,14 @@
   .photo-add-text { font-size: 14px; font-weight: 700; color: var(--primary); }
 
   .photo-item {
-    display: flex; gap: 10px; background: var(--card); border-radius: 14px; padding: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 10px;
+    display: flex; gap: 8px; background: var(--card); border-radius: 14px; padding: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 10px; align-items: stretch;
+  }
+  .photo-item.dragging { z-index: 50; box-shadow: 0 8px 20px rgba(0,0,0,0.25); opacity: 0.95; }
+  .photo-item-handle {
+    display: flex; align-items: center; justify-content: center;
+    width: 26px; flex-shrink: 0; font-size: 20px; color: var(--muted);
+    cursor: grab; touch-action: none; user-select: none;
   }
   .photo-item-thumb {
     width: 76px; height: 76px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #e0f2fe;
@@ -371,7 +377,8 @@ function renderPhotoList() {
     DEFAULT_PHASES.map(p => `<option value="${p}" ${p===selected?'selected':''}>${p}</option>`).join('');
 
   el.innerHTML = site.photos.map((p, i) => `
-    <div class="photo-item">
+    <div class="photo-item" id="pitem-${p.id}">
+      <span class="photo-item-handle" onpointerdown="startDrag(event,'${p.id}')">⠿</span>
       <div class="photo-item-thumb"><img src="${p.src}"></div>
       <div class="photo-item-body">
         <select class="photo-item-input" onchange="updatePhoto('${p.id}','phase',this.value)">
@@ -383,8 +390,6 @@ function renderPhotoList() {
         <div class="photo-item-counter"><span id="cnt-${p.id}">${(p.memo||'').length}</span> / ${MEMO_MAXLEN}</div>
       </div>
       <div class="photo-item-actions">
-        <button class="photo-item-btn" onclick="movePhoto(${i},-1)" ${i===0?'disabled style="opacity:.3"':''}>▲</button>
-        <button class="photo-item-btn" onclick="movePhoto(${i},1)" ${i===site.photos.length-1?'disabled style="opacity:.3"':''}>▼</button>
         <button class="photo-item-btn del" onclick="deletePhoto('${p.id}')">✕</button>
       </div>
     </div>`).join('');
@@ -397,15 +402,68 @@ function updatePhoto(photoId, field, value) {
   saveSites(sites);
 }
 
-function movePhoto(index, dir) {
+// ─────────────────────────────────────────────
+//  DRAG並べ替え（Pointer Events、スマホのタッチ対応）
+// ─────────────────────────────────────────────
+let dragCtx = null;
+
+function startDrag(e, photoId) {
+  e.preventDefault();
+  const handle = e.currentTarget;
+  const item = document.getElementById('pitem-' + photoId);
+  const list = document.getElementById('photo-list');
+  dragCtx = { photoId, item, list, startClientY: e.clientY };
+  item.classList.add('dragging');
+  handle.setPointerCapture(e.pointerId);
+  handle.onpointermove = onDragMove;
+  handle.onpointerup = endDrag;
+  handle.onpointercancel = endDrag;
+}
+
+function onDragMove(e) {
+  if (!dragCtx) return;
+  const deltaY = e.clientY - dragCtx.startClientY;
+  dragCtx.item.style.transform = `translateY(${deltaY}px)`;
+
+  const items = Array.from(dragCtx.list.querySelectorAll('.photo-item'));
+  const idx = items.indexOf(dragCtx.item);
+  const draggedRect = dragCtx.item.getBoundingClientRect();
+  const draggedCenter = draggedRect.top + draggedRect.height / 2;
+
+  const next = items[idx + 1];
+  if (next) {
+    const r = next.getBoundingClientRect();
+    if (draggedCenter > r.top + r.height / 2) {
+      dragCtx.list.insertBefore(next, dragCtx.item);
+      return;
+    }
+  }
+  const prev = items[idx - 1];
+  if (prev) {
+    const r = prev.getBoundingClientRect();
+    if (draggedCenter < r.top + r.height / 2) {
+      dragCtx.list.insertBefore(dragCtx.item, prev);
+    }
+  }
+}
+
+function endDrag(e) {
+  if (!dragCtx) return;
+  const handle = e.currentTarget;
+  handle.releasePointerCapture(e.pointerId);
+  handle.onpointermove = null;
+  handle.onpointerup = null;
+  handle.onpointercancel = null;
+
+  dragCtx.item.classList.remove('dragging');
+  dragCtx.item.style.transform = '';
+
   const site = currentSite();
-  const newIndex = index + dir;
-  if (newIndex < 0 || newIndex >= site.photos.length) return;
-  const tmp = site.photos[index];
-  site.photos[index] = site.photos[newIndex];
-  site.photos[newIndex] = tmp;
+  const newOrderIds = Array.from(dragCtx.list.querySelectorAll('.photo-item'))
+    .map(el => el.id.replace('pitem-', ''));
+  site.photos.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
   saveSites(sites);
-  renderPhotoList();
+  dragCtx = null;
 }
 
 function deletePhoto(photoId) {
