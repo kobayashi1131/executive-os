@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>工程写真アプリ</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1239a5;
+    --danger: #ef4444;
+    --success: #10b981;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --header-h: 56px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+    background: var(--bg); color: var(--text);
+    max-width: 480px; margin: 0 auto; min-height: 100vh;
+  }
+  .screen { display: none; min-height: 100vh; padding-bottom: 24px; }
+  .screen.active { display: block; }
+
+  .header {
+    background: var(--primary); color: white; height: var(--header-h);
+    display: flex; align-items: center; padding: 0 16px;
+    position: sticky; top: 0; z-index: 100; gap: 12px;
+  }
+  .header-back {
+    width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.15); border-radius: 50%; cursor: pointer; font-size: 19px; flex-shrink: 0;
+  }
+  .header-title { font-size: 17px; font-weight: 700; flex: 1; }
+  .header-action {
+    font-size: 13px; background: rgba(255,255,255,0.2);
+    padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap;
+  }
+
+  .section { padding: 16px; }
+  .card { background: var(--card); border-radius: 14px; padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 10px; }
+
+  /* HOME: 現場一覧 */
+  .site-card {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    cursor: pointer;
+  }
+  .site-card-name { font-size: 15px; font-weight: 700; }
+  .site-card-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .site-card-arrow { color: var(--muted); font-size: 18px; }
+  .fab {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    width: calc(100% - 32px); max-width: 448px;
+    background: var(--primary); color: white; border: none; border-radius: 14px;
+    padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(26,86,219,0.4);
+  }
+
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
+  .empty-state-icon { font-size: 44px; margin-bottom: 10px; }
+
+  /* PHOTO LIST */
+  .photo-add-drop {
+    background: #f8faff; border: 2px dashed #93c5fd; border-radius: 14px;
+    padding: 18px; text-align: center; cursor: pointer; margin-bottom: 14px;
+  }
+  .photo-add-icon { font-size: 30px; margin-bottom: 4px; }
+  .photo-add-text { font-size: 14px; font-weight: 700; color: var(--primary); }
+
+  .photo-item {
+    display: flex; gap: 10px; background: var(--card); border-radius: 14px; padding: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 10px;
+  }
+  .photo-item-thumb {
+    width: 76px; height: 76px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #e0f2fe;
+  }
+  .photo-item-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-item-body { flex: 1; min-width: 0; }
+  .photo-item-input {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 8px;
+    font-size: 13px; font-family: inherit; margin-bottom: 6px;
+  }
+  .photo-item-memo {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 8px;
+    font-size: 12px; font-family: inherit; resize: none; height: 44px; line-height: 1.4;
+  }
+  .photo-item-actions {
+    display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;
+  }
+  .photo-item-btn {
+    width: 30px; height: 30px; border-radius: 8px; border: none; background: var(--bg);
+    color: var(--muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .photo-item-btn.del { color: var(--danger); }
+
+  .submit-btn {
+    width: 100%; padding: 15px; border-radius: 14px; border: none;
+    background: var(--primary); color: white; font-size: 15px; font-weight: 800;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 12px rgba(26,86,219,0.35); font-family: inherit; margin-top: 4px;
+  }
+  .submit-btn.ghost { background: var(--card); color: var(--text); box-shadow: none; border: 1.5px solid var(--border); }
+
+  /* PRINT PREVIEW (screen) */
+  .print-page {
+    background: white; width: 100%; aspect-ratio: 210 / 297;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.15); margin: 0 auto 20px; padding: 10mm;
+    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto repeat(3, 1fr);
+    gap: 4mm; overflow: hidden;
+  }
+  .print-page-header {
+    grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1.5px solid #333; padding-bottom: 4px; margin-bottom: 2px;
+    font-size: 11px;
+  }
+  .print-page-header b { font-size: 13px; }
+  .print-cell { border: 1px solid #ccc; display: flex; flex-direction: column; overflow: hidden; }
+  .print-cell-photo { flex: 1; background: #eee; overflow: hidden; }
+  .print-cell-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .print-cell-caption { padding: 3px 5px; font-size: 9px; line-height: 1.3; border-top: 1px solid #ccc; }
+  .print-cell-caption b { font-size: 10px; display: block; }
+  .print-cell-empty { background: #f8f8f8; }
+
+  /* FORM */
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 12px 14px; border-radius: 12px;
+    border: 1.5px solid var(--border); font-size: 15px; font-family: inherit;
+    color: var(--text); background: white; outline: none;
+  }
+
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1e293b; color: white; padding: 12px 20px; border-radius: 24px;
+    font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 9999; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* PRINT MEDIA */
+  @media print {
+    body { max-width: none; }
+    .header, .fab, .no-print, .toast { display: none !important; }
+    .screen { display: none !important; padding-bottom: 0; }
+    .screen.printing { display: block !important; }
+    .print-page { box-shadow: none; margin: 0; page-break-after: always; width: 210mm; aspect-ratio: unset; height: 297mm; }
+    .section { padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── HOME: 現場一覧 ─── -->
+<div class="screen active" id="screen-home">
+  <div class="header">
+    <div class="header-title">📷 工程写真</div>
+  </div>
+  <div class="section" id="site-list"></div>
+  <button class="fab" onclick="openNewSite()">＋ 新しい現場を作成</button>
+</div>
+
+<!-- ─── NEW SITE ─── -->
+<div class="screen" id="screen-new-site">
+  <div class="header">
+    <div class="header-back" onclick="goScreen('home')">‹</div>
+    <div class="header-title">新しい現場</div>
+  </div>
+  <div class="section">
+    <div class="form-group">
+      <label class="form-label">現場名 <span style="color:var(--danger)">必須</span></label>
+      <input class="form-input" type="text" id="in-site-name" placeholder="例：田中工業 東海工場 新築工事">
+    </div>
+    <div class="form-group">
+      <label class="form-label">施工者名</label>
+      <input class="form-input" type="text" id="in-site-builder" placeholder="例：有限会社わしの建設">
+    </div>
+    <button class="submit-btn" onclick="createSite()">作成する</button>
+  </div>
+</div>
+
+<!-- ─── SITE DETAIL: 写真一覧 ─── -->
+<div class="screen" id="screen-detail">
+  <div class="header">
+    <div class="header-back" onclick="goScreen('home')">‹</div>
+    <div class="header-title" id="detail-title">現場詳細</div>
+    <div class="header-action" onclick="openPrintPreview()">🖨 印刷</div>
+  </div>
+  <div class="section">
+    <div class="photo-add-drop" onclick="triggerFileInput()">
+      <div class="photo-add-icon">📷</div>
+      <div class="photo-add-text">写真を追加（複数選択可）</div>
+    </div>
+    <input type="file" id="file-input" accept="image/*" multiple capture="environment" style="display:none" onchange="handleFiles(event)">
+    <div id="photo-list"></div>
+  </div>
+</div>
+
+<!-- ─── PRINT PREVIEW ─── -->
+<div class="screen" id="screen-print">
+  <div class="header no-print">
+    <div class="header-back" onclick="goScreen('detail')">‹</div>
+    <div class="header-title">印刷プレビュー</div>
+    <div class="header-action" onclick="window.print()">🖨 印刷/PDF保存</div>
+  </div>
+  <div class="section" id="print-pages"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA（localStorageに保存）
+// ─────────────────────────────────────────────
+const STORAGE_KEY = 'koutei_shashin_sites';
+
+// デフォルトの工程名候補（自由に編集・追加可）
+const DEFAULT_PHASES = ['着工前', '仮設・準備', '基礎工事', '躯体・骨組み', '屋根工事', '外壁工事', '内部造作', '設備工事', '外構工事', '完成'];
+
+function loadSites() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    return s ? JSON.parse(s) : [];
+  } catch(e) { return []; }
+}
+function saveSites(sites) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(sites)); }
+  catch(e) { showToast('⚠️ 保存に失敗しました（容量不足の可能性）'); }
+}
+
+let sites = loadSites();
+let currentSiteId = null;
+let currentScreen = 'home';
+
+function uid() { return 'S' + Date.now().toString(36).toUpperCase(); }
+
+function showToast(msg, duration=2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ─────────────────────────────────────────────
+//  NAVIGATION
+// ─────────────────────────────────────────────
+function goScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  currentScreen = name;
+  if (name === 'home') renderSiteList();
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────────
+//  HOME / SITE LIST
+// ─────────────────────────────────────────────
+function renderSiteList() {
+  const el = document.getElementById('site-list');
+  if (!sites.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏗️</div><div>まだ現場がありません</div></div>`;
+    return;
+  }
+  el.innerHTML = sites.map(s => `
+    <div class="card site-card" onclick="openSite('${s.id}')">
+      <div>
+        <div class="site-card-name">${s.name}</div>
+        <div class="site-card-sub">📷 ${s.photos.length}枚 ・ ${s.builder || '施工者未設定'}</div>
+      </div>
+      <div class="site-card-arrow">›</div>
+    </div>`).join('');
+}
+
+function openNewSite() {
+  document.getElementById('in-site-name').value = '';
+  document.getElementById('in-site-builder').value = '';
+  goScreen('new-site');
+}
+
+function createSite() {
+  const name = document.getElementById('in-site-name').value.trim();
+  if (!name) { showToast('⚠️ 現場名を入力してください'); return; }
+  const builder = document.getElementById('in-site-builder').value.trim();
+  const site = { id: uid(), name, builder, photos: [] };
+  sites.unshift(site);
+  saveSites(sites);
+  showToast('✓ 現場を作成しました');
+  openSite(site.id);
+}
+
+// ─────────────────────────────────────────────
+//  SITE DETAIL / PHOTO LIST
+// ─────────────────────────────────────────────
+function openSite(id) {
+  currentSiteId = id;
+  const site = sites.find(s => s.id === id);
+  document.getElementById('detail-title').textContent = site.name;
+  renderPhotoList();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-detail').classList.add('active');
+  currentScreen = 'detail';
+  window.scrollTo(0, 0);
+}
+
+function currentSite() { return sites.find(s => s.id === currentSiteId); }
+
+function triggerFileInput() { document.getElementById('file-input').click(); }
+
+function resizeImage(file, callback) {
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const img = new Image();
+    img.onload = function() {
+      const MAX = 1000;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.75));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleFiles(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const site = currentSite();
+  let loaded = 0;
+  files.forEach(file => {
+    resizeImage(file, dataUrl => {
+      const nextPhaseIdx = site.photos.length % DEFAULT_PHASES.length;
+      site.photos.push({
+        id: uid(),
+        src: dataUrl,
+        phase: DEFAULT_PHASES[nextPhaseIdx],
+        memo: ''
+      });
+      loaded++;
+      if (loaded === files.length) {
+        saveSites(sites);
+        renderPhotoList();
+        showToast(`📷 写真${files.length}枚を追加しました`);
+      }
+    });
+  });
+  e.target.value = '';
+}
+
+function renderPhotoList() {
+  const site = currentSite();
+  const el = document.getElementById('photo-list');
+  if (!site.photos.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📷</div><div>まだ写真がありません</div></div>`;
+    return;
+  }
+  const phaseOptions = DEFAULT_PHASES.map(p => `<option value="${p}">`).join('');
+  el.innerHTML = `<datalist id="phase-list">${phaseOptions}</datalist>` +
+    site.photos.map((p, i) => `
+    <div class="photo-item">
+      <div class="photo-item-thumb"><img src="${p.src}"></div>
+      <div class="photo-item-body">
+        <input class="photo-item-input" list="phase-list" value="${p.phase || ''}" placeholder="工程名"
+          onchange="updatePhoto('${p.id}','phase',this.value)">
+        <textarea class="photo-item-memo" placeholder="メモ（3行程度）"
+          onchange="updatePhoto('${p.id}','memo',this.value)">${p.memo || ''}</textarea>
+      </div>
+      <div class="photo-item-actions">
+        <button class="photo-item-btn" onclick="movePhoto(${i},-1)" ${i===0?'disabled style="opacity:.3"':''}>▲</button>
+        <button class="photo-item-btn" onclick="movePhoto(${i},1)" ${i===site.photos.length-1?'disabled style="opacity:.3"':''}>▼</button>
+        <button class="photo-item-btn del" onclick="deletePhoto('${p.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function updatePhoto(photoId, field, value) {
+  const site = currentSite();
+  const photo = site.photos.find(p => p.id === photoId);
+  photo[field] = value;
+  saveSites(sites);
+}
+
+function movePhoto(index, dir) {
+  const site = currentSite();
+  const newIndex = index + dir;
+  if (newIndex < 0 || newIndex >= site.photos.length) return;
+  const tmp = site.photos[index];
+  site.photos[index] = site.photos[newIndex];
+  site.photos[newIndex] = tmp;
+  saveSites(sites);
+  renderPhotoList();
+}
+
+function deletePhoto(photoId) {
+  const site = currentSite();
+  site.photos = site.photos.filter(p => p.id !== photoId);
+  saveSites(sites);
+  renderPhotoList();
+  showToast('🗑️ 写真を削除しました');
+}
+
+// ─────────────────────────────────────────────
+//  PRINT PREVIEW（A4 1枚6枚レイアウト）
+// ─────────────────────────────────────────────
+function openPrintPreview() {
+  const site = currentSite();
+  if (!site.photos.length) { showToast('⚠️ 写真がありません'); return; }
+
+  const PER_PAGE = 6;
+  const pages = [];
+  for (let i = 0; i < site.photos.length; i += PER_PAGE) {
+    pages.push(site.photos.slice(i, i + PER_PAGE));
+  }
+
+  const today = new Date().toLocaleDateString('ja-JP');
+  const el = document.getElementById('print-pages');
+  el.innerHTML = pages.map((pagePhotos, pi) => {
+    const cells = pagePhotos.map(p => `
+      <div class="print-cell">
+        <div class="print-cell-photo"><img src="${p.src}"></div>
+        <div class="print-cell-caption"><b>${p.phase || '―'}</b>${(p.memo||'').replace(/\n/g,'<br>')}</div>
+      </div>`).join('');
+    const emptyCells = Array(PER_PAGE - pagePhotos.length).fill('<div class="print-cell print-cell-empty"></div>').join('');
+    return `
+      <div class="print-page">
+        <div class="print-page-header">
+          <b>${site.name}</b>
+          <span>施工者：${site.builder || '―'} ／ 出力日：${today} ／ ${pi+1}/${pages.length}ページ</span>
+        </div>
+        ${cells}${emptyCells}
+      </div>`;
+  }).join('');
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-print').classList.add('active');
+  currentScreen = 'print';
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+renderSiteList();
+</script>
+</body>
+</html>
