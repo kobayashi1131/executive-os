@@ -79,8 +79,9 @@
   .photo-item-handle {
     display: flex; align-items: center; justify-content: center;
     width: 26px; flex-shrink: 0; font-size: 20px; color: var(--muted);
-    cursor: grab; touch-action: none; user-select: none;
+    cursor: grab; touch-action: none; user-select: none; -webkit-user-drag: none;
   }
+  body.dragging-active { user-select: none; }
   .photo-item-thumb {
     width: 76px; height: 76px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #e0f2fe;
   }
@@ -378,7 +379,7 @@ function renderPhotoList() {
 
   el.innerHTML = site.photos.map((p, i) => `
     <div class="photo-item" id="pitem-${p.id}">
-      <span class="photo-item-handle" onpointerdown="startDrag(event,'${p.id}')">⠿</span>
+      <span class="photo-item-handle" draggable="false" onpointerdown="startDrag(event,'${p.id}')">⠿</span>
       <div class="photo-item-thumb"><img src="${p.src}"></div>
       <div class="photo-item-body">
         <select class="photo-item-input" onchange="updatePhoto('${p.id}','phase',this.value)">
@@ -390,6 +391,8 @@ function renderPhotoList() {
         <div class="photo-item-counter"><span id="cnt-${p.id}">${(p.memo||'').length}</span> / ${MEMO_MAXLEN}</div>
       </div>
       <div class="photo-item-actions">
+        <button class="photo-item-btn" onclick="movePhoto(${i},-1)" ${i===0?'disabled style="opacity:.3"':''}>▲</button>
+        <button class="photo-item-btn" onclick="movePhoto(${i},1)" ${i===site.photos.length-1?'disabled style="opacity:.3"':''}>▼</button>
         <button class="photo-item-btn del" onclick="deletePhoto('${p.id}')">✕</button>
       </div>
     </div>`).join('');
@@ -414,6 +417,7 @@ function startDrag(e, photoId) {
   const list = document.getElementById('photo-list');
   dragCtx = { photoId, item, list, startClientY: e.clientY };
   item.classList.add('dragging');
+  document.body.classList.add('dragging-active');
   handle.setPointerCapture(e.pointerId);
   handle.onpointermove = onDragMove;
   handle.onpointerup = endDrag;
@@ -457,6 +461,7 @@ function endDrag(e) {
 
   dragCtx.item.classList.remove('dragging');
   dragCtx.item.style.transform = '';
+  document.body.classList.remove('dragging-active');
 
   const site = currentSite();
   const newOrderIds = Array.from(dragCtx.list.querySelectorAll('.photo-item'))
@@ -464,6 +469,18 @@ function endDrag(e) {
   site.photos.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
   saveSites(sites);
   dragCtx = null;
+  renderPhotoList();
+}
+
+function movePhoto(index, dir) {
+  const site = currentSite();
+  const newIndex = index + dir;
+  if (newIndex < 0 || newIndex >= site.photos.length) return;
+  const tmp = site.photos[index];
+  site.photos[index] = site.photos[newIndex];
+  site.photos[newIndex] = tmp;
+  saveSites(sites);
+  renderPhotoList();
 }
 
 function deletePhoto(photoId) {
