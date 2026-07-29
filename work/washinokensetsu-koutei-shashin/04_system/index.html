@@ -82,12 +82,13 @@
   .photo-item-body { flex: 1; min-width: 0; }
   .photo-item-input {
     width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 8px;
-    font-size: 13px; font-family: inherit; margin-bottom: 6px;
+    font-size: 13px; font-family: inherit; margin-bottom: 6px; background: white;
   }
   .photo-item-memo {
     width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 8px;
     font-size: 12px; font-family: inherit; resize: none; height: 44px; line-height: 1.4;
   }
+  .photo-item-counter { font-size: 10px; color: var(--muted); text-align: right; margin-top: 2px; }
   .photo-item-actions {
     display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;
   }
@@ -119,9 +120,12 @@
   }
   .print-page-header b { font-size: 13px; }
   .print-cell { border: 1px solid #ccc; display: flex; flex-direction: column; overflow: hidden; }
-  .print-cell-photo { flex: 1; background: #eee; overflow: hidden; }
+  .print-cell-photo { flex: 1; background: #eee; overflow: hidden; min-height: 0; }
   .print-cell-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .print-cell-caption { padding: 3px 5px; font-size: 9px; line-height: 1.3; border-top: 1px solid #ccc; }
+  .print-cell-caption {
+    padding: 3px 5px; font-size: 9px; line-height: 1.3; border-top: 1px solid #ccc;
+    height: 15mm; overflow: hidden; flex-shrink: 0;
+  }
   .print-cell-caption b { font-size: 10px; display: block; }
   .print-cell-empty { background: #f8f8f8; }
 
@@ -217,8 +221,10 @@
 // ─────────────────────────────────────────────
 const STORAGE_KEY = 'koutei_shashin_sites';
 
-// デフォルトの工程名候補（自由に編集・追加可）
+// 工程名の選択肢（選択式）
 const DEFAULT_PHASES = ['着工前', '仮設・準備', '基礎工事', '躯体・骨組み', '屋根工事', '外壁工事', '内部造作', '設備工事', '外構工事', '完成'];
+// メモの最大文字数（印刷レイアウトの枠に収まる目安）
+const MEMO_MAXLEN = 60;
 
 function loadSites() {
   try {
@@ -337,11 +343,10 @@ function handleFiles(e) {
   let loaded = 0;
   files.forEach(file => {
     resizeImage(file, dataUrl => {
-      const nextPhaseIdx = site.photos.length % DEFAULT_PHASES.length;
       site.photos.push({
         id: uid(),
         src: dataUrl,
-        phase: DEFAULT_PHASES[nextPhaseIdx],
+        phase: '',
         memo: ''
       });
       loaded++;
@@ -362,16 +367,20 @@ function renderPhotoList() {
     el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📷</div><div>まだ写真がありません</div></div>`;
     return;
   }
-  const phaseOptions = DEFAULT_PHASES.map(p => `<option value="${p}">`).join('');
-  el.innerHTML = `<datalist id="phase-list">${phaseOptions}</datalist>` +
-    site.photos.map((p, i) => `
+  const phaseOptionsHTML = (selected) => `<option value="">工程名を選択</option>` +
+    DEFAULT_PHASES.map(p => `<option value="${p}" ${p===selected?'selected':''}>${p}</option>`).join('');
+
+  el.innerHTML = site.photos.map((p, i) => `
     <div class="photo-item">
       <div class="photo-item-thumb"><img src="${p.src}"></div>
       <div class="photo-item-body">
-        <input class="photo-item-input" list="phase-list" value="${p.phase || ''}" placeholder="工程名"
-          onchange="updatePhoto('${p.id}','phase',this.value)">
-        <textarea class="photo-item-memo" placeholder="メモ（3行程度）"
+        <select class="photo-item-input" onchange="updatePhoto('${p.id}','phase',this.value)">
+          ${phaseOptionsHTML(p.phase)}
+        </select>
+        <textarea class="photo-item-memo" placeholder="メモ" maxlength="${MEMO_MAXLEN}"
+          oninput="document.getElementById('cnt-${p.id}').textContent = this.value.length"
           onchange="updatePhoto('${p.id}','memo',this.value)">${p.memo || ''}</textarea>
+        <div class="photo-item-counter"><span id="cnt-${p.id}">${(p.memo||'').length}</span> / ${MEMO_MAXLEN}</div>
       </div>
       <div class="photo-item-actions">
         <button class="photo-item-btn" onclick="movePhoto(${i},-1)" ${i===0?'disabled style="opacity:.3"':''}>▲</button>
@@ -420,7 +429,6 @@ function openPrintPreview() {
     pages.push(site.photos.slice(i, i + PER_PAGE));
   }
 
-  const today = new Date().toLocaleDateString('ja-JP');
   const el = document.getElementById('print-pages');
   el.innerHTML = pages.map((pagePhotos, pi) => {
     const cells = pagePhotos.map(p => `
@@ -433,7 +441,7 @@ function openPrintPreview() {
       <div class="print-page">
         <div class="print-page-header">
           <b>${site.name}</b>
-          <span>施工者：${site.builder || '―'} ／ 出力日：${today} ／ ${pi+1}/${pages.length}ページ</span>
+          <span>施工者：${site.builder || '―'} ／ ${pi+1}/${pages.length}ページ</span>
         </div>
         ${cells}${emptyCells}
       </div>`;
