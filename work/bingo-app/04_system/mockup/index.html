@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>大阪ビンゴ合戦</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#100e27;
+    --bg-2:#0a0919;
+    --surface:#1c1840;
+    --surface-2:#241f52;
+    --line:#3a3370;
+    --ink:#f3efe3;
+    --ink-dim:#a9a3d6;
+    --ink-faint:#726c9e;
+    --team-a:#ff3d7a;
+    --team-a-ink:#ffd6e6;
+    --team-b:#21d4c8;
+    --team-b-ink:#c8fbf6;
+    --gold:#ffc24b;
+    --diff-easy:#7cd992;
+    --diff-normal:#ffc24b;
+    --diff-hard:#ff6b57;
+    --diff-center:#b98cff;
+    --danger:#ff5c5c;
+    --font-display:'Dela Gothic One', 'Zen Kaku Gothic New', sans-serif;
+    --font-body:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;
+    --font-mono:'Rajdhani','Zen Kaku Gothic New',sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 0%, #2a2166 0%, transparent 55%),
+      radial-gradient(circle at 100% 25%, #1b3a4a 0%, transparent 45%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  h1,h2,h3{
+    font-family:var(--font-display);
+    text-wrap:balance;
+    line-height:1.4;
+    margin:0;
+  }
+  button{font-family:inherit;}
+  ::selection{background:var(--gold);color:#231a06;}
+
+  @media (prefers-reduced-motion: no-preference){
+    .tile.bingo{animation:pulseGold 1.8s ease-in-out infinite;}
+    .toast{animation:toastIn .25s ease-out;}
+  }
+  @keyframes pulseGold{
+    0%,100%{box-shadow:0 0 0 0 rgba(255,194,75,.55);}
+    50%{box-shadow:0 0 0 6px rgba(255,194,75,0);}
+  }
+  @keyframes toastIn{
+    from{transform:translateY(8px);opacity:0;}
+    to{transform:translateY(0);opacity:1;}
+  }
+
+  .app-shell{
+    max-width:460px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    border-inline:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(255,255,255,.02), transparent 12%);
+  }
+
+  /* ---------- HUD ---------- */
+  .hud{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(16,14,39,.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:10px 16px;
+    display:none;
+  }
+  .hud.show{display:block;}
+  .hud-row{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:8px;
+  }
+  .team-score{display:flex;flex-direction:column;gap:2px;}
+  .team-score.opp{align-items:flex-end;text-align:right;}
+  .team-score .label{
+    font-size:11px;
+    letter-spacing:.06em;
+    color:var(--ink-dim);
+  }
+  .team-score .score{
+    font-family:var(--font-mono);
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+    font-size:24px;
+  }
+  .team-score.me .score{color:var(--team-a);}
+  .team-score.opp .score{color:var(--team-b);}
+  .timer{
+    font-family:var(--font-mono);
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+    font-size:18px;
+    color:var(--gold);
+    padding:4px 10px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--surface);
+  }
+
+  /* ---------- Screens ---------- */
+  main{flex:1;padding:20px 18px 100px;}
+  .screen{display:none;animation:none;}
+  .screen.active{display:block;}
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.14em;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .screen h2{font-size:22px;color:var(--ink);margin-bottom:4px;}
+  .screen .sub{color:var(--ink-dim);font-size:14px;margin-bottom:20px;}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+  }
+  .stack{display:flex;flex-direction:column;gap:12px;}
+  .row{display:flex;gap:10px;align-items:center;}
+  .row.between{justify-content:space-between;}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    appearance:none;
+    border:none;
+    border-radius:12px;
+    padding:14px 18px;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    width:100%;
+    transition:transform .08s ease, filter .15s ease;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-primary{background:var(--gold);color:#241a05;}
+  .btn-primary:hover:not(:disabled){filter:brightness(1.06);}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line);}
+  .btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger);}
+  .btn-team-a{background:var(--team-a);color:#3a0018;}
+  .btn-team-b{background:var(--team-b);color:#00302c;}
+  .btn-sm{width:auto;padding:8px 12px;font-size:13px;border-radius:9px;}
+
+  /* ---------- join screen ---------- */
+  .team-pick{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+  .team-opt{
+    border:2px solid var(--line);
+    border-radius:14px;
+    padding:16px 10px;
+    text-align:center;
+    background:var(--surface);
+    cursor:pointer;
+  }
+  .team-opt .dot{width:14px;height:14px;border-radius:50%;margin:0 auto 8px;}
+  .team-opt[data-team="a"] .dot{background:var(--team-a);}
+  .team-opt[data-team="b"] .dot{background:var(--team-b);}
+  .team-opt.selected[data-team="a"]{border-color:var(--team-a);box-shadow:0 0 0 3px rgba(255,61,122,.18);}
+  .team-opt.selected[data-team="b"]{border-color:var(--team-b);box-shadow:0 0 0 3px rgba(33,212,200,.18);}
+  input[type="text"]{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--ink);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:15px;
+    font-family:inherit;
+  }
+  input[type="text"]:focus, .chip:focus-visible, .btn:focus-visible, .tile:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+
+  /* ---------- pool screen ---------- */
+  .family-group{margin-bottom:14px;}
+  .family-title{font-size:13px;color:var(--ink-dim);margin-bottom:6px;letter-spacing:.02em;}
+  .item-row{
+    display:grid;
+    grid-template-columns:auto 1fr auto auto;
+    align-items:center;
+    gap:8px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-bottom:6px;
+    background:var(--surface);
+  }
+  .diff-chip{
+    font-size:11px;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .diff-chip.easy{background:rgba(124,217,146,.16);color:var(--diff-easy);}
+  .diff-chip.normal{background:rgba(255,194,75,.16);color:var(--diff-normal);}
+  .diff-chip.hard{background:rgba(255,107,87,.16);color:var(--diff-hard);}
+  .diff-chip.center{background:rgba(185,140,255,.16);color:var(--diff-center);}
+  .item-text{font-size:14px;}
+  .item-pts{font-family:var(--font-mono);font-weight:700;color:var(--gold);font-size:14px;}
+  .icon-btn{
+    background:none;border:1px solid var(--line);color:var(--ink-dim);
+    border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;
+  }
+  .icon-btn.confirm{color:var(--danger);border-color:var(--danger);}
+  .edit-form{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px dashed var(--line);border-radius:10px;background:var(--surface-2);margin-bottom:6px;}
+  .edit-form .fields{display:grid;grid-template-columns:1fr auto auto;gap:8px;}
+  select, input[type="number"]{
+    background:var(--bg-2);border:1px solid var(--line);color:var(--ink);
+    border-radius:8px;padding:8px;font-family:inherit;font-size:13px;
+  }
+
+  /* ---------- build / play grid ---------- */
+  .quota-row{display:flex;gap:8px;margin-bottom:14px;}
+  .quota{
+    flex:1;text-align:center;padding:8px 4px;border-radius:10px;border:1px solid var(--line);background:var(--surface);
+    font-family:var(--font-mono);font-weight:700;font-size:15px;
+  }
+  .quota.easy{color:var(--diff-easy);}
+  .quota.normal{color:var(--diff-normal);}
+  .quota.hard{color:var(--diff-hard);}
+  .quota small{display:block;font-family:var(--font-body);font-weight:500;font-size:10px;color:var(--ink-dim);}
+
+  .tray{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:6px;}
+  .tray .chip{
+    flex:0 0 auto;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:13px;
+    cursor:pointer;
+    max-width:180px;
+  }
+  .tray .chip.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,194,75,.2);}
+  .tray .chip.disabled{opacity:.3;cursor:not-allowed;}
+  .tabs{display:flex;gap:6px;margin-bottom:10px;}
+  .tab{
+    flex:1;text-align:center;padding:8px;border-radius:9px;border:1px solid var(--line);
+    background:var(--surface);font-size:13px;cursor:pointer;font-weight:700;
+  }
+  .tab.active.easy{background:var(--diff-easy);color:#0c2412;border-color:var(--diff-easy);}
+  .tab.active.normal{background:var(--diff-normal);color:#241a05;border-color:var(--diff-normal);}
+  .tab.active.hard{background:var(--diff-hard);color:#2b0a04;border-color:var(--diff-hard);}
+
+  .grid5{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:6px;
+    margin-bottom:16px;
+  }
+  .tile{
+    aspect-ratio:1;
+    border-radius:9px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    padding:5px;
+    font-size:10.5px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    text-align:left;
+    color:var(--ink);
+  }
+  .tile .bar{position:absolute;top:0;left:0;right:0;height:4px;}
+  .tile.slot-easy .bar{background:var(--diff-easy);}
+  .tile.slot-normal .bar{background:var(--diff-normal);}
+  .tile.slot-hard .bar{background:var(--diff-hard);}
+  .tile.slot-center .bar{background:var(--diff-center);}
+  .tile .txt{margin-top:6px;font-size:10px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+  .tile .pt{font-family:var(--font-mono);font-weight:700;color:var(--gold);font-size:11px;align-self:flex-end;}
+  .tile.empty{display:flex;align-items:center;justify-content:center;color:var(--ink-faint);font-size:11px;}
+  .tile.done{background:var(--surface-2);}
+  .tile.done::after{
+    content:"✓";
+    position:absolute;top:4px;right:6px;
+    color:var(--diff-easy);font-weight:900;font-size:14px;
+  }
+  .tile.done .txt{opacity:.55;}
+  .tile.fixed{background:linear-gradient(160deg, rgba(185,140,255,.18), var(--surface));}
+  .tile.locked{cursor:default;}
+
+  /* ---------- forced mission banner ---------- */
+  .banner{
+    background:linear-gradient(90deg, rgba(255,61,122,.16), rgba(255,61,122,.04));
+    border:1px solid var(--team-a);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-bottom:14px;
+  }
+  .banner .tag{font-size:11px;color:var(--team-a);font-weight:700;letter-spacing:.06em;}
+
+  /* ---------- modal ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(6,5,16,.72);
+    display:none;align-items:flex-end;justify-content:center;z-index:50;
+  }
+  .modal-backdrop.show{display:flex;}
+  .modal{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:18px 18px 0 0;
+    padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+    width:100%;
+    max-width:460px;
+    max-height:85vh;
+    overflow-y:auto;
+  }
+  .modal h3{font-size:16px;margin-bottom:10px;}
+  .photo-drop{
+    border:1.5px dashed var(--line);
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+    color:var(--ink-dim);
+    font-size:13px;
+    margin:12px 0;
+    cursor:pointer;
+    background:var(--bg-2);
+  }
+  .photo-preview{width:100%;border-radius:12px;margin:12px 0;display:none;max-height:220px;object-fit:cover;}
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+    background:var(--gold);color:#241a05;font-weight:700;font-size:13px;
+    padding:10px 18px;border-radius:999px;z-index:60;display:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+
+  /* ---------- result ---------- */
+  .result-hero{text-align:center;padding:24px 0 8px;}
+  .result-hero .medal{font-size:40px;}
+  .final-scores{display:flex;justify-content:center;align-items:center;gap:18px;margin:18px 0;}
+  .final-scores .fs{text-align:center;}
+  .final-scores .fs .num{font-family:var(--font-mono);font-weight:700;font-size:40px;font-variant-numeric:tabular-nums;}
+  .final-scores .vs{color:var(--ink-faint);font-family:var(--font-mono);font-size:14px;}
+  .final-scores .fs.me .num{color:var(--team-a);}
+  .final-scores .fs.opp .num{color:var(--team-b);}
+
+  /* ---------- dev nav (mockup review helper) ---------- */
+  .dev-nav{
+    position:fixed;right:12px;bottom:12px;z-index:70;
+    display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+  }
+  .dev-nav .dev-toggle{
+    width:44px;height:44px;border-radius:50%;
+    background:var(--surface-2);border:1px dashed var(--ink-faint);
+    color:var(--ink-dim);font-size:11px;cursor:pointer;
+  }
+  .dev-nav .dev-list{
+    display:none;flex-direction:column;gap:4px;
+    background:var(--surface-2);border:1px dashed var(--ink-faint);
+    border-radius:10px;padding:8px;
+  }
+  .dev-nav.open .dev-list{display:flex;}
+  .dev-nav .dev-list button{
+    font-size:11px;padding:6px 10px;border-radius:7px;border:none;
+    background:var(--bg-2);color:var(--ink-dim);cursor:pointer;text-align:left;
+  }
+  .mock-note{
+    font-size:11px;color:var(--ink-faint);border-top:1px dashed var(--line);
+    margin-top:18px;padding-top:10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <div class="hud" id="hud">
+    <div class="hud-row">
+      <div class="team-score me">
+        <span class="label" id="hudMeLabel">チームA(自分)</span>
+        <span class="score" id="scoreMine">0</span>
+      </div>
+      <div class="timer" id="timerDisplay">06:00:00</div>
+      <div class="team-score opp">
+        <span class="label" id="hudOppLabel">チームB</span>
+        <span class="score" id="scoreOpp">0</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- S1: 参加 -->
+    <section class="screen active" data-screen="join">
+      <div class="eyebrow">大阪旅行 2026.08.29–30</div>
+      <h2>大阪ビンゴ合戦</h2>
+      <p class="sub">6時間で相手が作ったビンゴを埋めろ。負けたチームは晩飯おごり(予定)。</p>
+
+      <div class="card stack">
+        <div>
+          <div class="family-title">なまえ</div>
+          <input type="text" id="playerName" placeholder="例：小林" />
+        </div>
+        <div>
+          <div class="family-title">チームをえらぶ</div>
+          <div class="team-pick">
+            <div class="team-opt selected" data-team="a" onclick="selectTeam('a')">
+              <div class="dot"></div>チームA<br><small style="color:var(--ink-dim)">2人</small>
+            </div>
+            <div class="team-opt" data-team="b" onclick="selectTeam('b')">
+              <div class="dot"></div>チームB<br><small style="color:var(--ink-dim)">3人</small>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="showScreen('pool')">つぎへ：項目プールを見る</button>
+      </div>
+
+      <p class="mock-note">※ これはUI確認用のラフモックです。写真データや対戦相手の動きは仮の演出で、実際の通信・保存は行われません。6時間の制限時間はデモ用に約90秒に短縮して表示します。</p>
+    </section>
+
+    <!-- S2: 項目プール -->
+    <section class="screen" data-screen="pool">
+      <div class="eyebrow">Step 2</div>
+      <h2>項目プール</h2>
+      <p class="sub">マスの内容はここから選ぶ。全員が追加・編集・削除できる。</p>
+      <div id="poolList"></div>
+      <button class="btn btn-ghost" style="margin-bottom:14px" onclick="addFamily()">＋ 新しいファミリーを追加</button>
+      <button class="btn btn-primary" onclick="showScreen('build')">つぎへ：相手チームのカードを作る</button>
+    </section>
+
+    <!-- S3: カード作成 -->
+    <section class="screen" data-screen="build">
+      <div class="eyebrow">Step 3</div>
+      <h2>相手チームのカードを作る</h2>
+      <p class="sub">易・普・難を各8個、24マスに自由に配置する（中央は固定）。</p>
+
+      <div class="quota-row">
+        <div class="quota easy"><span id="quotaEasy">0/8</span><small>易</small></div>
+        <div class="quota normal"><span id="quotaNormal">0/8</span><small>普</small></div>
+        <div class="quota hard"><span id="quotaHard">0/8</span><small>難</small></div>
+      </div>
+
+      <div id="buildGrid" class="grid5"></div>
+
+      <div class="tabs">
+        <div class="tab active easy" data-diff="easy" onclick="setBuildTab('easy')">易</div>
+        <div class="tab normal" data-diff="normal" onclick="setBuildTab('normal')">普</div>
+        <div class="tab hard" data-diff="hard" onclick="setBuildTab('hard')">難</div>
+      </div>
+      <div class="tray" id="buildTray"></div>
+      <p class="sub" style="margin:-4px 0 14px;font-size:12px;">項目をタップして選択 → 空きマスをタップして配置。配置済みマスをタップすると外せる。</p>
+
+      <button class="btn btn-primary" id="finishBuildBtn" disabled onclick="finishBuild()">カード完成 → 待機画面へ</button>
+    </section>
+
+    <!-- S4: 待機 -->
+    <section class="screen" data-screen="lobby">
+      <div class="eyebrow">Step 4</div>
+      <h2>待機画面</h2>
+      <p class="sub">両チームのカードが揃ったら、誰か1人が開始を押す。</p>
+      <div class="card stack">
+        <div class="row between"><span>あなたのチームが作ったカード</span><strong style="color:var(--diff-easy)">完成 ✓</strong></div>
+        <div class="row between"><span>相手チームが作ったカード</span><strong style="color:var(--diff-easy)" id="oppCardStatus">完成 ✓（デモ）</strong></div>
+        <div class="row between"><span>強制ミッション残り回数</span><strong>2 / 2（各チーム）</strong></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="startGame()">ゲーム開始（6時間タイマー起動）</button>
+    </section>
+
+    <!-- S5: プレイ -->
+    <section class="screen" data-screen="play">
+      <div class="eyebrow">プレイ中</div>
+      <h2>あなたのカード</h2>
+      <p class="sub">相手チームが作ったカード。マスをタップして写真を提出すると達成になる。</p>
+
+      <div id="forcedArea"></div>
+
+      <div id="playGrid" class="grid5"></div>
+
+      <button class="btn btn-team-a" id="sendForcedBtn" onclick="openForcedModal()">相手に強制ミッションを送る（残り <span id="forcedRemain">2</span>/2）</button>
+      <button class="btn btn-ghost" style="margin-top:8px" onclick="simulateIncomingForced()">（デモ）相手から強制ミッションを受け取る</button>
+      <button class="btn btn-ghost" style="margin-top:8px" onclick="endGame()">（デモ）今すぐ終了して結果を見る</button>
+    </section>
+
+    <!-- S6: 結果 -->
+    <section class="screen" data-screen="result">
+      <div class="result-hero">
+        <div class="medal" id="resultMedal">🏆</div>
+        <h2 id="resultTitle">チームAの勝ち！</h2>
+        <p class="sub" id="resultSub">チームBの晩飯おごり確定</p>
+      </div>
+      <div class="final-scores">
+        <div class="fs me"><div class="num" id="finalMine">0</div><div>チームA(自分)</div></div>
+        <div class="vs">VS</div>
+        <div class="fs opp"><div class="num" id="finalOpp">0</div><div>チームB</div></div>
+      </div>
+      <div class="card stack">
+        <div class="row between"><span>達成マス数</span><strong id="finalDone">0 / 24</strong></div>
+        <div class="row between"><span>ビンゴ成立数</span><strong id="finalBingo">0本</strong></div>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:16px" onclick="resetAll()">最初からやり直す（デモリセット）</button>
+    </section>
+
+  </main>
+</div>
+
+<!-- 写真提出モーダル -->
+<div class="modal-backdrop" id="photoModalBackdrop">
+  <div class="modal">
+    <h3 id="photoModalTitle">マスの内容</h3>
+    <p class="sub" id="photoModalMeta" style="margin-bottom:4px;"></p>
+    <label class="photo-drop" for="photoInput">
+      タップして写真を選択 / カメラを起動<br>
+      <span style="font-size:11px">達成の証拠写真を1枚提出する</span>
+    </label>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" onchange="onPhotoChosen(event)">
+    <img id="photoPreview" class="photo-preview" alt="提出する写真のプレビュー">
+    <div class="stack">
+      <button class="btn btn-primary" id="submitPhotoBtn" disabled onclick="submitPhoto()">これで提出する（承認なし・即達成）</button>
+      <button class="btn btn-ghost" onclick="closeModal('photoModalBackdrop')">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- 強制ミッション送信モーダル -->
+<div class="modal-backdrop" id="forcedModalBackdrop">
+  <div class="modal">
+    <h3>強制ミッションを送る</h3>
+    <p class="sub">項目プールから1つ選ぶ。相手チームのカードと同じ内容でもよい。</p>
+    <div class="tray" id="forcedPicker" style="flex-wrap:wrap;overflow:visible;"></div>
+    <div class="stack">
+      <button class="btn btn-team-a" id="confirmForcedBtn" disabled onclick="confirmSendForced()">送信する</button>
+      <button class="btn btn-ghost" onclick="closeModal('forcedModalBackdrop')">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="dev-nav" id="devNav">
+  <button class="dev-toggle" onclick="toggleDevNav()">確認</button>
+  <div class="dev-list">
+    <button onclick="showScreen('join')">S1 参加</button>
+    <button onclick="showScreen('pool')">S2 項目プール</button>
+    <button onclick="showScreen('build')">S3 カード作成</button>
+    <button onclick="showScreen('lobby')">S4 待機</button>
+    <button onclick="showScreen('play')">S5 プレイ</button>
+    <button onclick="showScreen('result')">S6 結果</button>
+  </div>
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // データ（game-design.md のたたき台をそのまま初期投入）
+  // ---------------------------------------------------------------
+  const FAMILIES = [
+    { name:"パチンコ", cat:"ギャンブル", easy:"打つ（結果不問）", normal:"当たりを獲得する", hard:"当たりを獲得し○○発以上獲得する" },
+    { name:"スロット", cat:"ギャンブル", easy:"打つ（結果不問）", normal:"ボーナスを獲得する", hard:"差枚+300枚以上を出す" },
+    { name:"競馬(WINS)", cat:"ギャンブル", easy:"馬券を1枚買う", normal:"的中させる", hard:"オッズ5倍以上で的中させる" },
+    { name:"競艇", cat:"ギャンブル", easy:"舟券を1枚買う", normal:"的中させる", hard:"3連単で的中させる" },
+    { name:"ダーツ", cat:"スキル", easy:"投げる", normal:"インブルに入れる", hard:"ブル（センター）に入れる" },
+    { name:"カラオケ", cat:"スキル", easy:"1曲歌う", normal:"70点以上を取る", hard:"90点以上を取る" },
+    { name:"ガチャ・福引", cat:"ギャンブル", easy:"1回引く", normal:"対象の商品を当てる", hard:"一番良い賞を当てる" },
+    { name:"グルメ", cat:"観光", easy:"名物を1つ食べる", normal:"大盛りメニューを完食する", hard:"激辛・激盛りを制限時間内に完食する" },
+    { name:"観光名所", cat:"観光", easy:"名所へ行き写真を撮る", normal:"指定ポーズ・アイテムで撮る", hard:"複数の名所を指定順で回る" },
+    { name:"対人ミッション", cat:"その他", easy:"知らない人に道を聞く", normal:"知らない人と写真を撮ってもらう", hard:"知らない人に飲食物を奢ってもらう" },
+  ];
+  const POINTS = { easy:1, normal:2, hard:4, center:0 };
+  const DIFF_LABEL = { easy:"易", normal:"普", hard:"難", center:"固定" };
+
+  let pool = [];
+  let familySeq = 0;
+  function seedPool(){
+    pool = [];
+    FAMILIES.forEach(f => addFamilyToPool(f.name, f.cat, f.easy, f.normal, f.hard));
+  }
+  function addFamilyToPool(name, cat, easyTxt, normalTxt, hardTxt){
+    const fid = familySeq++;
+    ["easy","normal","hard"].forEach(diff => {
+      const txt = diff==="easy"?easyTxt:diff==="normal"?normalTxt:hardTxt;
+      pool.push({
+        id: "f"+fid+"-"+diff,
+        family: name,
+        cat, diff,
+        text: name + "：" + txt,
+        pts: POINTS[diff],
+      });
+    });
+  }
+  const CENTER_ITEM = { id:"center", family:"パチンコ", cat:"ギャンブル", diff:"center", text:"パチンコ初当たり獲得", pts:0 };
+
+  // ---------------------------------------------------------------
+  // 状態
+  // ---------------------------------------------------------------
+  const state = {
+    team:"a",
+    buildTab:"easy",
+    buildGrid: Array(25).fill(null), // itemId or null, index12 = center
+    trayPick: null,
+    myCard: null, // finalized: [{item, done, photo}]
+    scoreMine:0, scoreOpp:0,
+    forcedRemain:2,
+    forcedReceived: [], // {item, done}
+    pendingPhoto: null, // {kind:'grid', idx} or {kind:'forced', idx}
+    forcedPickId: null,
+    timerTotal: 6*3600,
+    timerLeft: 6*3600,
+    timerHandle: null,
+    oppTickHandle: null,
+    finished:false,
+  };
+  state.buildGrid[12] = "center";
+
+  // ---------------------------------------------------------------
+  // 画面切替
+  // ---------------------------------------------------------------
+  function showScreen(name){
+    document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.dataset.screen===name));
+    document.getElementById("hud").classList.toggle("show", ["play","lobby","result"].includes(name));
+    if(name==="pool") renderPool();
+    if(name==="build") renderBuild();
+    if(name==="play") renderPlay();
+    if(name==="result") renderResult();
+    window.scrollTo({top:0});
+  }
+  function toggleDevNav(){ document.getElementById("devNav").classList.toggle("open"); }
+
+  function selectTeam(t){
+    state.team = t;
+    document.querySelectorAll(".team-opt").forEach(el => el.classList.toggle("selected", el.dataset.team===t));
+  }
+
+  // ---------------------------------------------------------------
+  // S2 項目プール（追加・編集・削除）
+  // ---------------------------------------------------------------
+  function renderPool(){
+    const wrap = document.getElementById("poolList");
+    const families = [...new Set(pool.map(p=>p.family))];
+    wrap.innerHTML = families.map(fam => {
+      const items = pool.filter(p=>p.family===fam);
+      return `<div class="family-group">
+        <div class="family-title">${fam}（${items[0]?.cat||""}）</div>
+        ${items.map(it => renderItemRow(it)).join("")}
+      </div>`;
+    }).join("");
+  }
+  function renderItemRow(it){
+    return `<div class="item-row" id="row-${it.id}">
+      <span class="diff-chip ${it.diff}">${DIFF_LABEL[it.diff]}</span>
+      <span class="item-text">${it.text}</span>
+      <span class="item-pts">${it.pts}pt</span>
+      <span style="display:flex;gap:4px;">
+        <button class="icon-btn" onclick="editItem('${it.id}')" aria-label="編集">✎</button>
+        <button class="icon-btn" id="del-${it.id}" onclick="deleteItem('${it.id}')" aria-label="削除">✕</button>
+      </span>
+    </div>`;
+  }
+  function editItem(id){
+    const it = pool.find(p=>p.id===id);
+    const row = document.getElementById("row-"+id);
+    row.outerHTML = `<div class="edit-form" id="row-${id}">
+      <input type="text" id="edit-text-${id}" value="${it.text.replace(/"/g,'&quot;')}">
+      <div class="fields">
+        <select id="edit-diff-${id}">
+          <option value="easy" ${it.diff==="easy"?"selected":""}>易</option>
+          <option value="normal" ${it.diff==="normal"?"selected":""}>普</option>
+          <option value="hard" ${it.diff==="hard"?"selected":""}>難</option>
+        </select>
+        <input type="number" id="edit-pts-${id}" value="${it.pts}" min="0" max="20">
+        <button class="btn btn-primary btn-sm" onclick="saveItem('${id}')">保存</button>
+      </div>
+    </div>`;
+  }
+  function saveItem(id){
+    const it = pool.find(p=>p.id===id);
+    it.text = document.getElementById("edit-text-"+id).value || it.text;
+    it.diff = document.getElementById("edit-diff-"+id).value;
+    it.pts = Number(document.getElementById("edit-pts-"+id).value) || 0;
+    renderPool();
+  }
+  function deleteItem(id){
+    const btn = document.getElementById("del-"+id);
+    if(btn.dataset.armed==="1"){
+      pool = pool.filter(p=>p.id!==id);
+      renderPool();
+    } else {
+      btn.dataset.armed = "1";
+      btn.textContent = "本当に削除？";
+      btn.classList.add("confirm");
+      btn.style.width="auto";
+      setTimeout(()=>{ if(document.body.contains(btn)){btn.dataset.armed="0";btn.textContent="✕";btn.classList.remove("confirm");btn.style.width="";} }, 2500);
+    }
+  }
+  function addFamily(){
+    const n = familySeq;
+    addFamilyToPool("新しいファミリー"+n, "その他", "行動するだけ", "基本の結果を出す", "条件付きの結果を出す");
+    renderPool();
+    showToast("新しいファミリーを追加した。内容を編集してね");
+  }
+
+  // ---------------------------------------------------------------
+  // S3 カード作成
+  // ---------------------------------------------------------------
+  function itemById(id){
+    if(id==="center") return CENTER_ITEM;
+    return pool.find(p=>p.id===id);
+  }
+  function setBuildTab(diff){
+    state.buildTab = diff;
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.diff===diff));
+    state.trayPick = null;
+    renderBuild();
+  }
+  function buildCount(diff){
+    return state.buildGrid.filter(id => id && itemById(id).diff===diff).length;
+  }
+  function renderBuild(){
+    document.getElementById("quotaEasy").textContent = buildCount("easy")+"/8";
+    document.getElementById("quotaNormal").textContent = buildCount("normal")+"/8";
+    document.getElementById("quotaHard").textContent = buildCount("hard")+"/8";
+
+    const grid = document.getElementById("buildGrid");
+    grid.innerHTML = state.buildGrid.map((id, idx) => {
+      if(idx===12){
+        return `<div class="tile fixed slot-center locked"><div class="bar"></div><div class="txt">${CENTER_ITEM.text}</div><div class="pt">FIX</div></div>`;
+      }
+      if(!id){
+        return `<div class="tile empty" onclick="placeAt(${idx})">空き</div>`;
+      }
+      const it = itemById(id);
+      return `<div class="tile slot-${it.diff}" onclick="removeAt(${idx})"><div class="bar"></div><div class="txt">${it.text}</div><div class="pt">${it.pts}pt</div></div>`;
+    }).join("");
+
+    const tray = document.getElementById("buildTray");
+    const usedIds = new Set(state.buildGrid.filter(Boolean));
+    const candidates = pool.filter(p=>p.diff===state.buildTab);
+    const full = buildCount(state.buildTab) >= 8;
+    tray.innerHTML = candidates.map(it => {
+      const placed = usedIds.has(it.id);
+      const disabled = placed || (full && !placed);
+      return `<div class="chip ${state.trayPick===it.id?'selected':''} ${disabled?'disabled':''}"
+                onclick="${disabled?'':'pickTray(\\''+it.id+'\\')'}">${it.text}${placed?" ✓配置済":""}</div>`;
+    }).join("");
+
+    document.getElementById("finishBuildBtn").disabled =
+      !(buildCount("easy")===8 && buildCount("normal")===8 && buildCount("hard")===8);
+  }
+  function pickTray(id){
+    state.trayPick = (state.trayPick===id) ? null : id;
+    renderBuild();
+  }
+  function placeAt(idx){
+    if(!state.trayPick){ showToast("先に項目プールから内容を選んでね"); return; }
+    state.buildGrid[idx] = state.trayPick;
+    state.trayPick = null;
+    renderBuild();
+  }
+  function removeAt(idx){
+    state.buildGrid[idx] = null;
+    renderBuild();
+  }
+  function finishBuild(){
+    state.myCard = state.buildGrid.map(id => ({ item: itemById(id), done:false, photo:null }));
+    showScreen("lobby");
+  }
+
+  // ---------------------------------------------------------------
+  // S4 → S5 タイマー
+  // ---------------------------------------------------------------
+  function startGame(){
+    state.finished = false;
+    state.timerLeft = state.timerTotal;
+    updateTimerDisplay();
+    const DEMO_SPEED = 240; // 1秒 = ゲーム内240秒（6時間 ≈ 実時間90秒）
+    state.timerHandle = setInterval(() => {
+      state.timerLeft -= DEMO_SPEED;
+      if(state.timerLeft <= 0){
+        state.timerLeft = 0;
+        updateTimerDisplay();
+        endGame();
+        return;
+      }
+      updateTimerDisplay();
+    }, 1000);
+    state.oppTickHandle = setInterval(() => {
+      if(Math.random() < 0.6){
+        state.scoreOpp += [1,2,4][Math.floor(Math.random()*3)];
+        document.getElementById("scoreOpp").textContent = state.scoreOpp;
+      }
+    }, 2200);
+    showScreen("play");
+  }
+  function updateTimerDisplay(){
+    const s = Math.max(0, state.timerLeft);
+    const h = String(Math.floor(s/3600)).padStart(2,"0");
+    const m = String(Math.floor((s%3600)/60)).padStart(2,"0");
+    const sec = String(Math.floor(s%60)).padStart(2,"0");
+    document.getElementById("timerDisplay").textContent = `${h}:${m}:${sec}`;
+  }
+
+  // ---------------------------------------------------------------
+  // S5 プレイ
+  // ---------------------------------------------------------------
+  const LINES = (() => {
+    const lines = [];
+    for(let r=0;r<5;r++) lines.push([0,1,2,3,4].map(c=>r*5+c));
+    for(let c=0;c<5;c++) lines.push([0,1,2,3,4].map(r=>r*5+c));
+    lines.push([0,6,12,18,24]);
+    lines.push([4,8,12,16,20]);
+    return lines;
+  })();
+
+  function renderPlay(){
+    document.getElementById("hudMeLabel").textContent = state.team==="a" ? "チームA(自分)" : "チームB(自分)";
+    document.getElementById("hudOppLabel").textContent = state.team==="a" ? "チームB" : "チームA";
+    renderForcedArea();
+    renderPlayGrid();
+    document.getElementById("scoreMine").textContent = state.scoreMine;
+    document.getElementById("scoreOpp").textContent = state.scoreOpp;
+    document.getElementById("forcedRemain").textContent = state.forcedRemain;
+    document.getElementById("sendForcedBtn").disabled = state.forcedRemain<=0;
+  }
+  function renderForcedArea(){
+    const wrap = document.getElementById("forcedArea");
+    wrap.innerHTML = state.forcedReceived.map((f, idx) => `
+      <div class="banner">
+        <div class="tag">相手からの強制ミッション</div>
+        <div style="margin:4px 0;">${f.item.text}（${f.item.pts}pt）</div>
+        ${f.done
+          ? `<strong style="color:var(--diff-easy)">達成済み ✓</strong>`
+          : `<button class="btn btn-team-a btn-sm" onclick="openPhotoModalForced(${idx})">写真提出</button>`}
+      </div>
+    `).join("");
+  }
+  function bingoLineSet(){
+    const done = state.myCard.map(c=>c.done);
+    const hitLines = new Set();
+    LINES.forEach((line, li) => { if(line.every(i=>done[i])) line.forEach(i=>hitLines.add(i)); });
+    return hitLines;
+  }
+  function renderPlayGrid(){
+    const grid = document.getElementById("playGrid");
+    const hitLines = bingoLineSet();
+    grid.innerHTML = state.myCard.map((cell, idx) => {
+      const it = cell.item;
+      const classes = ["tile", "slot-"+it.diff];
+      if(cell.done) classes.push("done");
+      if(hitLines.has(idx)) classes.push("bingo");
+      if(it.diff==="center") classes.push("fixed");
+      const clickable = !cell.done;
+      return `<div class="${classes.join(' ')}" ${clickable?`onclick="openPhotoModalGrid(${idx})"`:''}>
+        <div class="bar"></div>
+        <div class="txt">${it.text}</div>
+        <div class="pt">${it.diff==="center"?"FIX":it.pts+"pt"}</div>
+      </div>`;
+    }).join("");
+  }
+  function recomputeScore(){
+    const base = state.myCard.reduce((sum,c)=> sum + (c.done ? c.item.pts : 0), 0);
+    const lineCount = LINES.filter(line => line.every(i=>state.myCard[i].done)).length;
+    state.scoreMine = base + lineCount*5;
+    document.getElementById("scoreMine").textContent = state.scoreMine;
+  }
+
+  // ---------------------------------------------------------------
+  // 写真提出モーダル
+  // ---------------------------------------------------------------
+  function openPhotoModalGrid(idx){
+    state.pendingPhoto = {kind:"grid", idx};
+    const it = state.myCard[idx].item;
+    openPhotoModalCommon(it);
+  }
+  function openPhotoModalForced(idx){
+    state.pendingPhoto = {kind:"forced", idx};
+    const it = state.forcedReceived[idx].item;
+    openPhotoModalCommon(it);
+  }
+  function openPhotoModalCommon(it){
+    document.getElementById("photoModalTitle").textContent = it.text;
+    document.getElementById("photoModalMeta").textContent = `難易度: ${DIFF_LABEL[it.diff]} ／ ${it.pts}pt`;
+    document.getElementById("photoInput").value = "";
+    document.getElementById("photoPreview").style.display = "none";
+    document.getElementById("submitPhotoBtn").disabled = true;
+    openModal("photoModalBackdrop");
+  }
+  function onPhotoChosen(ev){
+    const file = ev.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById("photoPreview");
+      img.src = e.target.result;
+      img.style.display = "block";
+      document.getElementById("submitPhotoBtn").disabled = false;
+    };
+    reader.readAsDataURL(file);
+  }
+  function submitPhoto(){
+    const p = state.pendingPhoto;
+    if(p.kind==="grid"){
+      state.myCard[p.idx].done = true;
+      const it = state.myCard[p.idx].item;
+      showToast(`達成！ +${it.pts}pt`);
+    } else {
+      const f = state.forcedReceived[p.idx];
+      f.done = true;
+      // 重複しているビンゴマスがあれば自動開放
+      const matchIdx = state.myCard.findIndex(c => !c.done && c.item.text===f.item.text);
+      if(matchIdx>=0) state.myCard[matchIdx].done = true;
+      showToast(`強制ミッション達成！ +${f.item.pts}pt`);
+    }
+    recomputeScore();
+    closeModal("photoModalBackdrop");
+    renderPlay();
+  }
+
+  // ---------------------------------------------------------------
+  // 強制ミッション送信
+  // ---------------------------------------------------------------
+  function openForcedModal(){
+    state.forcedPickId = null;
+    const wrap = document.getElementById("forcedPicker");
+    wrap.innerHTML = pool.map(it => `
+      <div class="chip" data-id="${it.id}" onclick="pickForced('${it.id}')">${it.text}<br><small style="color:var(--ink-dim)">${DIFF_LABEL[it.diff]}・${it.pts}pt</small></div>
+    `).join("");
+    document.getElementById("confirmForcedBtn").disabled = true;
+    openModal("forcedModalBackdrop");
+  }
+  function pickForced(id){
+    state.forcedPickId = id;
+    document.querySelectorAll("#forcedPicker .chip").forEach(c => c.classList.toggle("selected", c.dataset.id===id));
+    document.getElementById("confirmForcedBtn").disabled = false;
+  }
+  function confirmSendForced(){
+    state.forcedRemain -= 1;
+    closeModal("forcedModalBackdrop");
+    showToast("強制ミッションを送信した（相手に通知されます）");
+    renderPlay();
+  }
+  function simulateIncomingForced(){
+    if(state.forcedReceived.length >= 2){ showToast("デモでは受信は2件までにしてます"); return; }
+    const candidates = pool.filter(it => !state.forcedReceived.some(f=>f.item.id===it.id));
+    const it = candidates[Math.floor(Math.random()*candidates.length)];
+    state.forcedReceived.push({item: it, done:false});
+    showToast("相手から強制ミッションが届いた");
+    renderPlay();
+  }
+
+  // ---------------------------------------------------------------
+  // 終了・結果
+  // ---------------------------------------------------------------
+  function endGame(){
+    if(state.finished) return;
+    state.finished = true;
+    clearInterval(state.timerHandle);
+    clearInterval(state.oppTickHandle);
+    showScreen("result");
+  }
+  function renderResult(){
+    const mine = state.scoreMine, opp = state.scoreOpp;
+    document.getElementById("finalMine").textContent = mine;
+    document.getElementById("finalOpp").textContent = opp;
+    const doneCount = state.myCard.filter(c=>c.done).length;
+    document.getElementById("finalDone").textContent = `${doneCount} / 25`;
+    const bingoCount = LINES.filter(line => line.every(i=>state.myCard[i].done)).length;
+    document.getElementById("finalBingo").textContent = `${bingoCount}本`;
+    const meLabel = state.team==="a" ? "チームA(自分)" : "チームB(自分)";
+    const oppLabel = state.team==="a" ? "チームB" : "チームA";
+    if(mine===opp){
+      document.getElementById("resultMedal").textContent = "🤝";
+      document.getElementById("resultTitle").textContent = "引き分け";
+      document.getElementById("resultSub").textContent = "同点時の判定ルールは未確定（要相談）";
+    } else if(mine>opp){
+      document.getElementById("resultMedal").textContent = "🏆";
+      document.getElementById("resultTitle").textContent = `${meLabel} の勝ち！`;
+      document.getElementById("resultSub").textContent = `${oppLabel} の晩飯おごり確定`;
+    } else {
+      document.getElementById("resultMedal").textContent = "🍜";
+      document.getElementById("resultTitle").textContent = `${oppLabel} の勝ち…`;
+      document.getElementById("resultSub").textContent = `${meLabel} が晩飯おごり`;
+    }
+  }
+  function resetAll(){
+    clearInterval(state.timerHandle);
+    clearInterval(state.oppTickHandle);
+    state.buildGrid = Array(25).fill(null);
+    state.buildGrid[12] = "center";
+    state.myCard = null;
+    state.scoreMine = 0; state.scoreOpp = 0;
+    state.forcedRemain = 2; state.forcedReceived = [];
+    state.finished = false;
+    seedPool();
+    showScreen("join");
+  }
+
+  // ---------------------------------------------------------------
+  // モーダル共通
+  // ---------------------------------------------------------------
+  function openModal(id){ document.getElementById(id).classList.add("show"); }
+  function closeModal(id){ document.getElementById(id).classList.remove("show"); }
+  let toastTimer=null;
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{ t.style.display="none"; }, 2200);
+  }
+
+  // init
+  seedPool();
+  renderBuild();
+</script>
+</body>
+</html>
