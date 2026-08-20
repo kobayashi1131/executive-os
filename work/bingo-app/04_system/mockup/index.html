@@ -626,6 +626,8 @@
     { name:"道頓堀", cat:"観光", easy:"グリコの看板の写真を撮る", normal:"たこ焼きを1舟食べる", hard:"人数×15個のたこ焼きを食べる" },
     { name:"黒門市場", cat:"観光", easy:"黒門市場に行き証拠写真を提出する", normal:"30分以上滞在し、お店のお勧めを1つ食べる", hard:"5つの店でお勧めを食べる" },
     { name:"カラオケデュエット", cat:"スキル", easy:"合計160点以上", normal:"合計170点以上", hard:"合計175点以上" },
+    { name:"あべのハルカス", cat:"観光", easy:"あべのハルカスの写真を撮る", normal:null, hard:"展望台(ハルカス300)まで登る" },
+    { name:"天王寺動物園", cat:"観光", easy:null, normal:null, hard:"動物園に行って動物と一緒に写真を撮る" },
   ];
   const POINTS = { easy:1, normal:2, hard:4, center:0 };
   const DIFF_LABEL = { easy:"易", normal:"普", hard:"難", center:"固定" };
@@ -640,6 +642,7 @@
     const fid = familySeq++;
     ["easy","normal","hard"].forEach(diff => {
       const txt = diff==="easy"?easyTxt:diff==="normal"?normalTxt:hardTxt;
+      if(!txt) return; // 一部の難易度しか用意しないファミリーもある（例: あべのハルカスは普なし）
       pool.push({
         id: "f"+fid+"-"+diff,
         family: name,
