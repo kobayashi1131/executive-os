@@ -468,6 +468,8 @@
 
       <div id="buildGrid" class="grid5"></div>
 
+      <button class="btn btn-ghost" style="margin-bottom:14px" onclick="randomizeBuild()">🎲 ランダムで配置する（プールから自動で選んで並べる）</button>
+
       <div class="tabs">
         <div class="tab active easy" data-diff="easy" onclick="setBuildTab('easy')">易</div>
         <div class="tab normal" data-diff="normal" onclick="setBuildTab('normal')">普</div>
@@ -553,6 +555,20 @@
     <h3>強制ミッションを送る</h3>
     <p class="sub">項目プールから1つ選ぶ。相手チームのカードと同じ内容でもよい。</p>
     <div class="tray" id="forcedPicker" style="flex-wrap:wrap;overflow:visible;"></div>
+
+    <div class="edit-form" id="forcedAddForm" style="display:none;">
+      <input type="text" id="forcedNewText" placeholder="内容（例：ダーツ：ブルに入れる）">
+      <div class="fields">
+        <select id="forcedNewDiff" onchange="syncForcedNewPts()">
+          <option value="easy">易</option>
+          <option value="normal">普</option>
+          <option value="hard">難</option>
+        </select>
+        <input type="number" id="forcedNewPts" value="1" min="0" max="20">
+        <button class="btn btn-primary btn-sm" onclick="submitForcedNewItem()">追加して選択</button>
+      </div>
+    </div>
+
     <div class="stack">
       <button class="btn btn-team-a" id="confirmForcedBtn" disabled onclick="confirmSendForced()">送信する</button>
       <button class="btn btn-ghost" onclick="closeModal('forcedModalBackdrop')">キャンセル</button>
@@ -784,6 +800,34 @@
     state.buildGrid[idx] = null;
     renderBuild();
   }
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+  function randomizeBuild(){
+    const picks = [];
+    for(const diff of ["easy","normal","hard"]){
+      const candidates = pool.filter(p=>p.diff===diff);
+      if(candidates.length < 8){ showToast(`「${DIFF_LABEL[diff]}」の項目がプールに8個未満。先にプールを増やしてね`); return; }
+      picks.push(...shuffle(candidates).slice(0,8).map(p=>p.id));
+    }
+    const shuffled = shuffle(picks);
+    const newGrid = Array(25).fill(null);
+    newGrid[12] = "center";
+    let cursor = 0;
+    for(let i=0;i<25;i++){
+      if(i===12) continue;
+      newGrid[i] = shuffled[cursor++];
+    }
+    state.buildGrid = newGrid;
+    state.trayPick = null;
+    renderBuild();
+    showToast("ランダムに配置した。気に入らないマスはタップして入れ替えてね");
+  }
   function finishBuild(){
     state.myCard = state.buildGrid.map(id => ({ item: itemById(id), done:false, photo:null }));
     showScreen("lobby");
@@ -944,12 +988,39 @@
   // ---------------------------------------------------------------
   function openForcedModal(){
     state.forcedPickId = null;
-    const wrap = document.getElementById("forcedPicker");
-    wrap.innerHTML = pool.map(it => `
-      <div class="chip" data-id="${it.id}" onclick="pickForced('${it.id}')">${it.text}<br><small style="color:var(--ink-dim)">${DIFF_LABEL[it.diff]}・${it.pts}pt</small></div>
-    `).join("");
+    document.getElementById("forcedAddForm").style.display = "none";
+    renderForcedPicker();
     document.getElementById("confirmForcedBtn").disabled = true;
     openModal("forcedModalBackdrop");
+  }
+  function renderForcedPicker(){
+    const wrap = document.getElementById("forcedPicker");
+    wrap.innerHTML = pool.map(it => `
+      <div class="chip ${state.forcedPickId===it.id?'selected':''}" data-id="${it.id}" onclick="pickForced('${it.id}')">${it.text}<br><small style="color:var(--ink-dim)">${DIFF_LABEL[it.diff]}・${it.pts}pt</small></div>
+    `).join("") + `
+      <div class="chip" style="border-style:dashed;color:var(--gold);" onclick="toggleForcedAddForm()">＋ 新しい項目を追加</div>
+    `;
+  }
+  function toggleForcedAddForm(){
+    const form = document.getElementById("forcedAddForm");
+    form.style.display = form.style.display==="none" ? "flex" : "none";
+  }
+  function syncForcedNewPts(){
+    document.getElementById("forcedNewPts").value = POINTS[document.getElementById("forcedNewDiff").value];
+  }
+  let customSeq = 0;
+  function submitForcedNewItem(){
+    const text = document.getElementById("forcedNewText").value.trim();
+    if(!text){ showToast("内容を入力してね"); return; }
+    const diff = document.getElementById("forcedNewDiff").value;
+    const pts = Number(document.getElementById("forcedNewPts").value) || 0;
+    const id = "custom"+(customSeq++);
+    pool.push({ id, family:"その場で追加", cat:"その他", diff, text, pts });
+    document.getElementById("forcedNewText").value = "";
+    document.getElementById("forcedAddForm").style.display = "none";
+    renderForcedPicker();
+    pickForced(id);
+    showToast("項目プールに追加した。今後カード作成でも使える");
   }
   function pickForced(id){
     state.forcedPickId = id;
