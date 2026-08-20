@@ -231,7 +231,7 @@
     display:flex;justify-content:space-between;align-items:center;gap:8px;
     padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
   }
-  .mission-row .txt{font-size:13px;}
+  .mission-row .txt{font-size:13px;flex:1;min-width:0;}
   .gallery-thumb{
     aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--bg-2);
   }
@@ -679,7 +679,7 @@
   const CENTER_ITEM = { id:"center", family:"パチンコ", cat:"ギャンブル", diff:"center", text:"パチンコ初当たり獲得", pts:0 };
 
   const COMMON_MISSION_PTS = 2;
-  const COMMON_MISSIONS = [
+  const DEFAULT_COMMON_MISSIONS = [
     { id:"c1", text:"ヒョウ柄のおばちゃんを発見して写真を撮る" },
     { id:"c2", text:"阪神タイガースのグッズを身につけた人を発見して写真を撮る" },
     { id:"c3", text:"面白い商品を見つけて写真を撮る" },
@@ -688,6 +688,13 @@
     { id:"c6", text:"芸能人に遭遇する（可能なら写真を撮る）" },
     { id:"c7", text:"1円など激安商品を見つけて写真を撮る" },
   ];
+  let COMMON_MISSIONS = [];
+  let commonSeq = 0;
+  function seedCommon(){
+    COMMON_MISSIONS = DEFAULT_COMMON_MISSIONS.map(m => ({...m}));
+    commonSeq = COMMON_MISSIONS.length;
+  }
+  seedCommon();
 
   // ---------------------------------------------------------------
   // 状態
@@ -1024,13 +1031,64 @@
   function renderCommon(){
     const wrap = document.getElementById("commonList");
     wrap.innerHTML = COMMON_MISSIONS.map(m => `
-      <div class="mission-row">
+      <div class="mission-row" id="common-row-${m.id}">
         <span class="txt">${m.text}</span>
-        ${state.common[m.id]
-          ? `<strong style="color:var(--diff-easy);white-space:nowrap;">達成 ✓</strong>`
-          : `<button class="btn btn-team-a btn-sm" onclick="openPhotoModalCommonMission('${m.id}')">写真提出</button>`}
+        <span style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          ${state.common[m.id]
+            ? `<strong style="color:var(--diff-easy);white-space:nowrap;">達成 ✓</strong>`
+            : `<button class="btn btn-team-a btn-sm" onclick="openPhotoModalCommonMission('${m.id}')">写真提出</button>`}
+          <button class="icon-btn" onclick="editCommonMission('${m.id}')" aria-label="編集">✎</button>
+          <button class="icon-btn" id="del-common-${m.id}" onclick="deleteCommonMission('${m.id}')" aria-label="削除">✕</button>
+        </span>
       </div>
-    `).join("");
+    `).join("") + `
+      <div class="edit-form" id="commonAddForm" style="display:none;">
+        <input type="text" id="commonNewText" placeholder="内容（例：ふぐ提灯を見つけて写真を撮る）">
+        <button class="btn btn-primary btn-sm" onclick="submitCommonNewMission()">追加する（${COMMON_MISSION_PTS}pt固定）</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:2px;align-self:flex-start;" onclick="toggleCommonAddForm()">＋ 共通ミッションを追加</button>
+    `;
+  }
+  function toggleCommonAddForm(){
+    const form = document.getElementById("commonAddForm");
+    form.style.display = form.style.display==="none" ? "flex" : "none";
+  }
+  function submitCommonNewMission(){
+    const text = document.getElementById("commonNewText").value.trim();
+    if(!text){ showToast("内容を入力してね"); return; }
+    const id = "c"+(commonSeq++);
+    COMMON_MISSIONS.push({ id, text });
+    state.common[id] = false;
+    renderCommon();
+    showToast("共通ミッションを追加した");
+  }
+  function editCommonMission(id){
+    const m = COMMON_MISSIONS.find(x=>x.id===id);
+    const row = document.getElementById("common-row-"+id);
+    row.outerHTML = `<div class="edit-form" id="common-row-${id}">
+      <input type="text" id="edit-common-text-${id}" value="${m.text.replace(/"/g,'&quot;')}">
+      <button class="btn btn-primary btn-sm" onclick="saveCommonMission('${id}')">保存</button>
+    </div>`;
+  }
+  function saveCommonMission(id){
+    const m = COMMON_MISSIONS.find(x=>x.id===id);
+    m.text = document.getElementById("edit-common-text-"+id).value || m.text;
+    renderCommon();
+  }
+  function deleteCommonMission(id){
+    const btn = document.getElementById("del-common-"+id);
+    if(btn.dataset.armed==="1"){
+      COMMON_MISSIONS = COMMON_MISSIONS.filter(m=>m.id!==id);
+      delete state.common[id];
+      recomputeScore();
+      renderCommon();
+    } else {
+      btn.dataset.armed = "1";
+      btn.textContent = "本当に削除？";
+      btn.classList.add("confirm");
+      btn.style.width="auto";
+      setTimeout(()=>{ if(document.body.contains(btn)){btn.dataset.armed="0";btn.textContent="✕";btn.classList.remove("confirm");btn.style.width="";} }, 2500);
+    }
   }
   function renderGallery(){
     const wrap = document.getElementById("galleryGrid");
@@ -1211,6 +1269,7 @@
     state.myCard = null;
     state.scoreMine = 0; state.scoreOpp = 0;
     state.forcedRemain = 2; state.forcedReceived = [];
+    seedCommon();
     state.common = Object.fromEntries(COMMON_MISSIONS.map(m => [m.id, false]));
     state.gallery = [];
     state.finished = false;
