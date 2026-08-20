@@ -227,6 +227,15 @@
   .diff-chip.center{background:rgba(185,140,255,.16);color:var(--diff-center);}
   .item-text{font-size:14px;}
   .item-pts{font-family:var(--font-mono);font-weight:700;color:var(--gold);font-size:14px;}
+  .mission-row{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  }
+  .mission-row .txt{font-size:13px;}
+  .gallery-thumb{
+    aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--bg-2);
+  }
+  .gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
   .icon-btn{
     background:none;border:1px solid var(--line);color:var(--ink-dim);
     border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;
@@ -518,6 +527,21 @@
 
       <div id="playGrid" class="grid5"></div>
 
+      <div class="card stack" style="margin-bottom:14px;">
+        <div class="row between"><strong style="font-size:14px;">共通ミッション（両チーム独立に達成可・各2pt）</strong></div>
+        <div id="commonList"></div>
+      </div>
+
+      <div class="card stack" style="margin-bottom:14px;">
+        <div class="row between">
+          <strong style="font-size:14px;">おもろい瞬間ギャラリー</strong>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('galleryInput').click()">＋ 投稿</button>
+        </div>
+        <p class="sub" style="font-size:12px;margin:0;">得点はアプリでは計算しない。当日最後にみんなで見て清算する。</p>
+        <input type="file" id="galleryInput" accept="image/*" capture="environment" style="display:none" onchange="onGalleryPhotoChosen(event)">
+        <div id="galleryGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;"></div>
+      </div>
+
       <button class="btn btn-team-a" id="sendForcedBtn" onclick="openForcedModal()">相手に強制ミッションを送る（残り <span id="forcedRemain">2</span>/2）</button>
       <button class="btn btn-ghost" style="margin-top:8px" onclick="simulateIncomingForced()">（デモ）相手から強制ミッションを受け取る</button>
       <button class="btn btn-ghost" style="margin-top:8px" onclick="endGame()">（デモ）今すぐ終了して結果を見る</button>
@@ -654,6 +678,17 @@
   }
   const CENTER_ITEM = { id:"center", family:"パチンコ", cat:"ギャンブル", diff:"center", text:"パチンコ初当たり獲得", pts:0 };
 
+  const COMMON_MISSION_PTS = 2;
+  const COMMON_MISSIONS = [
+    { id:"c1", text:"ヒョウ柄のおばちゃんを発見して写真を撮る" },
+    { id:"c2", text:"阪神タイガースのグッズを身につけた人を発見して写真を撮る" },
+    { id:"c3", text:"面白い商品を見つけて写真を撮る" },
+    { id:"c4", text:"面白い・変わり種の自販機を見つけて写真を撮る" },
+    { id:"c5", text:"知らない人に話しかけられて写真を撮ってもらう" },
+    { id:"c6", text:"芸能人に遭遇する（可能なら写真を撮る）" },
+    { id:"c7", text:"1円など激安商品を見つけて写真を撮る" },
+  ];
+
   // ---------------------------------------------------------------
   // 状態
   // ---------------------------------------------------------------
@@ -666,8 +701,10 @@
     scoreMine:0, scoreOpp:0,
     forcedRemain:2,
     forcedReceived: [], // {item, done}
-    pendingPhoto: null, // {kind:'grid', idx} or {kind:'forced', idx}
+    pendingPhoto: null, // {kind:'grid', idx} or {kind:'forced', idx} or {kind:'common', idx}
     forcedPickId: null,
+    common: Object.fromEntries(COMMON_MISSIONS.map(m => [m.id, false])),
+    gallery: [], // dataURLの配列（おもろい瞬間ギャラリー）
     timerTotal: 6*3600,
     timerLeft: 6*3600,
     timerHandle: null,
@@ -935,6 +972,8 @@
     document.getElementById("hudOppLabel").textContent = state.team==="a" ? "チームB" : "チームA";
     renderForcedArea();
     renderPlayGrid();
+    renderCommon();
+    renderGallery();
     document.getElementById("scoreMine").textContent = state.scoreMine;
     document.getElementById("scoreOpp").textContent = state.scoreOpp;
     document.getElementById("forcedRemain").textContent = state.forcedRemain;
@@ -978,8 +1017,36 @@
   function recomputeScore(){
     const base = state.myCard.reduce((sum,c)=> sum + (c.done ? c.item.pts : 0), 0);
     const lineCount = LINES.filter(line => line.every(i=>state.myCard[i].done)).length;
-    state.scoreMine = base + lineCount*5;
+    const commonPts = Object.values(state.common).filter(Boolean).length * COMMON_MISSION_PTS;
+    state.scoreMine = base + lineCount*5 + commonPts;
     document.getElementById("scoreMine").textContent = state.scoreMine;
+  }
+  function renderCommon(){
+    const wrap = document.getElementById("commonList");
+    wrap.innerHTML = COMMON_MISSIONS.map(m => `
+      <div class="mission-row">
+        <span class="txt">${m.text}</span>
+        ${state.common[m.id]
+          ? `<strong style="color:var(--diff-easy);white-space:nowrap;">達成 ✓</strong>`
+          : `<button class="btn btn-team-a btn-sm" onclick="openPhotoModalCommonMission('${m.id}')">写真提出</button>`}
+      </div>
+    `).join("");
+  }
+  function renderGallery(){
+    const wrap = document.getElementById("galleryGrid");
+    wrap.innerHTML = state.gallery.map(src => `<div class="gallery-thumb"><img src="${src}" alt="投稿写真"></div>`).join("");
+  }
+  function onGalleryPhotoChosen(ev){
+    const file = ev.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      state.gallery.push(e.target.result);
+      renderGallery();
+      showToast("ギャラリーに投稿した");
+    };
+    reader.readAsDataURL(file);
+    ev.target.value = "";
   }
 
   // ---------------------------------------------------------------
@@ -994,6 +1061,12 @@
     state.pendingPhoto = {kind:"forced", idx};
     const it = state.forcedReceived[idx].item;
     openPhotoModalCommon(it);
+  }
+  function openPhotoModalCommonMission(id){
+    state.pendingPhoto = {kind:"common", idx:id};
+    const m = COMMON_MISSIONS.find(x=>x.id===id);
+    openPhotoModalCommon({ text:m.text, diff:"center", pts:COMMON_MISSION_PTS });
+    document.getElementById("photoModalMeta").textContent = `共通ミッション ／ ${COMMON_MISSION_PTS}pt（両チームとも達成可）`;
   }
   function openPhotoModalCommon(it){
     document.getElementById("photoModalTitle").textContent = it.text;
@@ -1021,13 +1094,16 @@
       state.myCard[p.idx].done = true;
       const it = state.myCard[p.idx].item;
       showToast(`達成！ +${it.pts}pt`);
-    } else {
+    } else if(p.kind==="forced"){
       const f = state.forcedReceived[p.idx];
       f.done = true;
       // 重複しているビンゴマスがあれば自動開放
       const matchIdx = state.myCard.findIndex(c => !c.done && c.item.text===f.item.text);
       if(matchIdx>=0) state.myCard[matchIdx].done = true;
       showToast(`強制ミッション達成！ +${f.item.pts}pt`);
+    } else if(p.kind==="common"){
+      state.common[p.idx] = true;
+      showToast(`共通ミッション達成！ +${COMMON_MISSION_PTS}pt`);
     }
     recomputeScore();
     closeModal("photoModalBackdrop");
@@ -1135,6 +1211,8 @@
     state.myCard = null;
     state.scoreMine = 0; state.scoreOpp = 0;
     state.forcedRemain = 2; state.forcedReceived = [];
+    state.common = Object.fromEntries(COMMON_MISSIONS.map(m => [m.id, false]));
+    state.gallery = [];
     state.finished = false;
     seedPool();
     showScreen("join");
