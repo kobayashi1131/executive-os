@@ -764,7 +764,7 @@
       const placed = usedIds.has(it.id);
       const disabled = placed || (full && !placed);
       return `<div class="chip ${state.trayPick===it.id?'selected':''} ${disabled?'disabled':''}"
-                onclick="${disabled?'':'pickTray(\\''+it.id+'\\')'}">${it.text}${placed?" ✓配置済":""}</div>`;
+                onclick="${disabled?'':`pickTray('${it.id}')`}">${it.text}${placed?" ✓配置済":""}</div>`;
     }).join("");
 
     document.getElementById("finishBuildBtn").disabled =
