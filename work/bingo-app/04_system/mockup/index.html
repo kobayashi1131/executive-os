@@ -476,6 +476,20 @@
         <div class="tab hard" data-diff="hard" onclick="setBuildTab('hard')">難</div>
       </div>
       <div class="tray" id="buildTray"></div>
+
+      <div class="edit-form" id="buildAddForm" style="display:none;">
+        <input type="text" id="buildNewText" placeholder="内容（例：ダーツ：ブルに入れる）">
+        <div class="fields">
+          <select id="buildNewDiff" onchange="syncBuildNewPts()">
+            <option value="easy">易</option>
+            <option value="normal">普</option>
+            <option value="hard">難</option>
+          </select>
+          <input type="number" id="buildNewPts" value="1" min="0" max="20">
+          <button class="btn btn-primary btn-sm" onclick="submitBuildNewItem()">追加して選択</button>
+        </div>
+      </div>
+
       <p class="sub" style="margin:-4px 0 14px;font-size:12px;">項目をタップして選択 → 空きマスをタップして配置。配置済みマスをタップすると外せる。</p>
 
       <button class="btn btn-primary" id="finishBuildBtn" disabled onclick="finishBuild()">カード完成 → 待機画面へ</button>
@@ -605,6 +619,13 @@
     { name:"グルメ", cat:"観光", easy:"名物を1つ食べる", normal:"大盛りメニューを完食する", hard:"激辛・激盛りを制限時間内に完食する" },
     { name:"観光名所", cat:"観光", easy:"名所へ行き写真を撮る", normal:"指定ポーズ・アイテムで撮る", hard:"複数の名所を指定順で回る" },
     { name:"対人ミッション", cat:"その他", easy:"知らない人に道を聞く", normal:"知らない人と写真を撮ってもらう", hard:"知らない人に飲食物を奢ってもらう" },
+    { name:"一番くじ", cat:"ギャンブル", easy:"1回引く", normal:"フィギュアを当てる", hard:"A・B・C賞のいずれかを当てる" },
+    { name:"クレーンゲーム", cat:"スキル", easy:"なんでもいいので景品を獲得する", normal:"ぬいぐるみかフィギュアを獲得する", hard:"ぬいぐるみ・フィギュアを2つ獲得する" },
+    { name:"ボウリング", cat:"スキル", easy:"1フレーム投げる", normal:"1ゲームで100点以上", hard:"1ゲームでストライクを3回以上" },
+    { name:"通天閣", cat:"観光", easy:"通天閣の写真を撮る", normal:"ビリケンさんと写真を撮る", hard:"通天閣に登り、展望台から写真を撮る" },
+    { name:"道頓堀", cat:"観光", easy:"グリコの看板の写真を撮る", normal:"たこ焼きを1舟食べる", hard:"人数×15個のたこ焼きを食べる" },
+    { name:"黒門市場", cat:"観光", easy:"黒門市場に行き証拠写真を提出する", normal:"30分以上滞在し、お店のお勧めを1つ食べる", hard:"5つの店でお勧めを食べる" },
+    { name:"カラオケデュエット", cat:"スキル", easy:"合計160点以上", normal:"合計170点以上", hard:"合計175点以上" },
   ];
   const POINTS = { easy:1, normal:2, hard:4, center:0 };
   const DIFF_LABEL = { easy:"易", normal:"普", hard:"難", center:"固定" };
@@ -781,7 +802,9 @@
       const disabled = placed || (full && !placed);
       return `<div class="chip ${state.trayPick===it.id?'selected':''} ${disabled?'disabled':''}"
                 onclick="${disabled?'':`pickTray('${it.id}')`}">${it.text}${placed?" ✓配置済":""}</div>`;
-    }).join("");
+    }).join("") + `
+      <div class="chip" style="border-style:dashed;color:var(--gold);" onclick="toggleBuildAddForm()">＋ 新しい項目を追加</div>
+    `;
 
     document.getElementById("finishBuildBtn").disabled =
       !(buildCount("easy")===8 && buildCount("normal")===8 && buildCount("hard")===8);
@@ -789,6 +812,31 @@
   function pickTray(id){
     state.trayPick = (state.trayPick===id) ? null : id;
     renderBuild();
+  }
+  function toggleBuildAddForm(){
+    const form = document.getElementById("buildAddForm");
+    const opening = form.style.display==="none";
+    form.style.display = opening ? "flex" : "none";
+    if(opening){
+      document.getElementById("buildNewDiff").value = state.buildTab;
+      syncBuildNewPts();
+    }
+  }
+  function syncBuildNewPts(){
+    document.getElementById("buildNewPts").value = POINTS[document.getElementById("buildNewDiff").value];
+  }
+  function submitBuildNewItem(){
+    const text = document.getElementById("buildNewText").value.trim();
+    if(!text){ showToast("内容を入力してね"); return; }
+    const diff = document.getElementById("buildNewDiff").value;
+    const pts = Number(document.getElementById("buildNewPts").value) || 0;
+    const id = "custom"+(customSeq++);
+    pool.push({ id, family:"その場で追加", cat:"その他", diff, text, pts });
+    document.getElementById("buildNewText").value = "";
+    document.getElementById("buildAddForm").style.display = "none";
+    setBuildTab(diff);
+    pickTray(id);
+    showToast("項目プールに追加した。今後どのカードでも使える");
   }
   function placeAt(idx){
     if(!state.trayPick){ showToast("先に項目プールから内容を選んでね"); return; }
