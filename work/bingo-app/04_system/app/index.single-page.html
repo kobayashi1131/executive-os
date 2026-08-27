@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>大阪ビンゴ合戦</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#100e27; --bg-2:#0a0919; --surface:#1c1840; --surface-2:#241f52; --line:#3a3370;
+    --ink:#f3efe3; --ink-dim:#a9a3d6; --ink-faint:#726c9e;
+    --team-a:#ff3d7a; --team-b:#21d4c8; --gold:#ffc24b;
+    --diff-easy:#7cd992; --diff-normal:#ffc24b; --diff-hard:#ff6b57;
+    --danger:#ff5c5c;
+    --font-display:'Dela Gothic One','Zen Kaku Gothic New',sans-serif;
+    --font-body:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;
+    --font-mono:'Rajdhani','Zen Kaku Gothic New',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    background-image:radial-gradient(circle at 15% 0%, #2a2166 0%, transparent 55%), radial-gradient(circle at 100% 20%, #1b3a4a 0%, transparent 45%);
+    background-attachment:fixed;
+    color:var(--ink); font-family:var(--font-body); line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh;
+  }
+  h1,h2,h3{ font-family:var(--font-display); text-wrap:balance; line-height:1.4; margin:0; }
+  button{font-family:inherit;}
+  input{font-family:inherit;}
+  .wrap{max-width:480px;margin:0 auto;padding:16px 14px 60px;}
+  .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:4px;}
+  .lede{color:var(--ink-dim);font-size:13px;margin:4px 0 16px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;}
+  .card h3{font-size:14px;margin-bottom:8px;}
+  .hint{font-size:11.5px;color:var(--ink-faint);margin:2px 0 8px;}
+  .syncnote{font-size:11px;color:var(--ink-faint);text-align:center;margin:-8px 0 14px;}
+
+  .scoreboard{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;
+    background:rgba(16,14,39,.85);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;position:sticky;top:8px;z-index:10;backdrop-filter:blur(6px);}
+  .score-box{text-align:center;}
+  .score-box .lbl{font-size:11px;color:var(--ink-dim);letter-spacing:.04em;}
+  .score-box .num{font-family:var(--font-mono);font-weight:700;font-size:28px;font-variant-numeric:tabular-nums;}
+  .score-box.team-a .num{color:var(--team-a);}
+  .score-box.team-b .num{color:var(--team-b);}
+  .score-box .sub{font-size:11px;color:var(--ink-faint);}
+  .timer-box{text-align:center;font-family:var(--font-mono);font-weight:700;font-size:13px;color:var(--gold);white-space:nowrap;}
+  .btn-start{width:100%;appearance:none;border:none;border-radius:12px;padding:13px;font-weight:700;font-size:14px;background:var(--gold);color:#241a05;cursor:pointer;margin-bottom:14px;}
+  .btn-start:active{transform:scale(.98);}
+  .btn-start[hidden]{display:none;}
+
+  .pool-row,.common-row,.forced-row{display:flex;align-items:center;gap:6px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);margin-bottom:6px;}
+  .diffbtns{display:flex;gap:2px;flex-shrink:0;}
+  .dbtn{border:1px solid var(--line);background:var(--bg-2);color:var(--ink-dim);font-size:11px;font-weight:700;padding:5px 6px;border-radius:6px;cursor:pointer;}
+  .dbtn.easy.active{background:var(--diff-easy);color:#0c2412;border-color:var(--diff-easy);}
+  .dbtn.normal.active{background:var(--diff-normal);color:#241a05;border-color:var(--diff-normal);}
+  .dbtn.hard.active{background:var(--diff-hard);color:#2b0a04;border-color:var(--diff-hard);}
+  .row-text{flex:1;min-width:0;font-size:12.5px;}
+  .row-pts{font-family:var(--font-mono);font-weight:700;color:var(--gold);font-size:12.5px;flex-shrink:0;width:32px;text-align:right;}
+  .row-del,.icon-btn{flex-shrink:0;background:none;border:1px solid var(--line);color:var(--ink-dim);border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:12px;}
+  .row-del[data-armed="1"]{width:auto;padding:0 8px;color:var(--danger);border-color:var(--danger);}
+  .edit-form{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px dashed var(--line);border-radius:10px;background:var(--bg-2);margin-bottom:6px;}
+  .edit-form input[type="text"]{background:var(--surface-2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:13px;}
+  .edit-form .row{display:flex;gap:8px;align-items:center;}
+  .edit-form input[type="number"]{width:56px;background:var(--surface-2);border:1px solid var(--line);color:var(--gold);border-radius:8px;padding:8px;text-align:center;font-family:var(--font-mono);font-weight:700;}
+  .add-row{display:flex;gap:6px;margin-top:2px;}
+  .add-row input[type="text"]{flex:1;min-width:0;background:var(--bg-2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:13px;}
+  .btn-add{flex-shrink:0;background:var(--gold);color:#241a05;border:none;border-radius:8px;padding:8px 12px;font-weight:700;font-size:12.5px;cursor:pointer;}
+  .btn-add:disabled{opacity:.35;cursor:not-allowed;}
+  .chk{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--ink-dim);flex-shrink:0;}
+  .chk input{width:16px;height:16px;}
+
+  .quota-readout{font-size:11px;color:var(--ink-faint);margin:-2px 0 8px;font-family:var(--font-mono);}
+  .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:10px;}
+  .cell{aspect-ratio:1;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);padding:4px;font-size:9.5px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;position:relative;overflow:hidden;}
+  .cell.empty{align-items:center;justify-content:center;color:var(--ink-faint);background:var(--bg-2);}
+  .cell.empty .cell-name{font-size:10px;}
+  .cell .cell-name{font-size:9.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+  .cell .cell-pts{font-family:var(--font-mono);font-weight:700;color:var(--gold);font-size:10px;align-self:flex-end;}
+  .cell.done{background:linear-gradient(160deg, rgba(124,217,146,.22), var(--surface-2));}
+  .cell.done::after{content:"✓";position:absolute;top:3px;right:5px;color:var(--diff-easy);font-weight:900;font-size:13px;}
+  .cell.fixed{background:linear-gradient(160deg, rgba(185,140,255,.2), var(--surface-2));}
+  .cell-clear{position:absolute;top:2px;left:2px;background:none;border:none;color:var(--ink-faint);font-size:10px;cursor:pointer;padding:2px;line-height:1;}
+  .btn-random{width:100%;background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px;font-size:12.5px;font-weight:700;cursor:pointer;margin-bottom:10px;}
+
+  .forced-cols{display:flex;flex-direction:column;gap:14px;}
+  .forced-col h4{font-size:12.5px;color:var(--ink-dim);margin:0 0 6px;font-weight:700;}
+
+  .picker-overlay{position:fixed;inset:0;background:rgba(6,5,16,.75);display:flex;align-items:flex-end;justify-content:center;z-index:50;}
+  .picker-overlay[hidden]{display:none;}
+  .picker-panel{background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 0 0;width:100%;max-width:480px;max-height:75vh;display:flex;flex-direction:column;}
+  .picker-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);}
+  .picker-list{overflow-y:auto;padding:10px 12px;}
+  .picker-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:6px;cursor:pointer;color:var(--ink);}
+  .pi-diff{font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;flex-shrink:0;}
+  .picker-item.easy .pi-diff{background:rgba(124,217,146,.18);color:var(--diff-easy);}
+  .picker-item.normal .pi-diff{background:rgba(255,194,75,.18);color:var(--diff-normal);}
+  .picker-item.hard .pi-diff{background:rgba(255,107,87,.18);color:var(--diff-hard);}
+  .pi-text{flex:1;min-width:0;font-size:12.5px;}
+  .pi-pts{font-family:var(--font-mono);font-weight:700;color:var(--gold);font-size:12px;flex-shrink:0;}
+
+  .note-line{font-size:12.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;margin:0 0 6px;}
+  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--gold);color:#241a05;font-weight:700;font-size:12.5px;padding:9px 16px;border-radius:999px;z-index:60;display:none;box-shadow:0 8px 24px rgba(0,0,0,.35);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">大阪旅行 2026.08.29–30 ／ 到着後6時間</div>
+  <h1 style="font-size:20px;">大阪ビンゴ合戦</h1>
+  <p class="lede">達成報告はLINEで。ここはスコアとミッション内容を全員でリアルタイム共有するボード。</p>
+  <p class="syncnote" id="syncStatus">同期中…</p>
+
+  <button id="startBtn" class="btn-start" onclick="startGame()">▶ ゲーム開始（6時間タイマー起動・誰か1人が押せばOK）</button>
+
+  <div class="scoreboard">
+    <div class="score-box team-a"><div class="lbl">チームA</div><div class="num" id="scoreA">0</div><div class="sub" id="bingoA">ビンゴ 0本</div></div>
+    <div class="timer-box" id="timerDisplay">未開始</div>
+    <div class="score-box team-b"><div class="lbl">チームB</div><div class="num" id="scoreB">0</div><div class="sub" id="bingoB">ビンゴ 0本</div></div>
+  </div>
+
+  <div class="card">
+    <h3>項目プール</h3>
+    <p class="hint">マス・強制ミッションの内容はここから選ぶ。全員が追加・編集・削除できる。</p>
+    <div id="poolList"></div>
+    <div class="add-row">
+      <span class="diffbtns" id="newPoolDiffBtns" data-diff="easy">
+        <button type="button" class="dbtn easy active" onclick="setNewPoolDiff(this,'easy')">易</button>
+        <button type="button" class="dbtn normal" onclick="setNewPoolDiff(this,'normal')">普</button>
+        <button type="button" class="dbtn hard" onclick="setNewPoolDiff(this,'hard')">難</button>
+      </span>
+      <input type="text" id="newPoolText" placeholder="新しい項目">
+      <button class="btn-add" onclick="addPoolItem()">追加</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--team-a);">チームAのカード</h3>
+    <p class="hint">相手（チームB）が内容を作る。空きマスをタップして選ぶ。達成したらマスをタップ。</p>
+    <div class="quota-readout" id="quotaA"></div>
+    <button class="btn-random" onclick="randomizeCard('A')">🎲 ランダムで配置する</button>
+    <div class="grid5" id="gridA"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--team-b);">チームBのカード</h3>
+    <p class="hint">相手（チームA）が内容を作る。空きマスをタップして選ぶ。達成したらマスをタップ。</p>
+    <div class="quota-readout" id="quotaB"></div>
+    <button class="btn-random" onclick="randomizeCard('B')">🎲 ランダムで配置する</button>
+    <div class="grid5" id="gridB"></div>
+  </div>
+
+  <div class="card">
+    <h3>共通ミッション（両チーム独立に達成可・各2pt）</h3>
+    <div id="commonList"></div>
+    <div class="add-row">
+      <input type="text" id="newCommonText" placeholder="新しい共通ミッション">
+      <button class="btn-add" onclick="addCommonItem()">追加</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>強制ミッション（各チーム2回まで）</h3>
+    <p class="hint">項目プールから選んで送る。相手のカードと同じ内容でもOK。同じ内容なら達成時にそのマスも自動で開く。</p>
+    <div class="forced-cols">
+      <div class="forced-col">
+        <h4 style="color:var(--team-a);">チームAへの強制ミッション（残り <span id="forcedCountA">2/2</span>）</h4>
+        <div id="forcedToA"></div>
+        <button class="btn-add" id="sendToABtn" style="width:100%;" onclick="openPicker('forced','forcedToA')">＋ チームAに送る</button>
+      </div>
+      <div class="forced-col">
+        <h4 style="color:var(--team-b);">チームBへの強制ミッション（残り <span id="forcedCountB">2/2</span>）</h4>
+        <div id="forcedToB"></div>
+        <button class="btn-add" id="sendToBBtn" style="width:100%;" onclick="openPicker('forced','forcedToB')">＋ チームBに送る</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>みんなのメモ・おもろかったこと</h3>
+    <p class="hint">写真はLINEで共有してね。ここはテキストの自由メモ。</p>
+    <div id="notepadList"></div>
+    <div class="add-row">
+      <input type="text" id="newNoteText" placeholder="おもろかったこと・メモを書く">
+      <button class="btn-add" onclick="addNote()">追加</button>
+    </div>
+  </div>
+</div>
+
+<div class="picker-overlay" id="pickerOverlay" hidden onclick="if(event.target===this)closePicker()">
+  <div class="picker-panel">
+    <div class="picker-head"><strong>項目を選ぶ</strong><button class="icon-btn" onclick="closePicker()">✕</button></div>
+    <div id="pickerList" class="picker-list"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* =========================================================
+     設定: Google Apps ScriptのWebアプリURLをここに貼る
+     ========================================================= */
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbx6aiFwfl3vpmZ7bSv4VFsR7GzCRDPtRvcnca2IFziodQeYBybVA9WotgSraVnZVRPw/exec';
+
+  var POINTS = { easy:1, normal:2, hard:4 };
+  var DIFF_LABEL = { easy:'易', normal:'普', hard:'難' };
+  var LINES = (function(){
+    var lines = [];
+    for(var r=0;r<5;r++) lines.push([0,1,2,3,4].map(function(c){return r*5+c;}));
+    for(var c=0;c<5;c++) lines.push([0,1,2,3,4].map(function(r){return r*5+c;}));
+    lines.push([0,6,12,18,24]);
+    lines.push([4,8,12,16,20]);
+    return lines;
+  })();
+
+  function seedFamily(list, seq, name, cat, easyTxt, normalTxt, hardTxt){
+    var diffs = [['easy',easyTxt],['normal',normalTxt],['hard',hardTxt]];
+    diffs.forEach(function(pair){
+      if(!pair[1]) return;
+      list.push({ id:'p'+(seq.n++), diff:pair[0], text:name+'：'+pair[1], pts:POINTS[pair[0]] });
+    });
+  }
+  function buildDefaultPool(){
+    var list = []; var seq = {n:1};
+    seedFamily(list,seq,'パチンコ','ギャンブル','打つ（結果不問）','当たりを獲得する','当たりを獲得し○○発以上獲得する');
+    seedFamily(list,seq,'スロット','ギャンブル','打つ（結果不問）','ボーナスを獲得する','差枚+300枚以上を出す');
+    seedFamily(list,seq,'競馬(WINS)','ギャンブル','馬券を1枚買う','的中させる','オッズ5倍以上で的中させる');
+    seedFamily(list,seq,'競艇','ギャンブル','舟券を1枚買う','的中させる','3連単で的中させる');
+    seedFamily(list,seq,'ダーツ','スキル','投げる','インブルに入れる','ブル（センター）に入れる');
+    seedFamily(list,seq,'カラオケ','スキル','1曲歌う','70点以上を取る','90点以上を取る');
+    seedFamily(list,seq,'ガチャ・福引','ギャンブル','1回引く','対象の商品を当てる','一番良い賞を当てる');
+    seedFamily(list,seq,'グルメ','観光','名物を1つ食べる','大盛りメニューを完食する','激辛・激盛りを制限時間内に完食する');
+    seedFamily(list,seq,'観光名所','観光','観光名所へ行き写真を撮る','指定ポーズ・アイテムで撮る','複数の名所を指定順で回る');
+    seedFamily(list,seq,'対人ミッション','その他','知らない人に道を聞く','知らない人と写真を撮ってもらう','知らない人に飲食物を奢ってもらう');
+    seedFamily(list,seq,'一番くじ','ギャンブル','1回引く','フィギュアを当てる','A・B・C賞のいずれかを当てる');
+    seedFamily(list,seq,'クレーンゲーム','スキル','なんでもいいので景品を獲得する','ぬいぐるみかフィギュアを獲得する','ぬいぐるみ・フィギュアを2つ獲得する');
+    seedFamily(list,seq,'ボウリング','スキル','1フレーム投げる','1ゲームで100点以上','1ゲームでストライクを3回以上');
+    seedFamily(list,seq,'通天閣','観光','通天閣の写真を撮る','ビリケンさんと写真を撮る','通天閣に登り、展望台から写真を撮る');
+    seedFamily(list,seq,'道頓堀','観光','グリコの看板の写真を撮る','たこ焼きを1舟食べる','人数×15個のたこ焼きを食べる');
+    seedFamily(list,seq,'黒門市場','観光','黒門市場に行く','30分以上滞在し、お店のお勧めを1つ食べる','5つの店でお勧めを食べる');
+    seedFamily(list,seq,'カラオケデュエット','スキル','合計160点以上','合計170点以上','合計175点以上');
+    seedFamily(list,seq,'あべのハルカス','観光','あべのハルカスの写真を撮る',null,'展望台(ハルカス300)まで登る');
+    seedFamily(list,seq,'天王寺動物園','観光',null,null,'動物園に行って動物と一緒に写真を撮る');
+    return list;
+  }
+  function buildDefaultCommon(){
+    return [
+      { id:'c1', text:'ヒョウ柄のおばちゃんを発見して写真を撮る', doneA:false, doneB:false },
+      { id:'c2', text:'阪神タイガースのグッズを身につけた人を発見して写真を撮る', doneA:false, doneB:false },
+      { id:'c3', text:'面白い商品を見つけて写真を撮る', doneA:false, doneB:false },
+      { id:'c4', text:'面白い・変わり種の自販機を見つけて写真を撮る', doneA:false, doneB:false },
+      { id:'c5', text:'知らない人に話しかけられて写真を撮ってもらう', doneA:false, doneB:false },
+      { id:'c6', text:'芸能人に遭遇する（可能なら写真を撮る）', doneA:false, doneB:false },
+      { id:'c7', text:'1円など激安商品を見つけて写真を撮る', doneA:false, doneB:false }
+    ];
+  }
+  function buildEmptyCard(){
+    var cells = [];
+    for(var i=0;i<25;i++){
+      if(i===12) cells.push({ text:'パチンコ初当たり獲得', pts:0, done:false, fixed:true });
+      else cells.push({ text:null, pts:0, done:false, fixed:false });
+    }
+    return cells;
+  }
+  function defaultState(){
+    return {
+      updatedAt: 0,
+      pool: buildDefaultPool(),
+      cardA: buildEmptyCard(),
+      cardB: buildEmptyCard(),
+      common: buildDefaultCommon(),
+      forcedToA: [],
+      forcedToB: [],
+      startAt: 0,
+      notes: [],
+      customSeq: 1
+    };
+  }
+
+  var state = defaultState();
+  var pendingMode = null, pendingTarget = null;
+  var saveTimer = null;
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.style.display = 'block';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function(){ t.style.display = 'none'; }, 2200);
+  }
+
+  /* ---------------- 項目プール ---------------- */
+  function renderPool(){
+    var wrap = document.getElementById('poolList');
+    wrap.innerHTML = state.pool.map(function(it){
+      return '<div class="pool-row" data-id="'+it.id+'">'
+        + '<span class="diffbtns">'
+        + ['easy','normal','hard'].map(function(d){
+            return '<button type="button" class="dbtn '+d+(it.diff===d?' active':'')+'" onclick="setPoolDiff(\''+it.id+'\',\''+d+'\')">'+DIFF_LABEL[d]+'</button>';
+          }).join('')
+        + '</span>'
+        + '<span class="row-text">'+escapeHtml(it.text)+'</span>'
+        + '<span class="row-pts">'+it.pts+'pt</span>'
+        + '<button class="icon-btn" onclick="editPoolItem(\''+it.id+'\')">✎</button>'
+        + '<button class="row-del" onclick="deletePoolItem(this,\''+it.id+'\')">✕</button>'
+        + '</div>';
+    }).join('');
+  }
+  function setPoolDiff(id, diff){
+    var it = state.pool.find(function(p){ return p.id===id; });
+    if(!it) return;
+    it.diff = diff; it.pts = POINTS[diff];
+    renderPool(); persist();
+  }
+  function editPoolItem(id){
+    var it = state.pool.find(function(p){ return p.id===id; });
+    var row = document.querySelector('.pool-row[data-id="'+id+'"]');
+    row.outerHTML = '<div class="edit-form" data-id="'+id+'">'
+      + '<input type="text" id="edit-text-'+id+'" value="'+escapeHtml(it.text)+'">'
+      + '<div class="row">'
+      + ['easy','normal','hard'].map(function(d){
+          return '<button type="button" class="dbtn '+d+(it.diff===d?' active':'')+'" id="edit-diff-'+id+'-'+d+'" onclick="pickEditDiff(\''+id+'\',\''+d+'\')">'+DIFF_LABEL[d]+'</button>';
+        }).join('')
+      + '<input type="number" id="edit-pts-'+id+'" value="'+it.pts+'">'
+      + '<button class="btn-add" onclick="savePoolItem(\''+id+'\')">保存</button>'
+      + '</div></div>';
+  }
+  function pickEditDiff(id, diff){
+    ['easy','normal','hard'].forEach(function(d){
+      document.getElementById('edit-diff-'+id+'-'+d).classList.toggle('active', d===diff);
+    });
+    document.getElementById('edit-pts-'+id).value = POINTS[diff];
+  }
+  function savePoolItem(id){
+    var it = state.pool.find(function(p){ return p.id===id; });
+    var newText = document.getElementById('edit-text-'+id).value.trim();
+    if(newText) it.text = newText;
+    var activeBtn = document.querySelector('#edit-diff-'+id+'-easy.active, #edit-diff-'+id+'-normal.active, #edit-diff-'+id+'-hard.active');
+    if(activeBtn) it.diff = activeBtn.id.split('-').pop();
+    it.pts = Number(document.getElementById('edit-pts-'+id).value) || 0;
+    renderPool(); persist();
+  }
+  function deletePoolItem(btn, id){
+    if(btn.dataset.armed==='1'){
+      state.pool = state.pool.filter(function(p){ return p.id!==id; });
+      renderPool(); persist();
+    } else {
+      btn.dataset.armed='1'; btn.textContent='本当に削除？';
+      setTimeout(function(){ if(btn.isConnected){ btn.dataset.armed='0'; btn.textContent='✕'; } }, 2500);
+    }
+  }
+  function setNewPoolDiff(btn, diff){
+    var group = document.getElementById('newPoolDiffBtns');
+    group.dataset.diff = diff;
+    group.querySelectorAll('.dbtn').forEach(function(b){ b.classList.toggle('active', b===btn); });
+  }
+  function addPoolItem(){
+    var text = document.getElementById('newPoolText').value.trim();
+    if(!text) return;
+    var diff = document.getElementById('newPoolDiffBtns').dataset.diff || 'easy';
+    state.pool.push({ id:'c'+(state.customSeq++), diff:diff, text:text, pts:POINTS[diff] });
+    document.getElementById('newPoolText').value = '';
+    renderPool(); persist();
+  }
+
+  /* ---------------- カード ---------------- */
+  function renderCard(letter){
+    var cells = state['card'+letter];
+    var grid = document.getElementById('grid'+letter);
+    grid.innerHTML = cells.map(function(c, i){
+      if(c.fixed){
+        return '<div class="cell fixed'+(c.done?' done':'')+'" onclick="toggleCellDone(\''+letter+'\','+i+')"><span class="cell-name">'+escapeHtml(c.text)+'</span><span class="cell-pts">FIX</span></div>';
+      }
+      if(!c.text){
+        return '<div class="cell empty" onclick="openPicker(\'cell\',\''+letter+'\','+i+')"><span class="cell-name">空き</span></div>';
+      }
+      return '<div class="cell'+(c.done?' done':'')+'" onclick="toggleCellDone(\''+letter+'\','+i+')">'
+        + '<button class="cell-clear" onclick="event.stopPropagation();clearCell(\''+letter+'\','+i+')">✕</button>'
+        + '<span class="cell-name">'+escapeHtml(c.text)+'</span><span class="cell-pts">'+c.pts+'pt</span></div>';
+    }).join('');
+  }
+  function toggleCellDone(letter, idx){
+    state['card'+letter][idx].done = !state['card'+letter][idx].done;
+    renderCard(letter); recomputeScores(); persist();
+  }
+  function clearCell(letter, idx){
+    state['card'+letter][idx] = { text:null, pts:0, done:false, fixed:false };
+    renderCard(letter); recomputeScores(); persist();
+  }
+  function randomizeCard(letter){
+    if(state.pool.length < 24){ showToast('プールが24個未満だとランダム配置できないよ'); return; }
+    var items = state.pool.slice();
+    for(var i=items.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = items[i]; items[i]=items[j]; items[j]=t;
+    }
+    var picks = items.slice(0,24);
+    var cards = state['card'+letter];
+    var p = 0;
+    for(var k=0;k<25;k++){
+      if(cards[k].fixed) continue;
+      var it = picks[p++];
+      cards[k] = { text: it.text, pts: it.pts, done:false, fixed:false };
+    }
+    renderCard(letter); recomputeScores(); persist();
+    showToast('ランダムに配置した');
+  }
+  function countByDiff(letter){
+    var c = { easy:0, normal:0, hard:0 };
+    state['card'+letter].forEach(function(cell){
+      if(cell.fixed || !cell.text) return;
+      if(cell.pts<=1) c.easy++; else if(cell.pts===2) c.normal++; else c.hard++;
+    });
+    return c;
+  }
+
+  /* ---------------- 共通ミッション ---------------- */
+  function renderCommon(){
+    var wrap = document.getElementById('commonList');
+    wrap.innerHTML = state.common.map(function(m){
+      return '<div class="common-row" data-id="'+m.id+'">'
+        + '<span class="row-text">'+escapeHtml(m.text)+'</span>'
+        + '<label class="chk"><input type="checkbox" '+(m.doneA?'checked':'')+' onchange="toggleCommon(\''+m.id+'\',\'A\',this.checked)"> A</label>'
+        + '<label class="chk"><input type="checkbox" '+(m.doneB?'checked':'')+' onchange="toggleCommon(\''+m.id+'\',\'B\',this.checked)"> B</label>'
+        + '<button class="row-del" onclick="deleteCommonItem(this,\''+m.id+'\')">✕</button>'
+        + '</div>';
+    }).join('');
+  }
+  function toggleCommon(id, team, checked){
+    var m = state.common.find(function(x){ return x.id===id; });
+    if(!m) return;
+    if(team==='A') m.doneA = checked; else m.doneB = checked;
+    recomputeScores(); persist();
+  }
+  function deleteCommonItem(btn, id){
+    if(btn.dataset.armed==='1'){
+      state.common = state.common.filter(function(m){ return m.id!==id; });
+      renderCommon(); recomputeScores(); persist();
+    } else {
+      btn.dataset.armed='1'; btn.textContent='本当に削除？';
+      setTimeout(function(){ if(btn.isConnected){ btn.dataset.armed='0'; btn.textContent='✕'; } }, 2500);
+    }
+  }
+  function addCommonItem(){
+    var text = document.getElementById('newCommonText').value.trim();
+    if(!text) return;
+    state.common.push({ id:'c'+(state.customSeq++), text:text, doneA:false, doneB:false });
+    document.getElementById('newCommonText').value = '';
+    renderCommon(); persist();
+  }
+
+  /* ---------------- 強制ミッション ---------------- */
+  function renderForced(letter){
+    var list = state['forcedTo'+letter];
+    var wrap = document.getElementById('forcedTo'+letter);
+    wrap.innerHTML = list.map(function(f, i){
+      return '<div class="forced-row">'
+        + '<span class="row-text">'+escapeHtml(f.text)+'</span>'
+        + '<span class="row-pts">'+f.pts+'pt</span>'
+        + '<label class="chk"><input type="checkbox" '+(f.done?'checked':'')+' onchange="toggleForced(\''+letter+'\','+i+',this.checked)"> 達成</label>'
+        + '</div>';
+    }).join('');
+    document.getElementById('forcedCount'+letter).textContent = list.length + '/2';
+    document.getElementById('sendTo'+letter+'Btn').disabled = list.length >= 2;
+  }
+  function toggleForced(letter, idx, checked){
+    var f = state['forcedTo'+letter][idx];
+    f.done = checked;
+    if(checked){
+      var cells = state['card'+letter];
+      var match = cells.find(function(c){ return !c.done && c.text===f.text; });
+      if(match) match.done = true;
+      renderCard(letter);
+    }
+    recomputeScores(); persist();
+  }
+
+  /* ---------------- 項目ピッカー（マス割当／強制ミッション送信共用） ---------------- */
+  function openPicker(mode, a, b){
+    pendingMode = mode;
+    pendingTarget = mode==='cell' ? { letter:a, idx:b } : a;
+    var list = document.getElementById('pickerList');
+    list.innerHTML = state.pool.map(function(it){
+      return '<button class="picker-item '+it.diff+'" onclick="choosePickerItem(\''+it.id+'\')">'
+        + '<span class="pi-diff">'+DIFF_LABEL[it.diff]+'</span>'
+        + '<span class="pi-text">'+escapeHtml(it.text)+'</span>'
+        + '<span class="pi-pts">'+it.pts+'pt</span></button>';
+    }).join('');
+    document.getElementById('pickerOverlay').hidden = false;
+  }
+  function closePicker(){
+    document.getElementById('pickerOverlay').hidden = true;
+    pendingMode = null; pendingTarget = null;
+  }
+  function choosePickerItem(itemId){
+    var it = state.pool.find(function(p){ return p.id===itemId; });
+    if(!it) return;
+    if(pendingMode==='cell'){
+      var t = pendingTarget;
+      state['card'+t.letter][t.idx] = { text: it.text, pts: it.pts, done:false, fixed:false };
+      renderCard(t.letter);
+    } else if(pendingMode==='forced'){
+      var letter = pendingTarget==='forcedToA' ? 'A' : 'B';
+      state['forcedTo'+letter].push({ text: it.text, pts: it.pts, done:false });
+      renderForced(letter);
+    }
+    closePicker(); recomputeScores(); persist();
+  }
+
+  /* ---------------- メモ ---------------- */
+  function renderNotes(){
+    var wrap = document.getElementById('notepadList');
+    wrap.innerHTML = state.notes.map(function(n){ return '<p class="note-line">'+escapeHtml(n)+'</p>'; }).join('');
+  }
+  function addNote(){
+    var text = document.getElementById('newNoteText').value.trim();
+    if(!text) return;
+    state.notes.push(text);
+    document.getElementById('newNoteText').value = '';
+    renderNotes(); persist();
+  }
+
+  /* ---------------- スコア・タイマー ---------------- */
+  function scoreForTeam(letter){
+    var cells = state['card'+letter];
+    var done = cells.map(function(c){ return c.done; });
+    var base = 0;
+    cells.forEach(function(c,i){ if(done[i]) base += Number(c.pts||0); });
+    var bingo = 0;
+    LINES.forEach(function(line){ if(line.every(function(i){return done[i];})) bingo++; });
+    var commonPts = 0;
+    state.common.forEach(function(m){ if(letter==='A' ? m.doneA : m.doneB) commonPts += 2; });
+    var forcedPts = 0;
+    state['forcedTo'+letter].forEach(function(f){ if(f.done) forcedPts += Number(f.pts||0); });
+    return { total: base + bingo*5 + commonPts + forcedPts, bingo: bingo };
+  }
+  function recomputeScores(){
+    var a = scoreForTeam('A'), b = scoreForTeam('B');
+    document.getElementById('scoreA').textContent = a.total;
+    document.getElementById('scoreB').textContent = b.total;
+    document.getElementById('bingoA').textContent = 'ビンゴ ' + a.bingo + '本';
+    document.getElementById('bingoB').textContent = 'ビンゴ ' + b.bingo + '本';
+    var ca = countByDiff('A'), cb = countByDiff('B');
+    document.getElementById('quotaA').textContent = '配置済み（目安） 易'+ca.easy+'・普'+ca.normal+'・難'+ca.hard;
+    document.getElementById('quotaB').textContent = '配置済み（目安） 易'+cb.easy+'・普'+cb.normal+'・難'+cb.hard;
+  }
+  function startGame(){
+    if(state.startAt) return;
+    state.startAt = Date.now();
+    updateTimer(); persist();
+  }
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function updateTimer(){
+    var timerEl = document.getElementById('timerDisplay');
+    var startBtn = document.getElementById('startBtn');
+    if(!state.startAt){ timerEl.textContent = '未開始'; startBtn.hidden = false; return; }
+    startBtn.hidden = true;
+    var remain = Math.max(0, 6*3600*1000 - (Date.now() - state.startAt));
+    if(remain<=0){ timerEl.textContent = '終了'; return; }
+    var h = Math.floor(remain/3600000), m = Math.floor((remain%3600000)/60000), s = Math.floor((remain%60000)/1000);
+    timerEl.textContent = '残り ' + pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+
+  /* ---------------- 全体描画 ---------------- */
+  function renderAll(){
+    renderPool(); renderCard('A'); renderCard('B'); renderCommon();
+    renderForced('A'); renderForced('B'); renderNotes();
+    recomputeScores(); updateTimer();
+  }
+
+  /* ---------------- サーバー同期 ---------------- */
+  function persist(){
+    state.updatedAt = Date.now();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveState, 300);
+  }
+  function isTyping(){
+    var el = document.activeElement;
+    return el && (el.tagName==='INPUT' || el.tagName==='TEXTAREA');
+  }
+  async function saveState(){
+    if(!GAS_URL || GAS_URL.indexOf('PASTE_YOUR') === 0){
+      document.getElementById('syncStatus').textContent = 'GAS_URL未設定（この端末だけのメモになってます）';
+      return;
+    }
+    try{
+      await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(state)
+      });
+      document.getElementById('syncStatus').textContent = '同期済み（自動更新中）';
+    } catch(err){
+      document.getElementById('syncStatus').textContent = '通信エラー：次の自動更新で再送します';
+    }
+  }
+  async function loadState(){
+    if(!GAS_URL || GAS_URL.indexOf('PASTE_YOUR') === 0) return;
+    try{
+      var res = await fetch(GAS_URL, { cache:'no-store' });
+      var text = await res.text();
+      if(!text){
+        // 誰もまだ保存していない = このセッションを最初の状態として保存する
+        await saveState();
+        return;
+      }
+      var remote = JSON.parse(text);
+      if(remote.updatedAt && remote.updatedAt !== state.updatedAt){
+        if(isTyping()) return; // 入力中に上書きしない
+        state = remote;
+        renderAll();
+      }
+      document.getElementById('syncStatus').textContent = '同期済み（自動更新中）';
+    } catch(err){
+      document.getElementById('syncStatus').textContent = '通信エラー：次の自動更新で再試行します';
+    }
+  }
+
+  renderAll();
+  loadState();
+  setInterval(loadState, 4000);
+  setInterval(updateTimer, 1000);
+</script>
+</body>
+</html>
