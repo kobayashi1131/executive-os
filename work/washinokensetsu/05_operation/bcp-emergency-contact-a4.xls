@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Title>BCP緊急連絡カード</Title>
+  <Author>わしの建設</Author>
+ </DocumentProperties>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Font ss:FontName="Yu Gothic" x:Family="Swiss" ss:Size="10"/>
+  </Style>
+  <Style ss:ID="Title">
+   <Font ss:FontName="Yu Gothic" ss:Size="16" ss:Bold="1"/>
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+  </Style>
+  <Style ss:ID="Sub">
+   <Font ss:FontName="Yu Gothic" ss:Size="10" ss:Color="#555555"/>
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+  </Style>
+  <Style ss:ID="SectionHeader">
+   <Font ss:FontName="Yu Gothic" ss:Size="12" ss:Bold="1" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#1A1A1A" ss:Pattern="Solid"/>
+   <Alignment ss:Vertical="Center"/>
+  </Style>
+  <Style ss:ID="TH">
+   <Font ss:FontName="Yu Gothic" ss:Size="10" ss:Bold="1"/>
+   <Interior ss:Color="#EEEEEE" ss:Pattern="Solid"/>
+   <Alignment ss:Vertical="Center" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="TD">
+   <Font ss:FontName="Yu Gothic" ss:Size="10"/>
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="TDFill">
+   <Font ss:FontName="Yu Gothic" ss:Size="10" ss:Color="#999999"/>
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="Note">
+   <Font ss:FontName="Yu Gothic" ss:Size="8" ss:Color="#555555"/>
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+  </Style>
+  <Style ss:ID="Footer">
+   <Font ss:FontName="Yu Gothic" ss:Size="9" ss:Color="#555555"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="BCP緊急連絡カード">
+  <Table ss:DefaultColumnWidth="80" ss:DefaultRowHeight="18">
+   <Column ss:Width="80"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="180"/>
+
+   <Row ss:Height="26">
+    <Cell ss:MergeAcross="3" ss:StyleID="Title"><Data ss:Type="String">災害時 緊急連絡カード（BCP）</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:MergeAcross="3" ss:StyleID="Sub"><Data ss:Type="String">有限会社わしの建設／大規模災害・緊急事態発生時にこのまま掲示・携帯してください</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">1. 緊急連絡網</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">役割</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">氏名</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">電話番号</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">備考</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">社長</Data></Cell>
+    <Cell ss:StyleID="TD"><Data ss:Type="String">鷲野章</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">現場責任者</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">各現場担当者</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">事務担当</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">主要取引先</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（会社名を記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">予備連絡先</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row ss:Height="34">
+    <Cell ss:StyleID="TH"><Data ss:Type="String">連絡ルール</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">①社長→現場責任者→各担当者の順で連絡　②つながらない場合は下記2の伝言サービスを利用　③安否・被害状況・出社可否を確認して社長へ報告</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">集合場所</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">本社代表番号</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TDFill"><Data ss:Type="String">（記入・伝言サービスの基準番号として全員で共有）</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">2. 電話がつながらない時：災害用伝言サービスの使い方</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:MergeAcross="1" ss:StyleID="TH"><Data ss:Type="String">災害用伝言ダイヤル（171）電話用</Data></Cell>
+    <Cell ss:MergeAcross="1" ss:StyleID="TH"><Data ss:Type="String">web171（ネット用）</Data></Cell>
+   </Row>
+   <Row ss:Height="32">
+    <Cell ss:MergeAcross="1" ss:StyleID="TD"><Data ss:Type="String">録音：171→「1」→自分の電話番号→伝言を録音</Data></Cell>
+    <Cell ss:MergeAcross="1" ss:StyleID="TD"><Data ss:Type="String">スマホ・PCで web171.jp にアクセスし「伝言を登録する」から状況を登録</Data></Cell>
+   </Row>
+   <Row ss:Height="32">
+    <Cell ss:MergeAcross="1" ss:StyleID="TD"><Data ss:Type="String">再生：171→「2」→相手の電話番号→伝言を再生</Data></Cell>
+    <Cell ss:MergeAcross="1" ss:StyleID="TD"><Data ss:Type="String">「伝言を確認する」から相手の電話番号で検索して閲覧</Data></Cell>
+   </Row>
+   <Row ss:Height="30">
+    <Cell ss:StyleID="TH"><Data ss:Type="String">使うタイミング</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">震度6弱以上の地震など大規模災害発生時（NTTが提供開始を発表）／体験利用日：毎月1日・15日、正月三が日、防災週間等</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">登録・確認する番号</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">上記「本社代表番号」に統一する</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="40">
+    <Cell ss:MergeAcross="3" ss:StyleID="Note"><Data ss:Type="String">※操作手順は変更される場合があるため、年1〜2回の体験利用日に社内で訓練し、最新の公式案内（NTT東日本／NTT西日本）も確認すること。一般解説は data/templates/bcp/disaster-message-dial-guide.md を参照。
+※実際の氏名・電話番号を入力したファイルは個人情報のためGit管理下に置かず、別名（例：*.local.xlsx）で非公開管理すること。</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="Footer"><Data ss:Type="String">作成日：2026-09-02</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="Footer"><Data ss:Type="String">次回見直し予定：　　　　年　　月（年1回の見直しを推奨）</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Layout x:Orientation="Portrait"/>
+    <PageMargins x:Bottom="0.5" x:Left="0.5" x:Right="0.5" x:Top="0.5"/>
+   </PageSetup>
+   <FitToPage/>
+   <Print>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <FitWidth>1</FitWidth>
+    <FitHeight>1</FitHeight>
+    <ValidPrinterInfo/>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Selected/>
+   <DoNotDisplayGridlines/>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>
