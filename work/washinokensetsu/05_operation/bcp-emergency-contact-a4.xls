@@ -65,7 +65,8 @@
    <Font ss:FontName="Yu Gothic" ss:Size="9" ss:Color="#555555"/>
   </Style>
  </Styles>
- <Worksheet ss:Name="BCP緊急連絡カード">
+
+ <Worksheet ss:Name="使用方法">
   <Table ss:DefaultColumnWidth="80" ss:DefaultRowHeight="18">
    <Column ss:Width="80"/>
    <Column ss:Width="100"/>
@@ -73,7 +74,92 @@
    <Column ss:Width="180"/>
 
    <Row ss:Height="26">
-    <Cell ss:MergeAcross="3" ss:StyleID="Title"><Data ss:Type="String">災害時 緊急連絡カード（BCP）</Data></Cell>
+    <Cell ss:MergeAcross="3" ss:StyleID="Title"><Data ss:Type="String">災害時 連絡手段の使用方法（BCP）</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:MergeAcross="3" ss:StyleID="Sub"><Data ss:Type="String">有限会社わしの建設／電話連絡がつながらない時にこのシートを参照してください</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">1. 連絡手段の優先順位</Data></Cell>
+   </Row>
+   <Row ss:Height="30">
+    <Cell ss:MergeAcross="3" ss:StyleID="TD"><Data ss:Type="String">①「連絡先一覧」シートの緊急連絡網（電話）で連絡　→　②つながらない場合は災害用伝言ダイヤル171（メイン）／web171（予備）を利用　→　③安否・被害状況・出社可否を確認して社長へ報告</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">2. 災害用伝言ダイヤル（171）― 電話用（メイン）</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">録音する</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">171 にダイヤル →「1」（録音）→ 自分（会社）の電話番号を市外局番から入力 → 伝言を録音（30秒程度）</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">再生する</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">171 にダイヤル →「2」（再生）→ 確認したい相手の電話番号を市外局番から入力 → 伝言を再生</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">3. web171（ネット用）― 予備</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">登録する</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">ブラウザで web171.jp にアクセス →「伝言を登録する」から自分（会社）の電話番号を入力し、状況を選択・入力して登録</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">確認する</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">「伝言を確認する」から相手の電話番号を入力し、登録された伝言を閲覧。携帯キャリア各社の「災害用伝言板」も同様の仕組み</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">4. 使うタイミング・共通ルール</Data></Cell>
+   </Row>
+   <Row ss:Height="30">
+    <Cell ss:StyleID="TH"><Data ss:Type="String">使うタイミング</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">震度6弱以上の地震など大規模災害発生時（NTTが提供開始を発表）／体験利用日：毎月1日・15日、正月三が日、防災週間等に社内で訓練</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">登録・確認する番号</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">「連絡先一覧」シートの本社代表番号に統一する（全員がこの番号で登録・確認する）</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="40">
+    <Cell ss:MergeAcross="3" ss:StyleID="Note"><Data ss:Type="String">※操作手順は変更される場合があるため、年1〜2回の体験利用日に社内で訓練し、最新の公式案内（NTT東日本／NTT西日本）も確認すること。一般解説は data/templates/bcp/disaster-message-dial-guide.md を参照。</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Layout x:Orientation="Portrait"/>
+    <PageMargins x:Bottom="0.5" x:Left="0.5" x:Right="0.5" x:Top="0.5"/>
+   </PageSetup>
+   <FitToPage/>
+   <Print>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <FitWidth>1</FitWidth>
+    <FitHeight>1</FitHeight>
+    <ValidPrinterInfo/>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Selected/>
+   <DoNotDisplayGridlines/>
+  </WorksheetOptions>
+ </Worksheet>
+
+ <Worksheet ss:Name="連絡先一覧">
+  <Table ss:DefaultColumnWidth="80" ss:DefaultRowHeight="18">
+   <Column ss:Width="80"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="180"/>
+
+   <Row ss:Height="26">
+    <Cell ss:MergeAcross="3" ss:StyleID="Title"><Data ss:Type="String">緊急連絡先一覧（BCP）</Data></Cell>
    </Row>
    <Row>
     <Cell ss:MergeAcross="3" ss:StyleID="Sub"><Data ss:Type="String">有限会社わしの建設／大規模災害・緊急事態発生時にこのまま掲示・携帯してください</Data></Cell>
@@ -125,9 +211,14 @@
     <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
     <Cell ss:StyleID="TD"></Cell>
    </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">2. 連絡ルール・基準情報</Data></Cell>
+   </Row>
    <Row ss:Height="34">
     <Cell ss:StyleID="TH"><Data ss:Type="String">連絡ルール</Data></Cell>
-    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">①社長→現場責任者→各担当者の順で連絡　②つながらない場合は下記2の伝言サービスを利用　③安否・被害状況・出社可否を確認して社長へ報告</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">①社長→現場責任者→各担当者の順で連絡　②つながらない場合は「使用方法」シートの災害用伝言ダイヤル（171）を利用　③安否・被害状況・出社可否を確認して社長へ報告</Data></Cell>
    </Row>
    <Row>
     <Cell ss:StyleID="TH"><Data ss:Type="String">集合場所</Data></Cell>
@@ -135,38 +226,13 @@
    </Row>
    <Row>
     <Cell ss:StyleID="TH"><Data ss:Type="String">本社代表番号</Data></Cell>
-    <Cell ss:MergeAcross="2" ss:StyleID="TDFill"><Data ss:Type="String">（記入・伝言サービスの基準番号として全員で共有）</Data></Cell>
-   </Row>
-   <Row ss:Height="6"></Row>
-
-   <Row ss:Height="20">
-    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">2. 電話がつながらない時：災害用伝言サービスの使い方</Data></Cell>
-   </Row>
-   <Row>
-    <Cell ss:MergeAcross="1" ss:StyleID="TH"><Data ss:Type="String">災害用伝言ダイヤル（171）電話用</Data></Cell>
-    <Cell ss:MergeAcross="1" ss:StyleID="TH"><Data ss:Type="String">web171（ネット用）</Data></Cell>
-   </Row>
-   <Row ss:Height="32">
-    <Cell ss:MergeAcross="1" ss:StyleID="TD"><Data ss:Type="String">録音：171→「1」→自分の電話番号→伝言を録音</Data></Cell>
-    <Cell ss:MergeAcross="1" ss:StyleID="TD"><Data ss:Type="String">スマホ・PCで web171.jp にアクセスし「伝言を登録する」から状況を登録</Data></Cell>
-   </Row>
-   <Row ss:Height="32">
-    <Cell ss:MergeAcross="1" ss:StyleID="TD"><Data ss:Type="String">再生：171→「2」→相手の電話番号→伝言を再生</Data></Cell>
-    <Cell ss:MergeAcross="1" ss:StyleID="TD"><Data ss:Type="String">「伝言を確認する」から相手の電話番号で検索して閲覧</Data></Cell>
-   </Row>
-   <Row ss:Height="30">
-    <Cell ss:StyleID="TH"><Data ss:Type="String">使うタイミング</Data></Cell>
-    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">震度6弱以上の地震など大規模災害発生時（NTTが提供開始を発表）／体験利用日：毎月1日・15日、正月三が日、防災週間等</Data></Cell>
-   </Row>
-   <Row>
-    <Cell ss:StyleID="TH"><Data ss:Type="String">登録・確認する番号</Data></Cell>
-    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">上記「本社代表番号」に統一する</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TDFill"><Data ss:Type="String">（記入・171／web171の登録先番号として全員で共有）</Data></Cell>
    </Row>
    <Row ss:Height="6"></Row>
 
    <Row ss:Height="40">
-    <Cell ss:MergeAcross="3" ss:StyleID="Note"><Data ss:Type="String">※操作手順は変更される場合があるため、年1〜2回の体験利用日に社内で訓練し、最新の公式案内（NTT東日本／NTT西日本）も確認すること。一般解説は data/templates/bcp/disaster-message-dial-guide.md を参照。
-※実際の氏名・電話番号を入力したファイルは個人情報のためGit管理下に置かず、別名（例：*.local.xlsx）で非公開管理すること。</Data></Cell>
+    <Cell ss:MergeAcross="3" ss:StyleID="Note"><Data ss:Type="String">※実際の氏名・電話番号を入力したファイルは個人情報のためGit管理下に置かず、別名（例：*.local.xlsx）で非公開管理すること。
+※171・web171の使い方は「使用方法」シートを参照。</Data></Cell>
    </Row>
    <Row>
     <Cell ss:StyleID="Footer"><Data ss:Type="String">作成日：2026-09-02</Data></Cell>
@@ -187,7 +253,6 @@
     <HorizontalResolution>600</HorizontalResolution>
     <VerticalResolution>600</VerticalResolution>
    </Print>
-   <Selected/>
    <DoNotDisplayGridlines/>
   </WorksheetOptions>
  </Worksheet>
