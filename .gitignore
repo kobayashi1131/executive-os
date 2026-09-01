@@ -26,3 +26,8 @@ build/
 # Nested repo (managed separately, pushed to its own GitHub remote)
 work/washinokensetsu/04_system/
 work/washinokensetsu-koutei-shashin/04_system/
+
+# Personal info (real names/phone numbers etc.) — keep out of version control
+*.local.md
+*.local.csv
+*.local.xlsx
