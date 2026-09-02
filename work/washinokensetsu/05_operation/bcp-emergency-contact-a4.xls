@@ -26,6 +26,11 @@
    <Interior ss:Color="#1A1A1A" ss:Pattern="Solid"/>
    <Alignment ss:Vertical="Center"/>
   </Style>
+  <Style ss:ID="SubHeader">
+   <Font ss:FontName="Yu Gothic" ss:Size="10" ss:Bold="1"/>
+   <Interior ss:Color="#DDDDDD" ss:Pattern="Solid"/>
+   <Alignment ss:Vertical="Center"/>
+  </Style>
   <Style ss:ID="TH">
    <Font ss:FontName="Yu Gothic" ss:Size="10" ss:Bold="1"/>
    <Interior ss:Color="#EEEEEE" ss:Pattern="Solid"/>
@@ -85,7 +90,7 @@
     <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">1. 連絡手段の優先順位</Data></Cell>
    </Row>
    <Row ss:Height="30">
-    <Cell ss:MergeAcross="3" ss:StyleID="TD"><Data ss:Type="String">①「連絡先一覧」シートの緊急連絡網（電話）で連絡　→　②つながらない場合は災害用伝言ダイヤル171（メイン）／web171（予備）を利用　→　③安否・被害状況・出社可否を確認して社長へ報告</Data></Cell>
+    <Cell ss:MergeAcross="3" ss:StyleID="TD"><Data ss:Type="String">①「連絡先一覧」シートの緊急連絡網（電話）で連絡　→　②つながらない場合は災害用伝言ダイヤル171（メイン）／web171（予備）を利用　→　③安否・被害状況・出社可否を確認して社長へ報告　※誰にどの順番で連絡するかは「連絡先一覧」シートの「連絡の優先順位」を参照</Data></Cell>
    </Row>
    <Row ss:Height="6"></Row>
 
@@ -167,7 +172,15 @@
    <Row ss:Height="6"></Row>
 
    <Row ss:Height="20">
-    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">1. 緊急連絡網</Data></Cell>
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">1. 連絡の優先順位</Data></Cell>
+   </Row>
+   <Row ss:Height="30">
+    <Cell ss:MergeAcross="3" ss:StyleID="TD"><Data ss:Type="String">①社長に電話　→　②つながらない場合は災害用伝言ダイヤル171で連絡（使い方は「使用方法」シート参照）　→　③受注済み工事のお客様担当者へ状況連絡　→　④受注済み工事を施工する職人へ状況連絡　→　⑤見積もり依頼がある会社へ状況連絡</Data></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">2. 緊急連絡網（社内）</Data></Cell>
    </Row>
    <Row>
     <Cell ss:StyleID="TH"><Data ss:Type="String">役割</Data></Cell>
@@ -200,12 +213,6 @@
     <Cell ss:StyleID="TD"></Cell>
    </Row>
    <Row>
-    <Cell ss:StyleID="TH"><Data ss:Type="String">主要取引先</Data></Cell>
-    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（会社名を記入）</Data></Cell>
-    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
-    <Cell ss:StyleID="TD"></Cell>
-   </Row>
-   <Row>
     <Cell ss:StyleID="TH"><Data ss:Type="String">予備連絡先</Data></Cell>
     <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
     <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
@@ -214,11 +221,101 @@
    <Row ss:Height="6"></Row>
 
    <Row ss:Height="20">
-    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">2. 連絡ルール・基準情報</Data></Cell>
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">3. 受注済み工事・見積もり先の連絡先</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:MergeAcross="3" ss:StyleID="SubHeader"><Data ss:Type="String">③受注済み工事のお客様担当者</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">工事名／現場</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">担当者名</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">電話番号</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">備考</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row ss:Height="4"></Row>
+
+   <Row>
+    <Cell ss:MergeAcross="3" ss:StyleID="SubHeader"><Data ss:Type="String">④受注済み工事を施工する職人</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">工事名／現場</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">会社名・担当者</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">電話番号</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">備考</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row ss:Height="4"></Row>
+
+   <Row>
+    <Cell ss:MergeAcross="3" ss:StyleID="SubHeader"><Data ss:Type="String">⑤見積もり依頼がある会社</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">会社名</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">担当者</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">電話番号</Data></Cell>
+    <Cell ss:StyleID="TH"><Data ss:Type="String">備考</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TDFill"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="TD"></Cell>
+   </Row>
+   <Row ss:Height="6"></Row>
+
+   <Row ss:Height="20">
+    <Cell ss:MergeAcross="3" ss:StyleID="SectionHeader"><Data ss:Type="String">4. 連絡ルール・基準情報</Data></Cell>
    </Row>
    <Row ss:Height="34">
     <Cell ss:StyleID="TH"><Data ss:Type="String">連絡ルール</Data></Cell>
-    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">①社長→現場責任者→各担当者の順で連絡　②つながらない場合は「使用方法」シートの災害用伝言ダイヤル（171）を利用　③安否・被害状況・出社可否を確認して社長へ報告</Data></Cell>
+    <Cell ss:MergeAcross="2" ss:StyleID="TD"><Data ss:Type="String">社内は①社長→現場責任者→各担当者の順で連絡。対外連絡の優先順位は上記「1. 連絡の優先順位」のとおり。安否・被害状況・出社可否・工事継続可否を確認して社長へ報告</Data></Cell>
    </Row>
    <Row>
     <Cell ss:StyleID="TH"><Data ss:Type="String">集合場所</Data></Cell>
@@ -230,9 +327,10 @@
    </Row>
    <Row ss:Height="6"></Row>
 
-   <Row ss:Height="40">
+   <Row ss:Height="50">
     <Cell ss:MergeAcross="3" ss:StyleID="Note"><Data ss:Type="String">※実際の氏名・電話番号を入力したファイルは個人情報のためGit管理下に置かず、別名（例：*.local.xlsx）で非公開管理すること。
-※171・web171の使い方は「使用方法」シートを参照。</Data></Cell>
+※171・web171の使い方は「使用方法」シートを参照。
+※受注済み工事・見積もり先の一覧は工事の進行に合わせて随時更新し、完了した工事は削除すること。</Data></Cell>
    </Row>
    <Row>
     <Cell ss:StyleID="Footer"><Data ss:Type="String">作成日：2026-09-02</Data></Cell>
