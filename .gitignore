@@ -31,3 +31,6 @@ work/washinokensetsu-koutei-shashin/04_system/
 *.local.md
 *.local.csv
 *.local.xlsx
+
+# BCP緊急連絡カード：実名・電話番号を直接入力して運用するため追跡対象外（OneDriveのみで管理）
+work/washinokensetsu/05_operation/bcp-emergency-contact-a4.xls
