@@ -1,0 +1,117 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta charset="UTF-8">
+<title>インターンシップ実施内容（実績）</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+body { font-family:"游ゴシック","Yu Gothic",sans-serif; font-size:11pt; color:#222222; }
+table { border-collapse:collapse; width:100%; margin-bottom:14pt; }
+.title { border-bottom:1.5pt solid #333333; padding-bottom:6pt; margin-bottom:10pt; }
+.title h1 { font-size:16pt; margin:0 0 6pt 0; }
+.meta td { padding:2pt 6pt; font-size:11pt; }
+.meta .label { color:#555555; width:120pt; }
+.dayHeader td { background:#EEEEEE; border:1pt solid #999999; padding:5pt 8pt; font-weight:bold; font-size:12pt; }
+.rowLabel { border:1pt solid #999999; background:#F5F5F5; padding:5pt 8pt; width:90pt; vertical-align:top; font-weight:bold; }
+.rowContent { border:1pt solid #999999; padding:5pt 8pt; vertical-align:top; }
+.contentBox { min-height:50pt; }
+.photoBox { min-height:170pt; border:1pt dashed #999999; color:#999999; text-align:center; vertical-align:middle; padding:5pt; }
+.note { font-size:9pt; color:#555555; margin-top:6pt; }
+.dayBlock { margin-bottom:18pt; }
+</style>
+</head>
+
+<body>
+
+<div class="title">
+<h1>インターンシップ実施内容（実績）</h1>
+</div>
+
+<table class="meta">
+<tr><td class="label">会社名</td><td>有限会社わしの建設</td></tr>
+<tr><td class="label">インターン生氏名</td><td>（記入）</td></tr>
+<tr><td class="label">実施期間</td><td>　　年　　月　　日 〜 　　年　　月　　日（実施日数：8日間）</td></tr>
+<tr><td class="label">作成日</td><td>2026-09-04</td></tr>
+</table>
+
+<div class="dayBlock">
+<table>
+<tr class="dayHeader"><td colspan="2">Day1（　　月　　日）</td></tr>
+<tr><td class="rowLabel">実施内容</td><td class="rowContent"><div class="contentBox">&nbsp;</div></td></tr>
+<tr><td class="rowLabel">写真</td><td class="rowContent"><div class="photoBox">（写真をここに挿入）</div></td></tr>
+</table>
+</div>
+
+<div class="dayBlock">
+<table>
+<tr class="dayHeader"><td colspan="2">Day2（　　月　　日）</td></tr>
+<tr><td class="rowLabel">実施内容</td><td class="rowContent"><div class="contentBox">&nbsp;</div></td></tr>
+<tr><td class="rowLabel">写真</td><td class="rowContent"><div class="photoBox">（写真をここに挿入）</div></td></tr>
+</table>
+</div>
+
+<div class="dayBlock">
+<table>
+<tr class="dayHeader"><td colspan="2">Day3（　　月　　日）</td></tr>
+<tr><td class="rowLabel">実施内容</td><td class="rowContent"><div class="contentBox">&nbsp;</div></td></tr>
+<tr><td class="rowLabel">写真</td><td class="rowContent"><div class="photoBox">（写真をここに挿入）</div></td></tr>
+</table>
+</div>
+
+<div class="dayBlock">
+<table>
+<tr class="dayHeader"><td colspan="2">Day4（　　月　　日）</td></tr>
+<tr><td class="rowLabel">実施内容</td><td class="rowContent"><div class="contentBox">&nbsp;</div></td></tr>
+<tr><td class="rowLabel">写真</td><td class="rowContent"><div class="photoBox">（写真をここに挿入）</div></td></tr>
+</table>
+</div>
+
+<div class="dayBlock">
+<table>
+<tr class="dayHeader"><td colspan="2">Day5（　　月　　日）</td></tr>
+<tr><td class="rowLabel">実施内容</td><td class="rowContent"><div class="contentBox">&nbsp;</div></td></tr>
+<tr><td class="rowLabel">写真</td><td class="rowContent"><div class="photoBox">（写真をここに挿入）</div></td></tr>
+</table>
+</div>
+
+<div class="dayBlock">
+<table>
+<tr class="dayHeader"><td colspan="2">Day6（　　月　　日）</td></tr>
+<tr><td class="rowLabel">実施内容</td><td class="rowContent"><div class="contentBox">&nbsp;</div></td></tr>
+<tr><td class="rowLabel">写真</td><td class="rowContent"><div class="photoBox">（写真をここに挿入）</div></td></tr>
+</table>
+</div>
+
+<div class="dayBlock">
+<table>
+<tr class="dayHeader"><td colspan="2">Day7（　　月　　日）</td></tr>
+<tr><td class="rowLabel">実施内容</td><td class="rowContent"><div class="contentBox">&nbsp;</div></td></tr>
+<tr><td class="rowLabel">写真</td><td class="rowContent"><div class="photoBox">（写真をここに挿入）</div></td></tr>
+</table>
+</div>
+
+<div class="dayBlock">
+<table>
+<tr class="dayHeader"><td colspan="2">Day8（　　月　　日）</td></tr>
+<tr><td class="rowLabel">実施内容</td><td class="rowContent"><div class="contentBox">&nbsp;</div></td></tr>
+<tr><td class="rowLabel">写真</td><td class="rowContent"><div class="photoBox">（写真をここに挿入）</div></td></tr>
+</table>
+</div>
+
+<p class="note">
+※各日の見出し・実施内容は、その日にやったことに合わせて自由に書き換えてください。<br>
+※「写真をここに挿入」の枠内をクリックし、Wordの「挿入」→「画像」から写真を貼り付けてください。写真を貼ると枠の文字は自動的に隠れます。<br>
+※参考：当初の予定表は同フォルダの「インターンシップ実施内容.doc」を参照。
+</p>
+
+</body>
+</html>
