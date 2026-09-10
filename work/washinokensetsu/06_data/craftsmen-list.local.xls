@@ -68,23 +68,23 @@
  <Worksheet ss:Name="一覧">
   <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="25" x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="110" ss:DefaultRowHeight="18">
    <Column ss:Index="1" ss:Width="130"/>
-   <Column ss:Index="2" ss:Width="220"/>
-   <Column ss:Index="3" ss:Width="90"/>
-   <Column ss:Index="4" ss:Width="110"/>
+   <Column ss:Index="2" ss:Width="260"/>
+   <Column ss:Index="3" ss:Width="100"/>
+   <Column ss:Index="4" ss:Width="130"/>
    <Column ss:Index="5" ss:Width="220"/>
    <Row ss:Height="26">
     <Cell ss:MergeAcross="4" ss:StyleID="sTitle"><Data ss:Type="String">職人・協力会社リスト</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0" ss:Height="45">
-    <Cell ss:MergeAcross="4" ss:StyleID="sSubtitle"><Data ss:Type="String">BCP「職人探し」検討のため、工種ごとの層の厚さを把握する一覧。会社名・工種のセットで随時追加してください。担当者・電話番号は分かる範囲でOKです。詳しい分析は「リスク分析」シートを参照。</Data></Cell>
+    <Cell ss:MergeAcross="4" ss:StyleID="sSubtitle"><Data ss:Type="String">社長・新井さんも編集OKです。会社名・工種のセットで随時追加してください。工種欄は広めにとってあるので、詳しく（対応範囲や得意不得意など）書いてもらって大丈夫です。工種ごとの層の厚さの分析は「リスク分析」シートを参照。</Data></Cell>
    </Row>
    <Row ss:Height="8"/>
    <Row ss:AutoFitHeight="0" ss:Height="24">
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">会社名（屋号）</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">会社名</Data></Cell>
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">工種</Data></Cell>
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">担当者</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">電話番号</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">備考</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">連絡先</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">住所</Data></Cell>
    </Row>
    <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">フォレストペイント</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">塗装（ペンキ屋）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
    <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">吉田塗装</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">塗装（ペンキ屋）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
