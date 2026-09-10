@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Title>職人・協力会社リスト</Title>
+  <Author>わしの建設</Author>
+ </DocumentProperties>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Font ss:FontName="Yu Gothic" x:Family="Modern"/>
+  </Style>
+  <Style ss:ID="sTitle">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Size="16" ss:Bold="1"/>
+  </Style>
+  <Style ss:ID="sSubtitle">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
+   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Size="10" ss:Color="#333333"/>
+  </Style>
+  <Style ss:ID="sHeader">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Bold="1" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#1A1A1A" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="sCell">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Size="10"/>
+  </Style>
+  <Style ss:ID="sCellSafe">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Size="10"/>
+   <Interior ss:Color="#E3F2E1" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="sCellRisk">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Size="10"/>
+   <Interior ss:Color="#FCE4E4" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="一覧">
+  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="25" x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="110" ss:DefaultRowHeight="18">
+   <Column ss:Index="1" ss:Width="130"/>
+   <Column ss:Index="2" ss:Width="220"/>
+   <Column ss:Index="3" ss:Width="90"/>
+   <Column ss:Index="4" ss:Width="110"/>
+   <Column ss:Index="5" ss:Width="220"/>
+   <Row ss:Height="26">
+    <Cell ss:MergeAcross="4" ss:StyleID="sTitle"><Data ss:Type="String">職人・協力会社リスト</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="45">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSubtitle"><Data ss:Type="String">BCP「職人探し」検討のため、工種ごとの層の厚さを把握する一覧。会社名・工種のセットで随時追加してください。担当者・電話番号は分かる範囲でOKです。詳しい分析は「リスク分析」シートを参照。</Data></Cell>
+   </Row>
+   <Row ss:Height="8"/>
+   <Row ss:AutoFitHeight="0" ss:Height="24">
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">会社名（屋号）</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">工種</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">担当者</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">電話番号</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">備考</Data></Cell>
+   </Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">フォレストペイント</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">塗装（ペンキ屋）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">吉田塗装</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">塗装（ペンキ屋）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">森電機</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">電気工事</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">総亜産業</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">建具（鋼製・金属製、窓・サッシ・扉など）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">トラス軽金属</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">建具（鋼製・金属製、サッシなど）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">山田建具</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">建具（木製、木のドアなど）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">加藤建築</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">大工</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">ノブズ</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">土工・外構</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">石川ブロック</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">ブロック工事・コンクリート関連工事・外構</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="30"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">川村板金</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">板金（屋根工事・外壁の板金工事・簡単なスレート工事）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">屋根・外壁・スレートを一手に担っており最重要注意</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">塚野工業</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">スレート工事</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"><Data ss:Type="String">川村板金も簡単なスレート工事は対応可</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">辻建設</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">解体業者</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">板倉水道</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">水道工事</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">明昇インテリア</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">クロス（内装仕上げ）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">西田工業</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">鉄骨（新築の時がメイン）</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">大川鉄工</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">鍛冶屋・鉄骨系</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">松尾左官（稲葉建築）</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">左官</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">イトウ空調</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">空調・エアコン設備</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">すまいる</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">足場</Data></Cell><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="30">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSubtitle"><Data ss:Type="String">緑＝複数社でカバーできている工種／赤＝1社しかない工種（BCP「職人探し」の候補）</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <PageMargins x:Bottom="0.5" x:Left="0.5" x:Right="0.5" x:Top="0.5"/>
+   </PageSetup>
+   <Print>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <Landscape/>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <DoNotDisplayGridlines/>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="リスク分析">
+  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="20" x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="200" ss:DefaultRowHeight="18">
+   <Column ss:Index="1" ss:Width="180"/>
+   <Column ss:Index="2" ss:Width="320"/>
+   <Row ss:Height="26">
+    <Cell ss:MergeAcross="1" ss:StyleID="sTitle"><Data ss:Type="String">工種ごとの層の厚さ</Data></Cell>
+   </Row>
+   <Row ss:Height="8"/>
+   <Row ss:Height="24">
+    <Cell ss:MergeAcross="1" ss:StyleID="sHeader"><Data ss:Type="String">複数社でカバーできている工種（安心）</Data></Cell>
+   </Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">塗装</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">フォレストペイント、吉田塗装</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">建具（鋼製・金属製）</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">総亜産業、トラス軽金属</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">鉄骨系</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">西田工業（新築メイン）、大川鉄工</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">スレート工事</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">塚野工業、川村板金（簡易対応）</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">外構</Data></Cell><Cell ss:StyleID="sCellSafe"><Data ss:Type="String">ノブズ、石川ブロック</Data></Cell></Row>
+   <Row ss:Height="8"/>
+   <Row ss:Height="24">
+    <Cell ss:MergeAcross="1" ss:StyleID="sHeader"><Data ss:Type="String">1社しかない工種（BCP「職人探し」の候補）</Data></Cell>
+   </Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">電気工事</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">森電機</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">建具（木製）</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">山田建具</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">大工</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">加藤建築</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">解体</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">辻建設</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">水道工事</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">板倉水道</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">クロス（内装仕上げ）</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">明昇インテリア</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">左官</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">松尾左官（稲葉建築）</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">空調・エアコン設備</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">イトウ空調</Data></Cell></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">足場</Data></Cell><Cell ss:StyleID="sCellRisk"><Data ss:Type="String">すまいる</Data></Cell></Row>
+   <Row ss:Height="8"/>
+   <Row ss:Height="60">
+    <Cell ss:MergeAcross="1" ss:StyleID="sCellRisk"><Data ss:Type="String">【特に注意】川村板金への集中：「屋根工事」「外壁の板金工事」「スレート工事（簡易）」の3役を1社が担っている。ここが抜けた時の影響は他のどの1社依存よりも大きいため、BCP「職人探し」では最優先の検討対象。</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <PageMargins x:Bottom="0.5" x:Left="0.5" x:Right="0.5" x:Top="0.5"/>
+   </PageSetup>
+   <DoNotDisplayGridlines/>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>
