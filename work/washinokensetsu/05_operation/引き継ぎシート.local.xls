@@ -21,6 +21,11 @@
    <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
    <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Size="10" ss:Color="#333333"/>
   </Style>
+  <Style ss:ID="sSection">
+   <Alignment ss:Vertical="Center" ss:WrapText="1"/>
+   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Size="12" ss:Bold="1" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#1A1A1A" ss:Pattern="Solid"/>
+  </Style>
   <Style ss:ID="sHeader">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>
    <Borders>
@@ -29,8 +34,8 @@
     <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
     <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
    </Borders>
-   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Bold="1" ss:Color="#FFFFFF"/>
-   <Interior ss:Color="#1A1A1A" ss:Pattern="Solid"/>
+   <Font ss:FontName="Yu Gothic" x:CharSet="128" x:Family="Modern" ss:Bold="1"/>
+   <Interior ss:Color="#DDDDDD" ss:Pattern="Solid"/>
   </Style>
   <Style ss:ID="sCell">
    <Alignment ss:Vertical="Top" ss:WrapText="1"/>
@@ -54,58 +59,151 @@
    <Interior ss:Color="#F5F5F5" ss:Pattern="Solid"/>
   </Style>
  </Styles>
- <Worksheet ss:Name="引き継ぎシート">
-  <Table ss:ExpandedColumnCount="8" ss:ExpandedRowCount="20" x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="110" ss:DefaultRowHeight="18">
-   <Column ss:Index="1" ss:Width="110"/>
-   <Column ss:Index="2" ss:Width="80"/>
-   <Column ss:Index="3" ss:Width="160"/>
-   <Column ss:Index="4" ss:Width="130"/>
-   <Column ss:Index="5" ss:Width="130"/>
-   <Column ss:Index="6" ss:Width="160"/>
-   <Column ss:Index="7" ss:Width="90"/>
-   <Column ss:Index="8" ss:Width="70"/>
+ <Worksheet ss:Name="社長用">
+  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="26" x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="120" ss:DefaultRowHeight="18">
+   <Column ss:Index="1" ss:Width="50"/>
+   <Column ss:Index="2" ss:Width="150"/>
+   <Column ss:Index="3" ss:Width="220"/>
+   <Column ss:Index="4" ss:Width="100"/>
+   <Column ss:Index="5" ss:Width="180"/>
    <Row ss:Height="26">
-    <Cell ss:MergeAcross="7" ss:StyleID="sTitle"><Data ss:Type="String">業務引き継ぎシート（社長・経理用）</Data></Cell>
+    <Cell ss:MergeAcross="4" ss:StyleID="sTitle"><Data ss:Type="String">業務引き継ぎシート（社長用）</Data></Cell>
    </Row>
-   <Row ss:AutoFitHeight="0" ss:Height="45">
-    <Cell ss:MergeAcross="7" ss:StyleID="sSubtitle"><Data ss:Type="String">気づいた時に、ご自身の業務を1行ずつ追加してください。全部を一度に埋める必要はありません。「あの人しか分からない」をなくすためのシートです。書き方が分からない項目は空欄のままでOKです。</Data></Cell>
+   <Row ss:AutoFitHeight="0" ss:Height="40">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSubtitle"><Data ss:Type="String">もし社長が急に対応できなくなった時、代わりの人が「まず①→次に②」の順で見れば動けるようにするシートです。気づいた時に1行ずつ追加してください。</Data></Cell>
    </Row>
-   <Row ss:Height="6"/>
-   <Row ss:AutoFitHeight="0" ss:Height="30">
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">業務名</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">頻度・タイミング</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">進め方（手順）</Data></Cell>
+   <Row ss:Height="8"/>
+   <Row ss:Height="24">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSection"><Data ss:Type="String">① まず連絡する人（優先順）</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="24">
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">順番</Data></Cell>
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">連絡先</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">使うもの・場所</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">注意点・よくある落とし穴</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">代わりにできそうな人</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">記入日</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">電話番号・メール</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">用件</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">備考</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="30">
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">（例）1</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">顧問税理士　〇〇先生</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">経理・資金繰り全般の相談</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="8"/>
+   <Row ss:Height="24">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSection"><Data ss:Type="String">② 毎月・定期的にある業務を片付ける</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="24">
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">項目</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">内容</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">方法（手順）</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">担当</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">困った時の連絡先</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0" ss:Height="60">
-    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">（記入例）月次の請求書発行</Data></Cell>
-    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">毎月25日頃</Data></Cell>
-    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">案件一覧から完了案件を確認→請求書ソフトで作成→郵送orメール送付</Data></Cell>
-    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">顧問税理士：〇〇先生</Data></Cell>
-    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">請求書ソフト（会社PCのデスクトップ）</Data></Cell>
-    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">締め日を過ぎると翌月扱いになるので注意</Data></Cell>
-    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">〇〇さん</Data></Cell>
-    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">2026/9/1</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">（例）新規案件の受注判断</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">毎月数件、都度発生</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">現場責任者から概要を聞く→必要なら現地確認→見積担当に依頼→金額確認しお客様へ回答</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">社長</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">（未定）</Data></Cell>
    </Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
-   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="8"/>
    <Row ss:Height="30">
-    <Cell ss:MergeAcross="7" ss:StyleID="sSubtitle"><Data ss:Type="String">※月1回を目安に、最新の状態か・代わりの人が見ても分かるかを見直してください。※このファイルには社内の連絡先・保管場所などの情報を含むため、Git管理対象外（OneDriveのみで共有）にしています。</Data></Cell>
+    <Cell ss:MergeAcross="4" ss:StyleID="sSubtitle"><Data ss:Type="String">※月1回を目安に見直してください。行が窮屈に見えたら、行の下端をダブルクリックすると自動で広がります。</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <PageMargins x:Bottom="0.5" x:Left="0.5" x:Right="0.5" x:Top="0.5"/>
+   </PageSetup>
+   <Print>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <Landscape/>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <DoNotDisplayGridlines/>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="経理用">
+  <Table ss:ExpandedColumnCount="5" ss:ExpandedRowCount="26" x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="120" ss:DefaultRowHeight="18">
+   <Column ss:Index="1" ss:Width="50"/>
+   <Column ss:Index="2" ss:Width="150"/>
+   <Column ss:Index="3" ss:Width="220"/>
+   <Column ss:Index="4" ss:Width="100"/>
+   <Column ss:Index="5" ss:Width="180"/>
+   <Row ss:Height="26">
+    <Cell ss:MergeAcross="4" ss:StyleID="sTitle"><Data ss:Type="String">業務引き継ぎシート（経理用）</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="40">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSubtitle"><Data ss:Type="String">もし経理担当が急に対応できなくなった時、代わりの人が「まず①→次に②」の順で見れば動けるようにするシートです。気づいた時に1行ずつ追加してください。</Data></Cell>
+   </Row>
+   <Row ss:Height="8"/>
+   <Row ss:Height="24">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSection"><Data ss:Type="String">① まず連絡する人（優先順）</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="24">
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">順番</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">連絡先</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">電話番号・メール</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">用件</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">備考</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="30">
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">（例）1</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">顧問税理士　〇〇先生</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">（記入）</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">請求・支払・税務全般の相談</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="8"/>
+   <Row ss:Height="24">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSection"><Data ss:Type="String">② 毎月・定期的にある業務を片付ける</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="24">
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">項目</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">内容</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">方法（手順）</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">担当</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">困った時の連絡先</Data></Cell>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="60">
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">（例）月次の請求書発行</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">毎月25日頃</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">案件管理アプリで完了案件を確認→請求書ソフトで作成→お客様へ郵送orメール送付</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">経理</Data></Cell>
+    <Cell ss:StyleID="sExampleCell"><Data ss:Type="String">顧問税理士　〇〇先生</Data></Cell>
+   </Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="20"><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/><Cell ss:StyleID="sCell"/></Row>
+   <Row ss:Height="8"/>
+   <Row ss:Height="30">
+    <Cell ss:MergeAcross="4" ss:StyleID="sSubtitle"><Data ss:Type="String">※月1回を目安に見直してください。行が窮屈に見えたら、行の下端をダブルクリックすると自動で広がります。</Data></Cell>
    </Row>
   </Table>
   <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
