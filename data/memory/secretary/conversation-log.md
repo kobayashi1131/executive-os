@@ -14,6 +14,9 @@
 
 ---
 
+## 2026-09-10
+- 小林のPCを買い替え（旧: Celeron/メモリ8GB → 新: Lenovo IdeaPad Slim 5 14AKP10、AMD Ryzen AI 5 330、メモリ16GB、Copilot+ PC認証機種）。会社のメール環境はさくらインターネットのIMAP（`washinokensetsuc.sakura.ne.jp`）で運用しており、Microsoft 365/Exchangeとは別物。新PCでのOutlook設定時にWindows Hello PINループ・ファイアウォールがドメイン管理下でグレーアウトする不具合が発生、原因未特定のまま保留中（IT担当不在、小林が自力でPC管理している）。
+
 ## 2026-08-20
 - 小林の個人プロジェクト「bingo-app」進行中（会社業務とは無関係、大阪旅行8/29-30で使う友人とのチーム対抗ビンゴアプリ）。詳細は `work/bingo-app/`
 - 本番実装はCloudflare Pages + Google Apps Scriptの方式で進行中（わしの建設アプリと同じ構成）。次回はDEPLOY.mdの手順をより詳細化する予定。GAS_URL発行後は小林から貼ってもらい、IA子がindex.htmlに反映してcommitする約束
