@@ -7,11 +7,21 @@
 <link rel="stylesheet" href="../../../../data/ui/examples/system-components.css">
 <style>
   /* このモック固有の微調整のみ。共通部品は system-components.css を使う */
-  .person-bar { display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-2); }
+  .person-bar { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-2); }
   .person-bar .name { width: 56px; font-size: var(--font-size-xs); color: var(--color-text-muted); }
-  .person-bar .bar-track { flex: 1; background: var(--color-bg); border-radius: 999px; height: 8px; overflow: hidden; }
+  .person-bar .bar-track { flex: 1; min-width: 80px; background: var(--color-bg); border-radius: 999px; height: 8px; overflow: hidden; }
   .person-bar .bar-fill { height: 100%; background: var(--color-primary); }
+  .person-bar .amount { width: 140px; text-align: right; font-size: var(--font-size-sm); }
   .note-banner { background: var(--color-info-bg); color: var(--color-info); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); margin-bottom: var(--space-6); font-size: var(--font-size-sm); }
+
+  .filter-tabs { display: flex; gap: var(--space-2); margin-bottom: var(--space-4); flex-wrap: wrap; }
+  .filter-tabs button { padding: var(--space-1) var(--space-3); border-radius: 999px; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted); font-size: var(--font-size-sm); cursor: pointer; }
+  .filter-tabs button.active { background: var(--color-primary-soft); color: var(--color-primary); border-color: var(--color-primary); font-weight: bold; }
+
+  @media (max-width: 480px) {
+    .person-bar .amount { width: 100%; text-align: left; }
+    .header-bar .input { width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -30,7 +40,7 @@
     <section id="screen-s01">
       <div class="header-bar">
         <h1>月次サマリー</h1>
-        <div style="display:flex; gap: var(--space-2); align-items:center;">
+        <div style="display:flex; gap: var(--space-2); align-items:center; flex-wrap:wrap;">
           <select class="input" style="width:auto;">
             <option>2026年9月</option>
             <option>2026年8月</option>
@@ -40,28 +50,34 @@
         </div>
       </div>
 
+      <div class="filter-tabs">
+        <button class="active">全員</button>
+        <button>小林</button>
+        <button>新井</button>
+      </div>
+
       <div class="note-banner">最終取り込み：2026-09-16 10:40（Dropboxの見積りフォルダをスキャン済み）</div>
 
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="label">見積り件数</div>
-          <div class="value">18件</div>
-          <div class="sub">合計 ¥24,500,000</div>
+          <div class="value">10件</div>
+          <div class="sub">合計 ¥10,500,000</div>
         </div>
         <div class="kpi-card">
           <div class="label">受注金額</div>
-          <div class="value">¥9,800,000</div>
-          <div class="sub">6件 受注確定</div>
+          <div class="value">¥3,800,000</div>
+          <div class="sub">4件 受注確定</div>
         </div>
         <div class="kpi-card">
           <div class="label">発注率</div>
-          <div class="value">40%</div>
+          <div class="value">36%</div>
           <div class="sub">受注金額 ÷ 見積り金額</div>
         </div>
         <div class="kpi-card">
           <div class="label">未確定</div>
-          <div class="value">12件</div>
-          <div class="sub">¥14,700,000 分</div>
+          <div class="value">5件</div>
+          <div class="sub">¥5,200,000 分</div>
         </div>
       </div>
 
@@ -69,19 +85,14 @@
         <div class="label" style="font-size:var(--font-size-sm); color:var(--color-text-muted); margin-bottom: var(--space-2);">人別の見積り件数・金額</div>
 
         <div class="person-bar">
-          <div class="name">社長</div>
-          <div class="bar-track"><div class="bar-fill" style="width:60%"></div></div>
-          <div style="width:140px; text-align:right; font-size:var(--font-size-sm);">8件 ¥14,000,000</div>
+          <div class="name">小林</div>
+          <div class="bar-track"><div class="bar-fill" style="width:29%"></div></div>
+          <div class="amount">4件 ¥3,000,000</div>
         </div>
         <div class="person-bar">
           <div class="name">新井</div>
-          <div class="bar-track"><div class="bar-fill" style="width:35%"></div></div>
-          <div style="width:140px; text-align:right; font-size:var(--font-size-sm);">6件 ¥7,500,000</div>
-        </div>
-        <div class="person-bar">
-          <div class="name">小林</div>
-          <div class="bar-track"><div class="bar-fill" style="width:22%"></div></div>
-          <div style="width:140px; text-align:right; font-size:var(--font-size-sm);">4件 ¥3,000,000</div>
+          <div class="bar-track"><div class="bar-fill" style="width:71%"></div></div>
+          <div class="amount">6件 ¥7,500,000</div>
         </div>
       </div>
 
@@ -112,6 +123,12 @@
         <button class="btn btn-secondary">最新の見積りを取り込む</button>
       </div>
 
+      <div class="filter-tabs">
+        <button class="active">全員</button>
+        <button>小林</button>
+        <button>新井</button>
+      </div>
+
       <div class="table-scroll">
         <table class="data-table">
           <thead>
@@ -134,7 +151,7 @@
               <td data-label="お客様名">愛同工業株式会社</td>
               <td data-label="案件名">シャッター下地工事</td>
               <td data-label="金額">¥620,000</td>
-              <td data-label="担当">社長</td>
+              <td data-label="担当">小林</td>
               <td data-label="ステータス"><span class="badge badge-success">受注</span></td>
               <td><select class="input" style="width:auto; font-size:var(--font-size-xs);">
                     <option>未確定</option><option selected>受注</option><option>失注</option>
@@ -172,6 +189,16 @@
 </div>
 
 <script>
+  // 絞り込みタブの見た目切替のみ（ラフモックのためデータ自体は変わらない）
+  document.querySelectorAll('.filter-tabs').forEach((group) => {
+    group.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  });
+
   // ラフモックのタブ切替（本実装ではルーティングに置き換える）
   document.querySelectorAll('.app-nav a').forEach((link, idx) => {
     link.addEventListener('click', (e) => {
