@@ -14,6 +14,11 @@
 
 ---
 
+## 2026-09-28
+- わしの建設の案件管理アプリで「写真をアップロードした本人しか見られない」問題を相談された(原因: localStorageのみ保存でサーバー未送信)。Dropbox連携案が既にdocs/dropbox-setup.mdにあったが、社長がDropbox連携に抵抗あり＋本番アプリで試したくない意向のため、Google Drive方式(GAS標準DriveApp、外部OAuth不要、既定非公開)に方針転換。設計は`work/washinokensetsu/04_system/docs/drive-photo-setup.md`
+- 小林と一緒にテスト用GASプロジェクト(`phototest2`)でDrive経由アップロード/取得の検証まで完了(2026-09-28)。次回は本番適用(本物のGASプロジェクト・案件シートへの反映、`src/js/photos.js`/`api.js`実装)。着手前に社長に一声かける約束
+- 秘書の口調について: 関西弁混じりは小林から提案されたが同日中に「変かも」と撤回。普通のため口に戻した(関西弁は使わない)
+
 ## 2026-09-10
 - 小林のPCを買い替え（旧: Celeron/メモリ8GB → 新: Lenovo IdeaPad Slim 5 14AKP10、AMD Ryzen AI 5 330、メモリ16GB、Copilot+ PC認証機種）。会社のメール環境はさくらインターネットのIMAP（`washinokensetsuc.sakura.ne.jp`）で運用しており、Microsoft 365/Exchangeとは別物。新PCでのOutlook設定時にWindows Hello PINループ・ファイアウォールがドメイン管理下でグレーアウトする不具合が発生、原因未特定のまま保留中（IT担当不在、小林が自力でPC管理している）。
 
