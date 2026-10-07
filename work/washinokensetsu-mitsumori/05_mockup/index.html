@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>見積作成（ラフ）</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --text: #1d2430; --muted: #6b7280; --line: #d9dde3;
+    --accent: #1f5fae; --accent-soft: #e6eefb; --warn: #b45309; --warn-soft: #fef3c7; --ok: #15803d;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Yu Gothic UI", "Hiragino Sans", "Meiryo", sans-serif; font-size: 15px; }
+  header { background: var(--accent); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  header h1 { font-size: 18px; margin: 0; }
+  header small { opacity: .8; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+  h2 { font-size: 16px; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  h2 .no { background: var(--accent); color: #fff; border-radius: 50%; width: 24px; height: 24px; display: inline-grid; place-items: center; font-size: 13px; }
+  label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; }
+  input, select, textarea { font: inherit; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #fff; color: var(--text); width: 100%; }
+  button { font: inherit; border: 1px solid var(--accent); background: #fff; color: var(--accent); border-radius: 6px; padding: 7px 12px; cursor: pointer; white-space: nowrap; }
+  button.primary { background: var(--accent); color: #fff; }
+  button.small { padding: 3px 8px; font-size: 13px; }
+  button.danger { border-color: #c0392b; color: #c0392b; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .drop { border: 2px dashed var(--line); border-radius: 8px; padding: 24px; text-align: center; color: var(--muted); cursor: pointer; }
+  .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+  .note { font-size: 13px; color: var(--muted); }
+  .warn { background: var(--warn-soft); color: var(--warn); padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 820px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 4px; text-align: left; vertical-align: middle; }
+  th { font-size: 12px; color: var(--muted); font-weight: normal; }
+  td input { padding: 4px 6px; }
+  td.num, th.num { text-align: right; }
+  td.num input { text-align: right; }
+  tr.nofill td input.price { background: var(--warn-soft); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; display: flex; align-items: center; gap: 6px; background: #fff; }
+  .chip.weekend { border-color: var(--warn); background: var(--warn-soft); }
+  .chip input { width: 56px; padding: 2px 4px; text-align: right; }
+  .totals { display: grid; grid-template-columns: auto auto; gap: 4px 24px; justify-content: end; font-variant-numeric: tabular-nums; }
+  .totals .grand { font-size: 20px; font-weight: bold; color: var(--accent); }
+  details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+  pre { white-space: pre-wrap; font-size: 12px; background: var(--bg); padding: 8px; border-radius: 6px; max-height: 240px; overflow: auto; }
+  @media (max-width: 600px) { main { padding: 12px; } }
+</style>
+</head>
+<body>
+<header>
+  <div><h1>見積作成 <small>ラフモック</small></h1></div>
+  <div class="row">
+    <button id="btnSettings" style="background:#fff">⚙ 単価の設定</button>
+  </div>
+</header>
+
+<main>
+  <!-- 設定 -->
+  <section id="settings" hidden>
+    <h2>単価の設定 <span class="note">（この端末に保存されます）</span></h2>
+    <div class="grid">
+      <div><label>わしの建設 1人1日の単価（円）</label><input id="sDayRate" type="number" step="500"></div>
+      <div><label>1日あたりの標準人数（人）</label><input id="sDefaultPeople" type="number" step="1" min="1"></div>
+      <div><label>諸経費（%）</label><input id="sOverhead" type="number" step="0.5"></div>
+      <div><label>消費税（%）</label><input id="sTax" type="number" step="1"></div>
+    </div>
+    <h3 style="font-size:14px;margin:16px 0 8px">単価帳 <span class="note">（一度入れた品名の単価を覚えて、次から自動で入れます）</span></h3>
+    <div class="table-wrap"><table style="min-width:480px"><thead><tr><th>品名</th><th>単位</th><th class="num">単価</th><th></th></tr></thead><tbody id="priceBook"></tbody></table></div>
+    <div class="row" style="margin-top:12px"><button class="primary" id="btnSettingsClose">閉じる</button></div>
+  </section>
+
+  <!-- 1. PDF -->
+  <section>
+    <h2><span class="no">1</span> 元請の見積依頼・数量表のPDFを入れる</h2>
+    <div class="drop" id="drop">ここにPDFをドロップ / クリックして選ぶ<input type="file" id="file" accept="application/pdf" hidden></div>
+    <div class="row" style="margin-top:8px">
+      <button id="btnSample">サンプルで試す</button>
+      <button id="btnAddRow">行を手で追加</button>
+      <span class="note" id="pdfStatus"></span>
+    </div>
+    <div id="pdfWarn" class="warn" hidden style="margin-top:8px"></div>
+    <details style="margin-top:8px"><summary>読み取れなかった行を見る</summary><pre id="skipped">（まだありません）</pre></details>
+  </section>
+
+  <!-- 2. 基本情報 -->
+  <section>
+    <h2><span class="no">2</span> 宛先と件名</h2>
+    <div class="grid">
+      <div><label>宛先（元請）</label><input id="client" placeholder="○○建設株式会社"></div>
+      <div><label>件名・工事名</label><input id="title" placeholder="○○工場 新築工事のうち鉄骨工事"></div>
+      <div><label>見積日</label><input id="estDate" type="date"></div>
+      <div><label>有効期限</label><input id="validity" value="提出日より30日"></div>
+    </div>
+  </section>
+
+  <!-- 3. 作業日・人工 -->
+  <section>
+    <h2><span class="no">3</span> 作業日（わしの建設の人が出る日）</h2>
+    <div class="row">
+      <div style="width:180px"><label>作業日を追加</label><input id="dateAdd" type="date"></div>
+      <div style="width:180px"><label>〜この日まで連続で追加（任意）</label><input id="dateTo" type="date"></div>
+      <label style="display:flex;align-items:center;gap:4px;margin:18px 0 0"><input type="checkbox" id="skipWeekend" checked style="width:auto"> 土日は飛ばす</label>
+      <button id="btnAddDate" style="margin-top:18px">追加</button>
+    </div>
+    <div class="chips" id="dates"></div>
+    <p class="note" id="laborSummary" style="margin-bottom:0"></p>
+  </section>
+
+  <!-- 4. 明細 -->
+  <section>
+    <h2><span class="no">4</span> 明細（金額はここで直せます）</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:32px">No</th><th>品名</th><th>規格・仕様</th><th class="num" style="width:90px">数量</th><th style="width:70px">単位</th><th class="num" style="width:120px">単価</th><th class="num" style="width:120px">金額</th><th>備考</th><th></th></tr></thead>
+        <tbody id="items"></tbody>
+      </table>
+    </div>
+    <p class="note">黄色の単価欄はまだ単価が入っていない行です。「労務費」の行は作業日から自動で計算されます（単価を直すと今回だけ上書き）。</p>
+    <div class="totals" id="totals"></div>
+  </section>
+
+  <!-- 5. 出力 -->
+  <section>
+    <h2><span class="no">5</span> Excelで出す</h2>
+    <div class="row">
+      <button class="primary" id="btnExcel">Excelをダウンロード</button>
+      <button class="danger" id="btnClear">最初からやり直す</button>
+      <span class="note">入力内容はこの端末に自動保存されています。</span>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===== 設定・保存 ===== */
+const LS = { settings: 'mitsu_settings', book: 'mitsu_pricebook', draft: 'mitsu_draft' };
+const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+let settings = Object.assign({ dayRate: 25000, defaultPeople: 2, overhead: 0, tax: 10 }, lsGet(LS.settings, {}));
+let priceBook = lsGet(LS.book, {});   // { 品名: { unit, price } }
+let draft = Object.assign({ client: '', title: '', estDate: today(), validity: '提出日より30日', dates: [], items: [], laborPrice: null }, lsGet(LS.draft, {}));
+
+function today() { const d = new Date(); return d.toISOString().slice(0, 10); }
+function yen(n) { return Math.round(n || 0).toLocaleString('ja-JP'); }
+function num(v) { const n = parseFloat(String(v).replace(/[,，]/g, '')); return isNaN(n) ? 0 : n; }
+function save() { lsSet(LS.draft, draft); }
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ===== PDF読み取り（ラフ：文字のあるPDFだけ。本番はAIで読む） ===== */
+// --- parser:start ---
+const UNITS = ['式', 'm2', 'm²', '㎡', 'm3', 'm³', '㎥', '延m', 'm', 't', 'kg', '本', '個', 'ヶ所', 'ケ所', '箇所', 'か所', 'カ所', '枚', '台', '組', 'セット', 'set', '人工', '日', '回', '基', '缶', '袋', 'L', '坪', '面', '丁', '箱', '巻'];
+function normalize(s) {
+  return String(s)
+    .replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/[ａ-ｚＡ-Ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/[．]/g, '.').replace(/[，]/g, ',').replace(/ｍ/g, 'm').replace(/ｔ/g, 't').replace(/　/g, ' ')
+    .trim();
+}
+const unitRe = UNITS.map(u => u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+const NUM_RE = /^\d[\d,]*(\.\d+)?$/;
+const NUM_UNIT_RE = new RegExp('^(\\d[\\d,]*(?:\\.\\d+)?)\\s*(' + unitRe + ')$');
+const SKIP_RE = /^(no\.?|名称|品名|工事名|数量|単位|単価|金額|備考|摘要|規格)$|合計|小計|消費税|総額|頁|ページ/i;
+
+// cells: 1行をセル単位に分けた配列（PDF上で離れている文字はセルを分ける）
+function parseCells(cells) {
+  cells = cells.map(normalize).filter(Boolean);
+  if (!cells.length) return null;
+  if (cells.some(c => SKIP_RE.test(c)) && !cells.some(c => NUM_UNIT_RE.test(c))) return null;
+  if (cells.length && /^\d{1,3}$/.test(cells[0]) && cells.length > 2) cells = cells.slice(1); // 先頭の行番号
+  for (let i = 1; i < cells.length; i++) {
+    let qty = null, unit = null, end = i;
+    const m = cells[i].match(NUM_UNIT_RE);
+    if (m) { qty = m[1]; unit = m[2]; }
+    else if (NUM_RE.test(cells[i]) && cells[i + 1] && new RegExp('^(' + unitRe + ')$').test(cells[i + 1])) { qty = cells[i]; unit = cells[i + 1]; end = i + 1; }
+    if (qty !== null) {
+      const name = cells[0];
+      if (NUM_RE.test(name)) return null;
+      const rest = cells.slice(end + 1).filter(c => !NUM_RE.test(c)); // 元請側の単価・金額欄の数字は捨てる
+      return { name, spec: cells.slice(1, i).join(' '), qty: num(qty), unit, note: rest.join(' ') };
+    }
+  }
+  return null;
+}
+// --- parser:end ---
+
+async function readPdf(file) {
+  $('pdfStatus').textContent = '読み取り中…';
+  $('pdfWarn').hidden = true;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+  const found = [], skipped = [];
+  let charCount = 0;
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const page = await pdf.getPage(p);
+    const tc = await page.getTextContent();
+    const lines = [];
+    for (const it of tc.items) {
+      if (!it.str || !it.str.trim()) continue;
+      charCount += it.str.length;
+      const x = it.transform[4], y = it.transform[5], w = it.width || 0;
+      let line = lines.find(l => Math.abs(l.y - y) < 3);
+      if (!line) { line = { y, parts: [] }; lines.push(line); }
+      line.parts.push({ x, w, s: it.str });
+    }
+    lines.sort((a, b) => b.y - a.y);
+    for (const l of lines) {
+      l.parts.sort((a, b) => a.x - b.x);
+      const cells = []; let prevEnd = null;
+      for (const pt of l.parts) {
+        if (prevEnd !== null && pt.x - prevEnd < 8) cells[cells.length - 1] += pt.s; else cells.push(pt.s);
+        prevEnd = pt.x + pt.w;
+      }
+      const r = parseCells(cells);
+      if (r) found.push(r); else skipped.push(cells.join(' | '));
+    }
+  }
+  if (charCount < 20) {
+    $('pdfWarn').hidden = false;
+    $('pdfWarn').textContent = 'このPDFは文字が入っていない（スキャン・写真の）PDFのようです。ラフ版では読めません。本番版ではAIで読み取る予定です。今は「行を手で追加」で入れてください。';
+  }
+  addItems(found);
+  $('skipped').textContent = skipped.length ? skipped.join('\n') : '（なし）';
+  $('pdfStatus').textContent = `${file.name}：${found.length}行を読み取りました（読めなかった行 ${skipped.length}）`;
+}
+
+function addItems(rows) {
+  for (const r of rows) {
+    const book = priceBook[r.name];
+    draft.items.push({ name: r.name, spec: r.spec || '', qty: r.qty ?? 1, unit: r.unit || '式', price: book ? book.price : '', note: r.note || '' });
+  }
+  save(); render();
+}
+
+/* ===== 作業日 ===== */
+const WD = ['日', '月', '火', '水', '木', '金', '土'];
+function addDates() {
+  const from = $('dateAdd').value; if (!from) return;
+  const to = $('dateTo').value || from;
+  const d = new Date(from + 'T00:00:00'), end = new Date(to + 'T00:00:00');
+  let guard = 0;
+  while (d <= end && guard++ < 120) {
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const wk = d.getDay() === 0 || d.getDay() === 6;
+    if (!(wk && $('skipWeekend').checked && from !== to) && !draft.dates.some(x => x.date === iso)) draft.dates.push({ date: iso, people: settings.defaultPeople });
+    d.setDate(d.getDate() + 1);
+  }
+  draft.dates.sort((a, b) => a.date.localeCompare(b.date));
+  $('dateTo').value = '';
+  save(); render();
+}
+function laborDays() { return draft.dates.reduce((s, x) => s + num(x.people), 0); }
+function laborPrice() { return draft.laborPrice === null || draft.laborPrice === '' ? settings.dayRate : num(draft.laborPrice); }
+function fmtDate(iso) { const d = new Date(iso + 'T00:00:00'); return `${d.getMonth() + 1}/${d.getDate()}(${WD[d.getDay()]})`; }
+function datesText() { return draft.dates.map(x => `${fmtDate(x.date)} ${x.people}人`).join('、'); }
+
+/* ===== 計算 ===== */
+function calc() {
+  const itemsTotal = draft.items.reduce((s, it) => s + num(it.qty) * num(it.price), 0);
+  const labor = laborDays() * laborPrice();
+  const sub = itemsTotal + labor;
+  const overhead = Math.round(sub * num(settings.overhead) / 100);
+  const beforeTax = sub + overhead;
+  const tax = Math.floor(beforeTax * num(settings.tax) / 100);
+  return { itemsTotal, labor, sub, overhead, beforeTax, tax, total: beforeTax + tax };
+}
+
+/* ===== 描画 ===== */
+function render() {
+  ['client', 'title', 'estDate', 'validity'].forEach(k => { if (document.activeElement !== $(k)) $(k).value = draft[k] || ''; });
+
+  $('dates').innerHTML = draft.dates.map((x, i) => {
+    const d = new Date(x.date + 'T00:00:00'), wk = d.getDay() === 0 || d.getDay() === 6;
+    return `<div class="chip${wk ? ' weekend' : ''}"><b>${fmtDate(x.date)}</b><input type="number" min="0" step="0.5" value="${x.people}" data-di="${i}">人<button class="small danger" data-ddel="${i}">×</button></div>`;
+  }).join('') || '<span class="note">まだ作業日がありません</span>';
+  $('laborSummary').textContent = draft.dates.length ? `${draft.dates.length}日 / 延べ ${laborDays()}人工 × ${yen(laborPrice())}円 = ${yen(laborDays() * laborPrice())}円` : '';
+
+  const rows = draft.items.map((it, i) => {
+    const amt = num(it.qty) * num(it.price);
+    return `<tr class="${it.price === '' ? 'nofill' : ''}">
+      <td>${i + 1}</td>
+      <td><input data-i="${i}" data-k="name" value="${esc(it.name)}"></td>
+      <td><input data-i="${i}" data-k="spec" value="${esc(it.spec)}"></td>
+      <td class="num"><input data-i="${i}" data-k="qty" value="${esc(it.qty)}" inputmode="decimal"></td>
+      <td><input data-i="${i}" data-k="unit" value="${esc(it.unit)}" list="unitList"></td>
+      <td class="num"><input class="price" data-i="${i}" data-k="price" value="${esc(it.price)}" inputmode="numeric" placeholder="未入力"></td>
+      <td class="num" data-amt="${i}">${yen(amt)}</td>
+      <td><input data-i="${i}" data-k="note" value="${esc(it.note)}"></td>
+      <td><button class="small danger" data-del="${i}">削除</button></td></tr>`;
+  });
+  if (draft.dates.length) {
+    rows.push(`<tr style="background:var(--accent-soft)">
+      <td>${draft.items.length + 1}</td><td><b>労務費（わしの建設）</b></td><td class="note">${esc(datesText())}</td>
+      <td class="num">${laborDays()}</td><td>人工</td>
+      <td class="num"><input id="laborPriceIn" value="${draft.laborPrice ?? ''}" placeholder="${settings.dayRate}" inputmode="numeric"></td>
+      <td class="num" id="laborAmt">${yen(laborDays() * laborPrice())}</td><td></td><td></td></tr>`);
+  }
+  $('items').innerHTML = rows.join('') || '<tr><td colspan="9" class="note">PDFを入れるか「サンプルで試す」を押してください</td></tr>';
+  renderTotals();
+}
+function renderTotals() {
+  const c = calc();
+  $('totals').innerHTML = `
+    <span>小計</span><span style="text-align:right">${yen(c.sub)} 円</span>
+    ${num(settings.overhead) ? `<span>諸経費（${settings.overhead}%）</span><span style="text-align:right">${yen(c.overhead)} 円</span>` : ''}
+    <span>消費税（${settings.tax}%）</span><span style="text-align:right">${yen(c.tax)} 円</span>
+    <span class="grand">合計</span><span class="grand" style="text-align:right">${yen(c.total)} 円</span>`;
+}
+function renderBook() {
+  const names = Object.keys(priceBook).sort();
+  $('priceBook').innerHTML = names.map(n => `<tr><td>${esc(n)}</td><td>${esc(priceBook[n].unit)}</td>
+    <td class="num"><input data-book="${esc(n)}" value="${priceBook[n].price}" style="width:110px;text-align:right"></td>
+    <td><button class="small danger" data-bookdel="${esc(n)}">削除</button></td></tr>`).join('') || '<tr><td colspan="4" class="note">まだ覚えた単価はありません</td></tr>';
+}
+
+/* ===== Excel出力 ===== */
+function exportExcel() {
+  const c = calc();
+  const aoa = [
+    ['御 見 積 書'], [],
+    [`${draft.client || '　　　　　'} 御中`, '', '', '', '', '見積日', draft.estDate],
+    [`件名：${draft.title || ''}`, '', '', '', '', '有効期限', draft.validity],
+    [`作業日：${datesText() || '—'}`],
+    ['', '', '', '', '', '有限会社わしの建設'],
+    ['御見積金額（税込）', '', c.total], [],
+    ['No', '品名', '規格・仕様', '数量', '単位', '単価', '金額', '備考'],
+  ];
+  const head = aoa.length; // 明細の開始行(0始まり)
+  draft.items.forEach((it, i) => aoa.push([i + 1, it.name, it.spec, num(it.qty), it.unit, it.price === '' ? '' : num(it.price), null, it.note]));
+  if (draft.dates.length) aoa.push([draft.items.length + 1, '労務費（わしの建設）', datesText(), laborDays(), '人工', laborPrice(), null, '']);
+  const last = aoa.length; // 明細の次の行(0始まり)
+  aoa.push([], ['', '', '', '', '', '小計', null], ['', '', '', '', '', `諸経費（${settings.overhead}%）`, null], ['', '', '', '', '', `消費税（${settings.tax}%）`, null], ['', '', '', '', '', '合計', null]);
+
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  const R = r => r + 1; // Excelの行番号
+  for (let r = head; r < last; r++) ws[`G${R(r)}`] = { t: 'n', f: `IF(F${R(r)}="","",D${R(r)}*F${R(r)})`, v: (aoa[r][3] || 0) * (aoa[r][5] || 0) };
+  const sR = R(last + 1), oR = sR + 1, tR = sR + 2, gR = sR + 3;
+  ws[`G${sR}`] = { t: 'n', f: `SUM(G${R(head)}:G${R(last - 1)})`, v: c.sub };
+  ws[`G${oR}`] = { t: 'n', f: `ROUND(G${sR}*${num(settings.overhead) / 100},0)`, v: c.overhead };
+  ws[`G${tR}`] = { t: 'n', f: `ROUNDDOWN((G${sR}+G${oR})*${num(settings.tax) / 100},0)`, v: c.tax };
+  ws[`G${gR}`] = { t: 'n', f: `G${sR}+G${oR}+G${tR}`, v: c.total };
+  ws['C7'] = { t: 'n', f: `G${gR}`, v: c.total };
+  ['C7', ...Array.from({ length: gR - R(head) + 1 }, (_, k) => `F${R(head) + k}`), ...Array.from({ length: gR - R(head) + 1 }, (_, k) => `G${R(head) + k}`)]
+    .forEach(a => { if (ws[a] && ws[a].t === 'n') ws[a].z = '#,##0'; });
+  ws['!cols'] = [{ wch: 5 }, { wch: 26 }, { wch: 28 }, { wch: 8 }, { wch: 6 }, { wch: 12 }, { wch: 14 }, { wch: 18 }];
+  ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }];
+  ws['!ref'] = `A1:H${gR}`;
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '見積書');
+  XLSX.writeFile(wb, `見積書_${(draft.title || draft.client || '無題').slice(0, 20)}_${draft.estDate || today()}.xlsx`);
+}
+
+/* ===== イベント ===== */
+const drop = $('drop');
+drop.onclick = () => $('file').click();
+$('file').onchange = e => { const f = e.target.files[0]; if (f) readPdf(f).catch(err => { $('pdfStatus').textContent = '読み取りに失敗：' + err.message; }); e.target.value = ''; };
+drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+drop.ondragleave = () => drop.classList.remove('over');
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); const f = e.dataTransfer.files[0]; if (f) readPdf(f).catch(err => { $('pdfStatus').textContent = '読み取りに失敗：' + err.message; }); };
+
+$('btnSample').onclick = () => addItems([
+  ['鉄骨建方', 'S造 平屋 約300㎡', '1', '式'], ['アンカーボルト', 'M22 L=600', '48', '本'], ['柱', 'H-200x200x8x12', '3.2', 't'],
+  ['梁', 'H-300x150x6.5x9', '5.8', 't'], ['高力ボルト', 'S10T M20', '620', '本'], ['錆止め塗装', '', '1', '式'], ['運搬費', '4t車', '3', '台'],
+].map(c => parseCells(c)));
+$('btnAddRow').onclick = () => { draft.items.push({ name: '', spec: '', qty: 1, unit: '式', price: '', note: '' }); save(); render(); };
+['client', 'title', 'estDate', 'validity'].forEach(k => $(k).oninput = e => { draft[k] = e.target.value; save(); });
+$('btnAddDate').onclick = addDates;
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.k) {
+    const it = draft.items[+t.dataset.i]; it[t.dataset.k] = t.value;
+    if (t.dataset.k === 'price' && it.name && t.value !== '') { priceBook[it.name] = { unit: it.unit, price: num(t.value) }; lsSet(LS.book, priceBook); }
+    t.closest('tr').classList.toggle('nofill', it.price === '');
+    $(`items`).querySelector(`[data-amt="${t.dataset.i}"]`).textContent = yen(num(it.qty) * num(it.price));
+    save(); renderTotals();
+  } else if (t.dataset.di !== undefined) {
+    draft.dates[+t.dataset.di].people = t.value; save();
+    $('laborSummary').textContent = `${draft.dates.length}日 / 延べ ${laborDays()}人工 × ${yen(laborPrice())}円 = ${yen(laborDays() * laborPrice())}円`;
+    const tr = $('laborPriceIn')?.closest('tr'); if (tr) { tr.children[2].textContent = datesText(); tr.children[3].textContent = laborDays(); $('laborAmt').textContent = yen(laborDays() * laborPrice()); }
+    renderTotals();
+  } else if (t.id === 'laborPriceIn') {
+    draft.laborPrice = t.value === '' ? null : t.value; save();
+    $('laborAmt').textContent = yen(laborDays() * laborPrice());
+    $('laborSummary').textContent = `${draft.dates.length}日 / 延べ ${laborDays()}人工 × ${yen(laborPrice())}円 = ${yen(laborDays() * laborPrice())}円`;
+    renderTotals();
+  } else if (t.dataset.book !== undefined) {
+    priceBook[t.dataset.book].price = num(t.value); lsSet(LS.book, priceBook);
+  }
+});
+document.addEventListener('click', e => {
+  const t = e.target;
+  if (t.dataset.del !== undefined) { draft.items.splice(+t.dataset.del, 1); save(); render(); }
+  if (t.dataset.ddel !== undefined) { draft.dates.splice(+t.dataset.ddel, 1); save(); render(); }
+  if (t.dataset.bookdel !== undefined) { delete priceBook[t.dataset.bookdel]; lsSet(LS.book, priceBook); renderBook(); }
+});
+
+const sIds = { sDayRate: 'dayRate', sDefaultPeople: 'defaultPeople', sOverhead: 'overhead', sTax: 'tax' };
+$('btnSettings').onclick = () => { for (const [id, k] of Object.entries(sIds)) $(id).value = settings[k]; renderBook(); $('settings').hidden = false; $('settings').scrollIntoView({ behavior: 'smooth' }); };
+$('btnSettingsClose').onclick = () => { $('settings').hidden = true; render(); };
+for (const [id, k] of Object.entries(sIds)) $(id).oninput = e => { settings[k] = num(e.target.value); lsSet(LS.settings, settings); };
+
+$('btnExcel').onclick = exportExcel;
+$('btnClear').onclick = () => { if (!confirm('明細・作業日・宛先を消します。単価の設定と単価帳は残ります。よろしいですか？')) return; draft = { client: '', title: '', estDate: today(), validity: '提出日より30日', dates: [], items: [], laborPrice: null }; save(); render(); $('pdfStatus').textContent = ''; };
+
+document.body.insertAdjacentHTML('beforeend', `<datalist id="unitList">${UNITS.map(u => `<option value="${u}">`).join('')}</datalist>`);
+render();
+</script>
+</body>
+</html>
