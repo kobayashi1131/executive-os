@@ -1,14 +1,15 @@
 # 見積作成アプリの公開手順
 
-ビンゴアプリと同じ方式（GitHub → Cloudflare Pages）。ログインなしでURLを開けば使える。
+GitHub → Cloudflare Workers（静的ファイルのみ）。ログインなしでURLを開けば使える。
 
-## 公開するファイル（このフォルダの3つ）
+## 公開するファイル（このフォルダの4つ）
 
 | ファイル | 中身 | gitに入るか |
 |---|---|---|
 | `index.html` | アプリ本体 | 入る |
 | `genshi.local.xltx` | 見積書の原紙（1ページに収まるよう直したもの。社印・口座入り） | **入らない**（`.local` なので） |
 | `robots.txt` | 検索エンジンに載せない設定 | 入る |
+| `.assetsignore` | `.git` を公開しない設定 | 入る |
 
 `genshi.local.xltx` はgitに入らないので、GitHubへは手でアップロードする。
 
@@ -28,24 +29,20 @@
 4. **Private を選ぶ**（Publicは不可）
 5. 「**Create repository**」
 6. 「**uploading an existing file**」をクリック
-7. このフォルダの3つ（`index.html` / `genshi.local.xltx` / `robots.txt`）をまとめてドラッグ＆ドロップ
+7. このフォルダの4つ（`index.html` / `genshi.local.xltx` / `robots.txt` / `.assetsignore`）をまとめてドラッグ＆ドロップ
    - フォルダの場所: `executive-os\work\washinokensetsu-mitsumori\04_system\app\`
    - `DEPLOY.md`（この手順書）は上げなくていい
 8. 「**Commit changes**」
 
-## 手順2: Cloudflare Pagesにつなぐ
+## 手順2: Cloudflareにつなぐ（2026-10-07 実施済み）
 
-1. `dash.cloudflare.com` にログイン
-2. 「**Workers & Pages**」→「**Create application**」→「**Pages**」タブ
-3. 「**Connect to Git**」→ 手順1のリポジトリを選ぶ
-   - GitHub連携で「Only select repositories」にしている場合は、`washino-mitsumori-ef296a` を追加で許可する
-4. 「Set up builds and deployments」
-   - Project name: `washino-mitsumori-ef296a`（これがURLになる）
-   - Framework preset: **None**
-   - Build command: 空欄
-   - Build output directory: 空欄（必須なら `/`）
-5. 「**Save and Deploy**」
-6. 1分ほどで `https://washino-mitsumori-ef296a.pages.dev` のようなURLが出る → この会話に貼る
+Cloudflareの画面に「Pages」が出なかったので **Workers** で公開した。
+
+- 公開URL: `https://washino-mitsumori-ef296a.s-koba-cc3.workers.dev`
+- GitHub連携: `github.com/settings/installations` →「Cloudflare Workers and Pages」→ Configure で `washino-mitsumori-ef296a` を許可
+- Build command: 空欄
+- Deploy command: `npx wrangler deploy --assets=. --name=washino-mitsumori-ef296a --compatibility-date=2026-10-01`
+- `.assetsignore` で `.git` などを公開対象から外している（これが無いと `/.git/` がURLから見える）
 
 ## 手順3: スマホで確認
 
