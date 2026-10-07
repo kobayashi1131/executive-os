@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>見積作成（ラフ）</title>
+<title>見積作成</title>
+<meta name="robots" content="noindex, nofollow">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
@@ -82,9 +83,9 @@
       </div>
       <div>
         <label>見積書の原紙（Excel）</label>
-        <div class="row"><span id="tplName" class="note grow">未登録</span><button class="small" id="btnTpl">原紙を選ぶ</button></div>
+        <div class="row"><span id="tplName" class="note grow">標準の原紙</span><button class="small" id="btnTplReset" hidden>標準に戻す</button><button class="small" id="btnTpl">別の原紙にする</button></div>
         <input type="file" id="tplFile" accept=".xlsx,.xltx" hidden>
-        <p class="note" style="margin:4px 0 0">Dropbox「お仕事/見積り」の原紙（.xltx / .xlsx）を一度選ぶと、この端末に覚えます。</p>
+        <p class="note" style="margin:4px 0 0">ふだんはアプリに入っている原紙を使います。別の原紙を選ぶと、この端末だけそちらに切り替わります。</p>
       </div>
       <button class="primary" id="btnSettingsClose">閉じる</button>
     </div>
@@ -147,7 +148,7 @@
   <section>
     <h2><span class="no">5</span> Excelにする</h2>
     <div class="f">
-      <div id="tplWarn" class="note" hidden>原紙がまだこの端末にありません。ボタンを押すと原紙を選ぶ画面が出ます（最初の1回だけ）。</div>
+      <div id="tplWarn" class="warn" hidden>原紙が読み込めませんでした。電波を確認するか、⚙設定の「別の原紙にする」から原紙を選んでください。</div>
       <div class="note" id="totalsDetail"></div>
       <button class="primary" id="btnExcel">原紙に書き込んでExcelを作る</button>
       <div class="row"><span class="note grow">入力内容はこの端末に自動保存されています。</span><button class="small danger" id="btnClear">最初から</button></div>
@@ -359,7 +360,6 @@ function renderTotals() {
   $('barGp').className = 'gp' + (c.hasCost && low ? ' low' : '');
   $('barGp').textContent = c.hasCost ? `粗利率 ${(c.gp * 100).toFixed(1)}%` : '原価未入力';
   $('totalsDetail').textContent = `小計 ${yen(c.sub)}円 / 消費税 ${yen(c.tax)}円 / 合計 ${yen(c.total)}円` + (c.hasCost ? ` / 原価計 ${yen(c.cost)}円 / 粗利率 ${(c.gp * 100).toFixed(1)}%` : '');
-  $('tplWarn').hidden = !!lsGet(LS.tpl, null);
 }
 function refreshCard(i) { // 入力中のカードの金額・粗利だけ描き直す（入力欄のフォーカスを奪わない）
   const it = draft.items[i], amt = amountOf(it);
@@ -451,11 +451,18 @@ function fileName() { // 今のファイル名の付け方「工事名＋年月(
   const d = dObj(draft.estDate || today());
   return `${(draft.title || draft.client || '見積').replace(/[\\/:*?"<>|]/g, '')}${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, '0')}.xlsx`;
 }
-let pendingExport = false;
+// 原紙: この端末で別の原紙を選んでいればそれ、なければアプリに入っている標準の原紙
+const BUILTIN_TPL = 'genshi.local.xltx';
+async function templateBytes() {
+  const own = lsGet(LS.tpl, null);
+  if (own) return b64ToBytes(own.b64);
+  try { const r = await fetch(BUILTIN_TPL, { cache: 'no-cache' }); if (r.ok) return new Uint8Array(await r.arrayBuffer()); } catch {}
+  return null;
+}
 async function exportExcel() {
-  const tpl = lsGet(LS.tpl, null);
-  if (!tpl) { pendingExport = true; $('tplFile').click(); return; } // 最初の1回だけ原紙を選んでもらい、選んだらそのまま作る
-  const blob = await buildExcel(b64ToBytes(tpl.b64));
+  const tpl = await templateBytes();
+  if (!tpl) { $('tplWarn').hidden = false; $('tplWarn').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  const blob = await buildExcel(tpl);
   const file = new File([blob], fileName(), { type: blob.type });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try { await navigator.share({ files: [file], title: file.name }); return; } catch (e) { if (e.name === 'AbortError') return; }
@@ -506,7 +513,8 @@ document.addEventListener('click', e => {
 });
 
 const sIds = { sDayRate: 'dayRate', sDayCost: 'dayCost', sDefaultPeople: 'defaultPeople', sMarkup: 'markup', sMinGp: 'minGp' };
-function showTplName() { const t = lsGet(LS.tpl, null); $('tplName').textContent = t ? `登録済み：${t.name}` : '未登録'; }
+function showTplName() { const t = lsGet(LS.tpl, null); $('tplName').textContent = t ? `この端末だけ：${t.name}` : '標準の原紙'; $('btnTplReset').hidden = !t; }
+$('btnTplReset').onclick = () => { try { localStorage.removeItem(LS.tpl); } catch {} showTplName(); };
 $('btnSettings').onclick = () => { for (const [id, k] of Object.entries(sIds)) $(id).value = settings[k]; showTplName(); $('settings').hidden = false; window.scrollTo({ top: 0, behavior: 'smooth' }); };
 $('btnSettingsClose').onclick = () => { $('settings').hidden = true; render(); };
 for (const [id, k] of Object.entries(sIds)) $(id).oninput = e => { settings[k] = e.target.value === '' && k === 'dayCost' ? '' : num(e.target.value); lsSet(LS.settings, settings); };
@@ -516,8 +524,7 @@ $('tplFile').onchange = async e => {
   const bytes = new Uint8Array(await f.arrayBuffer()); let s = '';
   for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
   if (!lsSet(LS.tpl, { name: f.name, b64: btoa(s) })) alert('この端末に保存できませんでした（容量不足の可能性）');
-  showTplName(); renderTotals(); e.target.value = '';
-  if (pendingExport) { pendingExport = false; exportExcel().catch(err => alert('Excelの作成に失敗しました：' + err.message)); }
+  showTplName(); $('tplWarn').hidden = true; e.target.value = '';
 };
 $('btnExcel').onclick = () => exportExcel().catch(err => alert('Excelの作成に失敗しました：' + err.message));
 $('btnClear').onclick = () => { if (!confirm('宛先・作業日・明細を消します。設定と原紙は残ります。よろしいですか？')) return; draft = blankDraft(); save(); $('srcs').innerHTML = ''; render(); };
