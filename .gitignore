@@ -54,3 +54,6 @@ work/washinokensetsu/03_documents/インターンシップ課題まとめ.doc
 # Word編集中のロックファイル
 ~$*
 ~WRD*.tmp
+
+# 見積アプリ: 職人見積の取込・作成したExcel（金額・取引先情報のため）
+work/washinokensetsu-mitsumori/06_data/mitsumori/
