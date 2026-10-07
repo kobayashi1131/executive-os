@@ -18,7 +18,9 @@
   header h1 { font-size: 17px; margin: 0; }
   header small { opacity: .75; font-weight: normal; }
   header button { background: #fff; }
-  main { max-width: 640px; margin: 0 auto; padding: 12px; display: grid; gap: 12px; }
+  main { max-width: 640px; margin: 0 auto; padding: 12px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  input[type=date] { -webkit-appearance: none; appearance: none; min-height: 42px; }
+  .card .head input { flex: 1; }
   section { background: var(--card); border-radius: 10px; padding: 14px; }
   h2 { font-size: 15px; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
   h2 .no { background: var(--accent); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-grid; place-items: center; font-size: 12px; flex: none; }
@@ -30,13 +32,13 @@
   button.small { padding: 5px 9px; font-size: 13px; }
   button.danger { border-color: var(--ng); color: var(--ng); }
   .f { display: grid; gap: 8px; }
-  .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .f3 { display: grid; grid-template-columns: 1.1fr .8fr 1.3fr; gap: 8px; }
+  .f2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+  .f3 { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .8fr) minmax(0, 1.3fr); gap: 8px; }
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .grow { flex: 1; }
   .note { font-size: 13px; color: var(--muted); }
   .warn { background: var(--warn-soft); color: var(--warn); padding: 8px 10px; border-radius: 8px; font-size: 13px; }
-  .bigbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .bigbtns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
   .bigbtns button { padding: 14px 8px; font-size: 15px; }
   .src { margin-top: 10px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
   .src img { width: 100%; border-radius: 6px; display: block; }
@@ -44,7 +46,7 @@
   .card.labor { background: var(--accent-soft); border-color: transparent; }
   .card .head { display: flex; gap: 8px; align-items: center; }
   .card .head .idx { color: var(--muted); font-size: 13px; width: 22px; flex: none; }
-  .cost { background: #fafafa; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+  .cost { background: #fafafa; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; }
   .gp { font-size: 13px; text-align: right; }
   .gp.low { color: var(--ng); font-weight: bold; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
