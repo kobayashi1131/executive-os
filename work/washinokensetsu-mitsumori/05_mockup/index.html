@@ -147,7 +147,7 @@
   <section>
     <h2><span class="no">5</span> Excelにする</h2>
     <div class="f">
-      <div id="tplWarn" class="warn" hidden>先に ⚙設定 から見積書の原紙を選んでください。</div>
+      <div id="tplWarn" class="note" hidden>原紙がまだこの端末にありません。ボタンを押すと原紙を選ぶ画面が出ます（最初の1回だけ）。</div>
       <div class="note" id="totalsDetail"></div>
       <button class="primary" id="btnExcel">原紙に書き込んでExcelを作る</button>
       <div class="row"><span class="note grow">入力内容はこの端末に自動保存されています。</span><button class="small danger" id="btnClear">最初から</button></div>
@@ -451,9 +451,10 @@ function fileName() { // 今のファイル名の付け方「工事名＋年月(
   const d = dObj(draft.estDate || today());
   return `${(draft.title || draft.client || '見積').replace(/[\\/:*?"<>|]/g, '')}${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, '0')}.xlsx`;
 }
+let pendingExport = false;
 async function exportExcel() {
   const tpl = lsGet(LS.tpl, null);
-  if (!tpl) { $('tplWarn').hidden = false; $('tplWarn').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  if (!tpl) { pendingExport = true; $('tplFile').click(); return; } // 最初の1回だけ原紙を選んでもらい、選んだらそのまま作る
   const blob = await buildExcel(b64ToBytes(tpl.b64));
   const file = new File([blob], fileName(), { type: blob.type });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -516,6 +517,7 @@ $('tplFile').onchange = async e => {
   for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
   if (!lsSet(LS.tpl, { name: f.name, b64: btoa(s) })) alert('この端末に保存できませんでした（容量不足の可能性）');
   showTplName(); renderTotals(); e.target.value = '';
+  if (pendingExport) { pendingExport = false; exportExcel().catch(err => alert('Excelの作成に失敗しました：' + err.message)); }
 };
 $('btnExcel').onclick = () => exportExcel().catch(err => alert('Excelの作成に失敗しました：' + err.message));
 $('btnClear').onclick = () => { if (!confirm('宛先・作業日・明細を消します。設定と原紙は残ります。よろしいですか？')) return; draft = blankDraft(); save(); $('srcs').innerHTML = ''; render(); };
