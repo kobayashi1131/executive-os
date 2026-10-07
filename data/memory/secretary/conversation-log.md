@@ -56,3 +56,4 @@
 ## 2026-10-07
 - 小林から「PDFをアップすると見積書を作るアプリ」の依頼。PDFは元請の見積依頼・数量表、人工は全員同じ1日単価、出力はExcelで仕上げる。ラフモックを `work/washinokensetsu-mitsumori/05_mockup/index.html` に作成。次は実物の元請PDFで読み取り率を確認し、AI読み取り（Claude API・課金あり）が要るか判断する
 - 同日訂正: 入れるのは元請の数量表ではなく「職人からの見積」（FAX→PDF取込、メールPDF、たまに写真）。画像PDFはラフでは読めないのでAI読み取りが前提になる。職人見積→わしの見積の利益の乗せ方は未確認
+- 同日 見積アプリを公開（https://washino-mitsumori-ef296a.s-koba-cc3.workers.dev、ログインなし）。原紙は内蔵、Dropboxには置かない方針。注意: executive-os リポジトリがGitHubでPublicになっているのを発見し、Privateにするよう伝えた（未対応）
