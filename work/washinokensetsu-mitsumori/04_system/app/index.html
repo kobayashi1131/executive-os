@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>見積作成</title>
 <meta name="robots" content="noindex, nofollow">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root {
@@ -17,16 +16,15 @@
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif; font-size: 16px; padding-bottom: 96px; }
   header { background: var(--accent); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 5; }
   header h1 { font-size: 17px; margin: 0; }
-  header small { opacity: .75; font-weight: normal; }
   header button { background: #fff; }
   main { max-width: 640px; margin: 0 auto; padding: 12px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  input[type=date] { -webkit-appearance: none; appearance: none; min-height: 42px; }
-  .card .head input { flex: 1; }
   section { background: var(--card); border-radius: 10px; padding: 14px; }
   h2 { font-size: 15px; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
   h2 .no { background: var(--accent); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-grid; place-items: center; font-size: 12px; flex: none; }
   label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 3px; }
-  input, select { font: inherit; font-size: 16px; border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; background: #fff; color: var(--text); width: 100%; min-width: 0; }
+  input, select, textarea { font: inherit; font-size: 16px; border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; background: #fff; color: var(--text); width: 100%; min-width: 0; }
+  textarea { min-height: 110px; font-size: 13px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  input[type=date] { -webkit-appearance: none; appearance: none; min-height: 42px; }
   input.num { text-align: right; }
   button { font: inherit; font-size: 15px; border: 1px solid var(--accent); background: #fff; color: var(--accent); border-radius: 8px; padding: 9px 12px; cursor: pointer; white-space: nowrap; }
   button.primary { background: var(--accent); color: #fff; }
@@ -40,32 +38,32 @@
   .note { font-size: 13px; color: var(--muted); }
   .warn { background: var(--warn-soft); color: var(--warn); padding: 8px 10px; border-radius: 8px; font-size: 13px; }
   .bigbtns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
-  .bigbtns button { padding: 14px 8px; font-size: 15px; }
-  .src { margin-top: 10px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
-  .src img { width: 100%; border-radius: 6px; display: block; }
+  .bigbtns button { padding: 12px 8px; }
   .card { border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 8px; }
-  .card.labor { background: var(--accent-soft); border-color: transparent; }
+  .card.auto { background: var(--accent-soft); border-color: transparent; }
+  .card.check { border-color: var(--warn); background: var(--warn-soft); }
   .card .head { display: flex; gap: 8px; align-items: center; }
+  .card .head input { flex: 1; }
   .card .head .idx { color: var(--muted); font-size: 13px; width: 22px; flex: none; }
-  .cost { background: #fafafa; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; }
+  .cost { background: #fafafa; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
   .gp { font-size: 13px; text-align: right; }
   .gp.low { color: var(--ng); font-weight: bold; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .chip { border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; display: flex; align-items: center; gap: 4px; background: #fff; font-size: 14px; }
   .chip.weekend { border-color: var(--warn); background: var(--warn-soft); }
-  .chip input { width: 52px; padding: 4px; text-align: right; }
+  .chip input { width: 56px; padding: 4px; text-align: right; }
   .bar { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--line); padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); z-index: 5; }
   .bar .in { max-width: 640px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .bar .total { font-size: 20px; font-weight: bold; color: var(--accent); font-variant-numeric: tabular-nums; }
   .bar .sub { font-size: 12px; color: var(--muted); }
-  details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
-  pre { white-space: pre-wrap; font-size: 12px; background: var(--bg); padding: 8px; border-radius: 6px; max-height: 200px; overflow: auto; }
   .ok { color: var(--ok); }
+  .steps { margin: 0 0 8px; padding-left: 20px; font-size: 14px; }
+  .steps li { margin-bottom: 4px; }
 </style>
 </head>
 <body>
 <header>
-  <h1>見積作成 <small>ラフ</small></h1>
+  <h1>見積作成</h1>
   <button class="small" id="btnSettings">⚙ 設定</button>
 </header>
 
@@ -75,11 +73,13 @@
     <h2>設定 <span class="note">（この端末に保存）</span></h2>
     <div class="f">
       <div class="f2">
-        <div><label>わしのの人 1人1日（売値）</label><input id="sDayRate" class="num" type="number" inputmode="numeric"></div>
-        <div><label>わしのの人 1人1日（原価）</label><input id="sDayCost" class="num" type="number" inputmode="numeric" placeholder="未設定"></div>
-        <div><label>1日の標準人数</label><input id="sDefaultPeople" class="num" type="number" inputmode="decimal"></div>
-        <div><label>職人見積に掛ける率（売値＝原価×）</label><input id="sMarkup" class="num" type="number" step="0.05" inputmode="decimal"></div>
-        <div><label>粗利率がこれ未満なら赤字表示（%）</label><input id="sMinGp" class="num" type="number" inputmode="numeric"></div>
+        <div><label>売値＝原価 ×</label><input id="sMarkup" class="num" type="number" step="0.05" inputmode="decimal"></div>
+        <div><label>諸経費（明細合計の%）</label><input id="sOverheadPct" class="num" type="number" inputmode="decimal"></div>
+        <div><label>わしのの人 1日（売値）</label><input id="sDayRate" class="num" type="number" inputmode="numeric"></div>
+        <div><label>わしのの人 1日（原価）</label><input id="sDayCost" class="num" type="number" inputmode="numeric"></div>
+        <div><label>目標の粗利率（%）</label><input id="sTargetGp" class="num" type="number" inputmode="decimal"></div>
+        <div><label>値引き後をそろえる単位（円）</label><input id="sRoundUnit" class="num" type="number" inputmode="numeric"></div>
+        <div><label>1日の標準人数</label><input id="sDefaultPeople" class="num" type="number" step="0.5" inputmode="decimal"></div>
       </div>
       <div>
         <label>見積書の原紙（Excel）</label>
@@ -97,28 +97,30 @@
     <div class="f">
       <div class="row"><div class="grow"><label>宛先</label><input id="client" placeholder="愛同工業株式会社"></div>
         <div style="width:90px"><label>敬称</label><select id="honor"><option>御中</option><option>様</option></select></div></div>
-      <div><label>工事名（明細の1行目に入ります）</label><input id="title" placeholder="5工場1F断熱材工事"></div>
+      <div><label>工事名（明細の1行目に入ります）</label><input id="title" placeholder="東海工場　シートシャッター修理"></div>
       <div><label>見積日</label><input id="estDate" type="date"></div>
     </div>
   </section>
 
-  <!-- 2. 職人見積 -->
+  <!-- 2. 職人見積をAIで読む -->
   <section>
-    <h2><span class="no">2</span> 職人・業者の見積を入れる</h2>
+    <h2><span class="no">2</span> 職人・業者の見積をAIで読む</h2>
+    <ol class="steps">
+      <li>「頼み方をコピー」を押す</li>
+      <li>スマホの<b>Claudeアプリ</b>を開いて、見積の写真かPDFを付けて、コピーした文を貼って送る</li>
+      <li>返ってきた答えを全部コピーして、下の欄に貼って「取り込む」</li>
+    </ol>
     <div class="bigbtns">
-      <button class="primary" id="btnCamera">📷 写真を撮る</button>
-      <button id="btnPick">📄 PDF・画像を選ぶ</button>
+      <button id="btnCopyPrompt">📋 頼み方をコピー</button>
+      <button id="btnOpenClaude">Claudeを開く</button>
     </div>
-    <input type="file" id="camFile" accept="image/*" capture="environment" hidden>
-    <input type="file" id="pickFile" accept="application/pdf,image/*" hidden>
-    <p class="note" id="srcStatus" style="margin:8px 0 0">文字の入ったPDFは自動で明細にします。FAX・写真はラフ版では読めないので、画像を見ながら下の明細に入れてください（本番ではAIが読む予定）。</p>
-    <div id="srcs"></div>
-    <details style="margin-top:8px"><summary>PDFで読めなかった行</summary><pre id="skipped">（なし）</pre></details>
+    <textarea id="aiPaste" style="margin-top:8px" placeholder="ここにClaudeの答えを貼る"></textarea>
+    <div class="row" style="margin-top:8px"><span class="note grow" id="importMsg"></span><button class="primary" id="btnImport">取り込む</button></div>
   </section>
 
   <!-- 3. 作業日 -->
   <section>
-    <h2><span class="no">3</span> 作業日（わしのの人が出る日）</h2>
+    <h2><span class="no">3</span> わしのの人が出る日（現場管理費）</h2>
     <div class="f2">
       <div><label>この日から</label><input id="dateAdd" type="date"></div>
       <div><label>この日まで（1日だけなら空欄）</label><input id="dateTo" type="date"></div>
@@ -128,6 +130,9 @@
       <span class="grow"></span><button id="btnAddDate">追加</button>
     </div>
     <div class="chips" id="dates"></div>
+    <div style="margin-top:8px"><label>誰が出るか（原価の横に書く名前・任意）</label><input id="laborWho" placeholder="小林"></div>
+    <p class="note" style="margin:6px 0 0">日付が決まってなければ、日付なしで人工だけ入れる：</p>
+    <div class="row"><input id="laborManual" class="num grow" type="number" step="0.5" inputmode="decimal" placeholder="人工（例 0.5）" style="max-width:160px"><span class="note">人工（日付を入れたらそちらを優先）</span></div>
     <p class="note" id="laborSummary" style="margin:8px 0 0"></p>
   </section>
 
@@ -135,11 +140,12 @@
   <section>
     <h2><span class="no">4</span> 明細</h2>
     <div class="f" id="items"></div>
-    <div class="row" style="margin-top:10px">
-      <button id="btnAddRow">＋ 行を追加</button>
-      <button class="small" data-quick="諸経費">＋諸経費</button>
-      <button class="small" data-quick="法定福利費">＋法定福利費</button>
-      <button class="small" data-quick="出精値引き">＋値引き</button>
+    <div class="row" style="margin-top:10px"><button id="btnAddRow">＋ 行を追加</button></div>
+    <div class="f" id="autoRows" style="margin-top:10px"></div>
+    <div style="margin-top:10px">
+      <label>注意書き（値引きの1行下に入ります）</label>
+      <div class="f" id="notes"></div>
+      <button class="small" id="btnAddNote" style="margin-top:6px">＋ 注意書き</button>
     </div>
     <div id="rowWarn" class="warn" hidden style="margin-top:8px"></div>
   </section>
@@ -163,43 +169,53 @@
 
 <script>
 /* ===== 保存 ===== */
-const LS = { settings: 'mitsu2_settings', draft: 'mitsu2_draft', tpl: 'mitsu2_template' };
+const LS = { settings: 'mitsu3_settings', draft: 'mitsu3_draft', tpl: 'mitsu2_template' };
 const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } };
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const num = v => { const n = parseFloat(String(v ?? '').replace(/[,，]/g, '')); return isNaN(n) ? 0 : n; };
+const num = v => { const n = parseFloat(String(v ?? '').replace(/[,，¥￥円\s]/g, '')); return isNaN(n) ? 0 : n; };
+const isSet = v => v !== '' && v !== null && v !== undefined;
 const yen = n => Math.round(n || 0).toLocaleString('ja-JP');
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
-let settings = Object.assign({ dayRate: 25000, dayCost: '', defaultPeople: 2, markup: 1.3, minGp: 20 }, lsGet(LS.settings, {}));
-const blankDraft = () => ({ client: '', honor: '御中', title: '', estDate: today(), dates: [], items: [], laborPrice: null });
+// 見積ルール（work/washinokensetsu-mitsumori/00_context/mitsumori-rules.md）
+let settings = Object.assign({ markup: 1.5, overheadPct: 8, dayRate: 25000, dayCost: 25000, targetGp: 25, roundUnit: 10000, defaultPeople: 1 }, lsGet(LS.settings, {}));
+const blankDraft = () => ({ client: '', honor: '御中', title: '', estDate: today(), items: [], dates: [], laborManual: '', laborWho: '',
+  overheadAmt: null, overheadCost: '', overheadWho: '', discount: null, notes: [] });
 let draft = Object.assign(blankDraft(), lsGet(LS.draft, {}));
 const save = () => lsSet(LS.draft, draft);
-const MAX_ROWS = 22; // 原紙の明細欄（10〜31行目）
+const FIRST_ROW = 10, LAST_ROW = 31; // 原紙の明細欄
 
-/* ===== 明細の計算 ===== */
-// 明細1行 = { name, qty, unit, price, amount, cost, note }
-// price(単価)があれば 金額=数量×単価。無ければ amount(一式の金額)をそのまま使う。cost は原価の合計。
-const amountOf = it => it.price !== '' && it.price != null ? num(it.qty) * num(it.price) : num(it.amount);
+/* ===== 計算 ===== */
+// 明細1行 = { name, qty, unit, price, amount, cost, who, note, check }
+// price(単価)があれば 金額=数量×単価。無ければ amount(一式の金額)。cost は原価の合計、who は職人名（H列）
+const amountOf = it => isSet(it.price) ? num(it.qty) * num(it.price) : num(it.amount);
 function applyMarkup(it) {
-  const sell = num(it.cost) * num(settings.markup);
   if (!num(it.cost)) return;
+  const sell = num(it.cost) * num(settings.markup);
   if (it.unit !== '式' && num(it.qty) > 1) { it.price = Math.ceil(sell / num(it.qty) / 10) * 10; it.amount = ''; }
   else { it.price = ''; it.amount = Math.ceil(sell / 100) * 100; }
 }
-function laborDays() { return draft.dates.reduce((s, x) => s + num(x.people), 0); }
-function laborPrice() { return draft.laborPrice === null || draft.laborPrice === '' ? num(settings.dayRate) : num(draft.laborPrice); }
-function laborItem() {
-  if (!draft.dates.length) return null;
-  return { name: '作業員（わしの建設）', qty: laborDays(), unit: '人工', price: laborPrice(), amount: '', cost: settings.dayCost === '' ? '' : laborDays() * num(settings.dayCost), note: '' };
-}
-function allItems() { const l = laborItem(); return l ? [...draft.items, l] : draft.items.slice(); }
+function laborDays() { return draft.dates.length ? draft.dates.reduce((s, x) => s + num(x.people), 0) : num(draft.laborManual); }
+// 現場管理費・諸経費・値引きは明細から自動で出す（金額を手で入れたらそちらを優先）
 function calc() {
-  const items = allItems();
-  const sub = items.reduce((s, it) => s + amountOf(it), 0);
-  const cost = items.reduce((s, it) => s + num(it.cost), 0);
-  return { sub, tax: sub * 0.1, total: sub * 1.1, cost, gp: sub ? (sub - cost) / sub : 0, hasCost: items.some(it => num(it.cost)) };
+  const days = laborDays();
+  const labor = days ? { amount: days * num(settings.dayRate), cost: days * num(settings.dayCost) } : null;
+  const itemsAmt = draft.items.reduce((s, it) => s + amountOf(it), 0);
+  const itemsCost = draft.items.reduce((s, it) => s + num(it.cost), 0);
+  const base = itemsAmt + (labor ? labor.amount : 0);
+  const overheadAuto = Math.round(base * num(settings.overheadPct) / 100 / 100) * 100;
+  const overhead = isSet(draft.overheadAmt) ? num(draft.overheadAmt) : overheadAuto;
+  const pre = base + overhead;
+  const cost = itemsCost + (labor ? labor.cost : 0) + num(draft.overheadCost);
+  // 目標の粗利率を超える一番小さい「キリのいい額」まで値引き
+  const unit = num(settings.roundUnit) || 1, t = num(settings.targetGp) / 100;
+  const goal = cost && t < 1 ? Math.ceil(cost / (1 - t) / unit) * unit : 0;
+  const discountAuto = goal && pre > goal ? goal - pre : 0;
+  const discount = isSet(draft.discount) ? -Math.abs(num(draft.discount)) : discountAuto;
+  const sub = pre + discount;
+  return { days, labor, base, overhead, overheadAuto, pre, cost, goal, discount, discountAuto, sub, tax: sub * 0.1, total: sub * 1.1, gp: sub ? (sub - cost) / sub : 0 };
 }
 
 /* ===== 作業日 ===== */
@@ -224,152 +240,145 @@ function datesText() {
   let prevM = null;
   return draft.dates.map(x => { const d = dObj(x.date), m = d.getMonth() + 1; const s = m === prevM ? `${d.getDate()}` : `${m}/${d.getDate()}`; prevM = m; return s; }).join('，');
 }
+function laborWhoText(days) {
+  const n = days === 0.5 ? '半日' : `${days}人工`;
+  return `わしの建設（${draft.laborWho ? draft.laborWho + ' ' : ''}${n}）`;
+}
 
-/* ===== 職人見積の読み取り（ラフ：文字入りPDFだけ） ===== */
-// --- parser:start ---
-const UNITS = ['式', 'm2', 'm²', '㎡', 'm3', 'm³', '㎥', '延m', 'm', 't', 'kg', '本', '個', 'ヶ所', 'ケ所', '箇所', 'か所', 'カ所', '枚', '台', '組', 'セット', 'set', '人工', '日', '回', '基', '缶', '袋', 'L', '坪', '面', '丁', '箱', '巻'];
-function normalize(s) {
-  return String(s).replace(/[０-９ａ-ｚＡ-Ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
-    .replace(/．/g, '.').replace(/，/g, ',').replace(/ｍ/g, 'm').replace(/ｔ/g, 't').replace(/[¥￥円]/g, '').replace(/　/g, ' ').trim();
-}
-const unitRe = UNITS.map(u => u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-const NUM_RE = /^-?\d[\d,]*(\.\d+)?$/;
-const UNIT_ONLY_RE = new RegExp('^(' + unitRe + ')$');
-const NUM_UNIT_RE = new RegExp('^(\\d[\\d,]*(?:\\.\\d+)?)\\s*(' + unitRe + ')$');
-const SKIP_RE = /^(no\.?|名称|品名|工事名|数量|単位|単価|金額|備考|摘要|規格)$|合計|小計|消費税|総額|頁|ページ/i;
-// 職人見積の1行 → { name, spec, qty, unit, cost }（cost は原価の合計）
-function parseCells(cells) {
-  cells = cells.map(normalize).filter(Boolean);
-  if (!cells.length) return null;
-  if (cells.some(c => SKIP_RE.test(c))) return null;
-  if (/^\d{1,3}$/.test(cells[0]) && cells.length > 2) cells = cells.slice(1);
-  for (let i = 1; i < cells.length; i++) {
-    let qty = null, unit = null, end = i;
-    const m = cells[i].match(NUM_UNIT_RE);
-    if (m) { qty = m[1]; unit = m[2]; }
-    else if (NUM_RE.test(cells[i]) && cells[i + 1] && UNIT_ONLY_RE.test(cells[i + 1])) { qty = cells[i]; unit = cells[i + 1]; end = i + 1; }
-    if (qty === null) continue;
-    if (NUM_RE.test(cells[0])) return null;
-    const after = cells.slice(end + 1), nums = after.filter(c => NUM_RE.test(c)).map(num);
-    let cost = '';
-    if (nums.length >= 2) cost = nums[nums.length - 1];               // 単価・金額 → 金額を原価に
-    else if (nums.length === 1) cost = (unit === '式' || num(qty) === 1) ? nums[0] : nums[0] * num(qty); // 1つだけなら単価とみなす
-    return { name: cells[0], spec: cells.slice(1, i).join(' '), qty: num(qty), unit, cost, note: after.filter(c => !NUM_RE.test(c)).join(' ') };
-  }
-  return null;
-}
-// --- parser:end ---
+/* ===== AI（スマホのClaudeアプリ）の読み取り結果を取り込む ===== */
+const AI_PROMPT = `添付した見積書（職人・業者からわしの建設あての見積）を読み取って、次の形のJSONだけを返してください。説明文はいりません。
 
-async function readFile(file) {
-  const box = document.createElement('div'); box.className = 'src';
-  box.innerHTML = `<div class="row"><b class="grow" style="font-size:14px">${esc(file.name || '写真')}</b><button class="small danger">閉じる</button></div><div class="note">読み込み中…</div>`;
-  box.querySelector('button').onclick = () => box.remove();
-  $('srcs').prepend(box);
-  const msg = box.querySelector('.note');
-  if (file.type.startsWith('image/')) {
-    const img = document.createElement('img'); img.src = URL.createObjectURL(file); box.append(img);
-    msg.textContent = '写真はラフ版では読み取れません。見ながら明細に入れてください（本番ではAIが読む予定）。';
-    return;
-  }
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-  const found = [], skipped = []; let chars = 0;
-  for (let p = 1; p <= pdf.numPages; p++) {
-    const page = await pdf.getPage(p);
-    const tc = await page.getTextContent(), lines = [];
-    for (const it of tc.items) {
-      if (!it.str || !it.str.trim()) continue;
-      chars += it.str.length;
-      const x = it.transform[4], y = it.transform[5];
-      let line = lines.find(l => Math.abs(l.y - y) < 3);
-      if (!line) { line = { y, parts: [] }; lines.push(line); }
-      line.parts.push({ x, w: it.width || 0, s: it.str });
-    }
-    lines.sort((a, b) => b.y - a.y);
-    for (const l of lines) {
-      l.parts.sort((a, b) => a.x - b.x);
-      const cells = []; let prevEnd = null;
-      for (const pt of l.parts) { if (prevEnd !== null && pt.x - prevEnd < 8) cells[cells.length - 1] += pt.s; else cells.push(pt.s); prevEnd = pt.x + pt.w; }
-      const r = parseCells(cells); if (r) found.push(r); else skipped.push(cells.join(' | '));
-    }
-    if (p === 1) { // 1ページ目は見本として画像でも出す（FAXを見ながら入力できるように）
-      const vp = page.getViewport({ scale: 1.6 }), cv = document.createElement('canvas');
-      cv.width = vp.width; cv.height = vp.height; cv.style.width = '100%'; cv.style.borderRadius = '6px';
-      await page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise; box.append(cv);
-    }
-  }
-  $('skipped').textContent = skipped.length ? skipped.join('\n') : '（なし）';
-  if (chars < 20) { msg.textContent = 'FAX・スキャンのPDFで、文字が入っていません。ラフ版では読めないので、見ながら明細に入れてください（本番ではAIが読む予定）。'; return; }
-  addFromSource(found);
-  msg.innerHTML = `<span class="ok">${found.length}行を明細に入れました</span>（読めなかった行 ${skipped.length}）。売値は原価×${settings.markup}で仮に入れています。`;
+{
+  "vendor": "見積を出した会社・職人の名前",
+  "title": "件名・工事名（あれば）",
+  "items": [
+    {"name": "品名（規格・寸法もここに）", "qty": 1, "unit": "式", "amount": 10000, "kind": "item"}
+  ],
+  "net_total": null,
+  "notes": ["※平日工事となります。"]
 }
-function addFromSource(rows) {
-  for (const r of rows) {
-    const it = { name: r.spec ? `${r.name}　${r.spec}` : r.name, qty: r.qty, unit: r.unit, price: '', amount: '', cost: r.cost, note: r.note || '' };
-    applyMarkup(it); draft.items.push(it);
+
+ルール:
+- items は明細の行だけ。小計・合計・消費税の行は入れない
+- 内訳書（明細書）が付いていれば、その明細を使う
+- amount はその行の金額（税抜、カンマなしの数字）
+- 業者側の諸経費・出張費の行は kind を "keihi" にする
+- 「NET金額」「値引き後」など、実際に払う税抜の総額が書いてあれば net_total に数字で入れる。なければ null
+- 工事の条件（平日工事、別途工事など）は notes に「※〜となります。」の形で短く入れる。なければ []
+- 読みにくくて自信がない行には "check": true を付ける`;
+
+function parseAi(text) {
+  const s = text.indexOf('{'), e = text.lastIndexOf('}');
+  if (s < 0 || e < s) throw new Error('答えの中にJSONが見つかりません。Claudeの答えを全部コピーして貼ってください。');
+  const j = JSON.parse(text.slice(s, e + 1).replace(/[“”]/g, '"'));
+  if (!Array.isArray(j.items)) throw new Error('items（明細）が見つかりません。');
+  return j;
+}
+function importAi(j) {
+  const vendor = String(j.vendor || '').trim();
+  const rows = j.items.filter(r => r && r.name && num(r.amount));
+  const sum = rows.reduce((s, r) => s + num(r.amount), 0);
+  // NET金額があれば、各行の原価をその割合で割り振る（端数は一番大きい行で調整）
+  const net = num(j.net_total), f = net && net < sum ? net / sum : 1;
+  const costs = rows.map(r => Math.round(num(r.amount) * f));
+  if (f !== 1 && costs.length) { const big = costs.indexOf(Math.max(...costs)); costs[big] += net - costs.reduce((a, b) => a + b, 0); }
+  let added = 0, keihi = 0;
+  rows.forEach((r, i) => {
+    if (r.kind === 'keihi') { keihi += costs[i]; return; }
+    const it = { name: String(r.name), qty: num(r.qty) || 1, unit: String(r.unit || '式'), price: '', amount: '', cost: costs[i], who: vendor, note: '', check: !!r.check };
+    applyMarkup(it); draft.items.push(it); added++;
+  });
+  if (keihi) {
+    draft.overheadCost = num(draft.overheadCost) + keihi;
+    draft.overheadWho = [draft.overheadWho, vendor && `${vendor}（諸経費・出張費）`].filter(Boolean).join('、');
   }
+  for (const n of (Array.isArray(j.notes) ? j.notes : [])) if (n && !draft.notes.includes(n)) draft.notes.push(String(n));
   save(); render();
+  const checks = rows.filter(r => r.check).length;
+  return `${vendor || '見積'}：${added}行を取り込みました（原価${yen(f !== 1 ? net : sum)}円${f !== 1 ? '＝NET金額' : ''}）` + (keihi ? `、業者の諸経費${yen(keihi)}円は諸経費の原価へ` : '') + (checks ? `。黄色の${checks}行は数字を確認してください` : '');
 }
 
 /* ===== 描画 ===== */
-function itemCard(it, i, labor) {
-  const amt = amountOf(it), gp = amt && num(it.cost) ? (amt - num(it.cost)) / amt : null;
-  const gpTxt = gp === null ? '' : `粗利 ${yen(amt - num(it.cost))}円（${(gp * 100).toFixed(1)}%）`;
-  const low = gp !== null && gp * 100 < num(settings.minGp);
-  if (labor) return `<div class="card labor">
-    <div class="head"><span class="idx">${i + 1}</span><b class="grow">${esc(it.name)}</b></div>
-    <div class="note">${esc(datesText())}（${draft.dates.length}日・延べ${it.qty}人工）</div>
-    <div class="f3"><div><label>人工</label><input class="num" value="${it.qty}" disabled></div><div><label>単位</label><input value="人工" disabled></div>
-      <div><label>1日単価（今回だけ変更可）</label><input class="num" id="laborPriceIn" inputmode="numeric" value="${draft.laborPrice ?? ''}" placeholder="${settings.dayRate}"></div></div>
-    <div class="row"><span class="grow note">金額</span><b data-amt="L">${yen(amt)} 円</b></div>
-    <div class="gp ${low ? 'low' : ''}" data-gp="L">${gpTxt}</div></div>`;
-  return `<div class="card" data-card="${i}">
+function gpText(amt, cost) {
+  if (!amt || !num(cost)) return { t: '', low: false };
+  const g = (amt - num(cost)) / amt;
+  return { t: `粗利 ${yen(amt - num(cost))}円（${(g * 100).toFixed(1)}%）`, low: g * 100 < num(settings.targetGp) };
+}
+function itemCard(it, i) {
+  const amt = amountOf(it), g = gpText(amt, it.cost);
+  return `<div class="card${it.check ? ' check' : ''}" data-card="${i}">
     <div class="head"><span class="idx">${i + 1}</span><input data-i="${i}" data-k="name" value="${esc(it.name)}" placeholder="品名"><button class="small danger" data-del="${i}">×</button></div>
     <div class="f3"><div><label>数量</label><input class="num" data-i="${i}" data-k="qty" value="${esc(it.qty)}" inputmode="decimal"></div>
       <div><label>単位</label><input data-i="${i}" data-k="unit" value="${esc(it.unit)}" list="unitList"></div>
       <div><label>単価</label><input class="num" data-i="${i}" data-k="price" value="${esc(it.price)}" inputmode="numeric" placeholder="一式なら空欄"></div></div>
-    <div class="f2"><div><label>金額（売値）</label><input class="num" data-i="${i}" data-k="amount" value="${it.price !== '' && it.price != null ? amt : esc(it.amount)}" inputmode="numeric"></div>
+    <div class="f2"><div><label>金額（売値）</label><input class="num" data-i="${i}" data-k="amount" value="${isSet(it.price) ? amt : esc(it.amount)}" inputmode="numeric"></div>
       <div><label>備考</label><input data-i="${i}" data-k="note" value="${esc(it.note)}"></div></div>
-    <div class="cost"><div><label>原価（職人・業者の金額。見積書には出ません）</label><input class="num" data-i="${i}" data-k="cost" value="${esc(it.cost)}" inputmode="numeric"></div>
-      <button class="small" data-mk="${i}">×${settings.markup}で売値</button></div>
-    <div class="gp ${low ? 'low' : ''}" data-gp="${i}">${gpTxt}</div></div>`;
+    <div class="cost"><div><label>原価（見積書には出ません）</label><input class="num" data-i="${i}" data-k="cost" value="${esc(it.cost)}" inputmode="numeric"></div>
+      <div><label>職人・業者名</label><input data-i="${i}" data-k="who" value="${esc(it.who)}"></div></div>
+    <div class="row"><button class="small" data-mk="${i}">原価×${settings.markup}で売値</button><span class="grow gp ${g.low ? 'low' : ''}" data-gp="${i}">${g.t}</span></div></div>`;
+}
+function renderAuto() {
+  const c = calc(); let h = '';
+  if (c.labor) h += `<div class="card auto"><div class="head"><b class="grow">現場管理費　1式</b><b>${yen(c.labor.amount)} 円</b></div>
+    <div class="note">${c.days}人工 × ${yen(settings.dayRate)}円　原価 ${yen(c.labor.cost)}円　${esc(laborWhoText(c.days))}</div></div>`;
+  h += `<div class="card auto"><div class="head"><b class="grow">諸経費　1式</b></div>
+    <div class="f2"><div><label>金額（空欄なら合計の${settings.overheadPct}%＝${yen(c.overheadAuto)}円）</label><input class="num" id="ovAmt" inputmode="numeric" value="${draft.overheadAmt ?? ''}" placeholder="${c.overheadAuto}"></div>
+      <div><label>原価（業者の諸経費など）</label><input class="num" id="ovCost" inputmode="numeric" value="${esc(draft.overheadCost)}"></div></div>
+    <div><label>職人・業者名</label><input id="ovWho" value="${esc(draft.overheadWho)}"></div></div>`;
+  h += `<div class="card auto"><div class="head"><b class="grow" style="text-align:center">値引き</b></div>
+    <div><label>値引き額（空欄なら粗利${settings.targetGp}%を超える${yen(settings.roundUnit)}円単位に自動＝${yen(-c.discountAuto)}円）</label>
+      <input class="num" id="discIn" inputmode="numeric" value="${draft.discount ?? ''}" placeholder="${-c.discountAuto}"></div>
+    <div class="note" id="discNote"></div></div>`;
+  $('autoRows').innerHTML = h;
+  renderDiscNote();
+}
+function renderDiscNote() {
+  const c = calc(), el = $('discNote'); if (!el) return;
+  el.textContent = c.cost ? `値引き前 ${yen(c.pre)}円 → 値引き後 ${yen(c.sub)}円（粗利率 ${(c.gp * 100).toFixed(1)}%）` + (c.pre < c.goal ? `　※値引きなしでも粗利${settings.targetGp}%に届きません` : '') : '原価が入ると自動で計算します';
 }
 function render() {
-  ['client', 'honor', 'title', 'estDate'].forEach(k => { if (document.activeElement !== $(k)) $(k).value = draft[k] || ''; });
+  ['client', 'honor', 'title', 'estDate', 'laborWho', 'laborManual'].forEach(k => { if (document.activeElement !== $(k)) $(k).value = draft[k] ?? ''; });
   $('dates').innerHTML = draft.dates.map((x, i) => {
     const d = dObj(x.date), wk = d.getDay() === 0 || d.getDay() === 6;
     return `<div class="chip${wk ? ' weekend' : ''}"><b>${d.getMonth() + 1}/${d.getDate()}(${WD[d.getDay()]})</b><input type="number" inputmode="decimal" min="0" step="0.5" value="${x.people}" data-di="${i}">人<button class="small danger" data-ddel="${i}">×</button></div>`;
-  }).join('') || '<span class="note">まだ作業日がありません</span>';
+  }).join('') || '<span class="note">日付なし</span>';
   renderLaborSummary();
-  const cards = draft.items.map((it, i) => itemCard(it, i, false));
-  const l = laborItem(); if (l) cards.push(itemCard(l, draft.items.length, true));
-  $('items').innerHTML = cards.join('') || '<p class="note">職人の見積を入れるか「＋ 行を追加」で始めてください。</p>';
-  const n = allItems().length;
-  $('rowWarn').hidden = n <= MAX_ROWS;
-  $('rowWarn').textContent = `明細が${n}行あります。原紙の1ページ目に入るのは${MAX_ROWS}行までです（ラフ版では超えた分は書き込まれません）。`;
-  renderTotals();
+  $('items').innerHTML = draft.items.map(itemCard).join('') || '<p class="note">Claudeの答えを取り込むか「＋ 行を追加」で始めてください。</p>';
+  $('notes').innerHTML = draft.notes.map((n, i) => `<div class="row"><input class="grow" data-ni="${i}" value="${esc(n)}"><button class="small danger" data-ndel="${i}">×</button></div>`).join('');
+  renderAuto(); renderTotals();
 }
 function renderLaborSummary() {
-  $('laborSummary').textContent = draft.dates.length ? `${draft.dates.length}日 / 延べ ${laborDays()}人工 × ${yen(laborPrice())}円 = ${yen(laborDays() * laborPrice())}円　備考欄には「${datesText()}」と入ります` : '';
+  const c = calc();
+  $('laborSummary').textContent = c.days ? `延べ ${c.days}人工 → 現場管理費 ${yen(c.labor.amount)}円（原価 ${yen(c.labor.cost)}円）` + (draft.dates.length ? `　備考欄に「${datesText()}」` : '') : '';
+}
+function usedRows() { // 明細＋現場管理費＋諸経費、3行下に値引き、その下に注意書き
+  const c = calc(), n = draft.items.length + (c.labor ? 1 : 0) + ((c.overhead || num(draft.overheadCost)) ? 1 : 0);
+  return n + (c.discount ? 3 : 1) + draft.notes.length;
 }
 function renderTotals() {
   const c = calc();
   $('barTotal').textContent = `${yen(c.total)} 円`;
   $('barSub').textContent = `小計 ${yen(c.sub)} / 税 ${yen(c.tax)}`;
-  const low = c.gp * 100 < num(settings.minGp);
-  $('barGp').className = 'gp' + (c.hasCost && low ? ' low' : '');
-  $('barGp').textContent = c.hasCost ? `粗利率 ${(c.gp * 100).toFixed(1)}%` : '原価未入力';
-  $('totalsDetail').textContent = `小計 ${yen(c.sub)}円 / 消費税 ${yen(c.tax)}円 / 合計 ${yen(c.total)}円` + (c.hasCost ? ` / 原価計 ${yen(c.cost)}円 / 粗利率 ${(c.gp * 100).toFixed(1)}%` : '');
+  $('barGp').className = 'gp' + (c.cost && c.gp * 100 < num(settings.targetGp) ? ' low' : '');
+  $('barGp').textContent = c.cost ? `粗利率 ${(c.gp * 100).toFixed(1)}%` : '原価未入力';
+  $('totalsDetail').textContent = `小計 ${yen(c.sub)}円 / 消費税 ${yen(c.tax)}円 / 合計 ${yen(c.total)}円` + (c.cost ? ` / 原価計 ${yen(c.cost)}円 / 粗利 ${yen(c.sub - c.cost)}円（${(c.gp * 100).toFixed(1)}%）` : '');
+  const max = LAST_ROW - FIRST_ROW + 1, u = usedRows();
+  $('rowWarn').hidden = u <= max;
+  $('rowWarn').textContent = `明細・値引き・注意書きで${u}行使います。原紙の1ページ目に入るのは${max}行までです（超えた分は書き込まれません）。`;
 }
 function refreshCard(i) { // 入力中のカードの金額・粗利だけ描き直す（入力欄のフォーカスを奪わない）
   const it = draft.items[i], amt = amountOf(it);
   const card = document.querySelector(`[data-card="${i}"]`); if (!card) return;
-  const a = card.querySelector('[data-k="amount"]'); if (document.activeElement !== a) a.value = it.price !== '' && it.price != null ? amt : it.amount;
+  const a = card.querySelector('[data-k="amount"]'); if (document.activeElement !== a) a.value = isSet(it.price) ? amt : (it.amount ?? '');
   const p = card.querySelector('[data-k="price"]'); if (document.activeElement !== p) p.value = it.price ?? '';
-  const g = card.querySelector('[data-gp]'), gp = amt && num(it.cost) ? (amt - num(it.cost)) / amt : null;
-  g.textContent = gp === null ? '' : `粗利 ${yen(amt - num(it.cost))}円（${(gp * 100).toFixed(1)}%）`;
-  g.className = 'gp' + (gp !== null && gp * 100 < num(settings.minGp) ? ' low' : '');
-  renderTotals();
+  const g = gpText(amt, it.cost), el = card.querySelector('[data-gp]');
+  el.textContent = g.t; el.className = 'grow gp' + (g.low ? ' low' : '');
+  refreshAuto();
+}
+function refreshAuto() { // 自動の行は入力中でなければ描き直す
+  const ae = document.activeElement;
+  if (ae && ['ovAmt', 'ovCost', 'ovWho', 'discIn'].includes(ae.id)) { renderDiscNote(); renderTotals(); return; }
+  renderAuto(); renderTotals();
 }
 
 /* ===== Excel：原紙にそのまま書き込む ===== */
@@ -381,11 +390,14 @@ function getRow(doc, r) {
   for (const row of sd.getElementsByTagNameNS(NS, 'row')) { const n = +row.getAttribute('r'); if (n === r) return row; if (n > r) { after = row; break; } }
   const row = doc.createElementNS(NS, 'row'); row.setAttribute('r', r); sd.insertBefore(row, after); return row;
 }
-function setCell(doc, ref, val) {
+function getCell(doc, ref) {
   const row = getRow(doc, +ref.match(/\d+/)[0]);
-  let c = null, after = null;
-  for (const x of row.getElementsByTagNameNS(NS, 'c')) { if (x.getAttribute('r') === ref) { c = x; break; } if (colNo(x.getAttribute('r')) > colNo(ref)) { after = x; break; } }
-  if (!c) { c = doc.createElementNS(NS, 'c'); c.setAttribute('r', ref); row.insertBefore(c, after); }
+  let after = null;
+  for (const x of row.getElementsByTagNameNS(NS, 'c')) { if (x.getAttribute('r') === ref) return x; if (colNo(x.getAttribute('r')) > colNo(ref)) { after = x; break; } }
+  const c = doc.createElementNS(NS, 'c'); c.setAttribute('r', ref); row.insertBefore(c, after); return c;
+}
+function setCell(doc, ref, val) {
+  const c = getCell(doc, ref);
   while (c.firstChild) c.removeChild(c.firstChild);
   c.removeAttribute('t');
   if (val === null || val === undefined || val === '') return;
@@ -399,28 +411,60 @@ function setCell(doc, ref, val) {
     const is = doc.createElementNS(NS, 'is'), t = doc.createElementNS(NS, 't'); t.textContent = val; is.append(t); c.append(is);
   }
 }
+// セルの書式をコピーして横位置だけ変えた書式を足し、その番号を返す
+function alignedStyle(styles, baseIdx, horizontal) {
+  const m = styles.xml.match(/<cellXfs count="(\d+)">([\s\S]*?)<\/cellXfs>/);
+  const xfs = m[2].match(/<xf\b[^>]*\/>|<xf\b[^>]*>[\s\S]*?<\/xf>/g);
+  let x = xfs[baseIdx].replace(/<alignment[^>]*\/>/, '').replace(/\s*applyAlignment="\d"/, '');
+  x = x.replace(/^<xf\b([^>]*?)\s*\/>$/, '<xf$1></xf>').replace(/^<xf\b/, '<xf applyAlignment="1"').replace(/<\/xf>$/, `<alignment horizontal="${horizontal}" vertical="center"/></xf>`);
+  styles.xml = styles.xml.replace(m[0], `<cellXfs count="${xfs.length + 1}">${m[2]}${x}</cellXfs>`);
+  return xfs.length;
+}
 function b64ToBytes(b64) { const s = atob(b64), a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+function sheetRows() { // 原紙に書く行の並び
+  const c = calc(), rows = draft.items.map(it => ({ ...it }));
+  if (c.labor) rows.push({ name: '現場管理費', qty: 1, unit: '式', price: '', amount: c.labor.amount, cost: c.labor.cost, who: laborWhoText(c.days), note: '' });
+  if (c.overhead || num(draft.overheadCost)) rows.push({ name: '諸経費', qty: 1, unit: '式', price: '', amount: c.overhead, cost: num(draft.overheadCost), who: draft.overheadWho, note: '' });
+  const out = rows.map(r => ({ type: 'item', ...r }));
+  if (c.discount) { out.push({ type: 'blank' }, { type: 'blank' }, { type: 'discount', amount: c.discount }); }
+  draft.notes.forEach(n => out.push({ type: 'note', name: n }));
+  return out;
+}
 async function buildExcel(tplBytes) {
   const zip = await JSZip.loadAsync(tplBytes);
   const sheetPath = 'xl/worksheets/sheet1.xml';
   const doc = new DOMParser().parseFromString(await zip.file(sheetPath).async('string'), 'application/xml');
-  const c = calc(), items = allItems().slice(0, MAX_ROWS);
+  const styles = { xml: await zip.file('xl/styles.xml').async('string') };
+  const c = calc(), rows = sheetRows().slice(0, LAST_ROW - FIRST_ROW + 1);
 
   setCell(doc, 'A4', draft.client || '');
   setCell(doc, 'B4', draft.honor || '御中');
   if (draft.estDate) setCell(doc, 'F4', Math.round((dObj(draft.estDate) - new Date(1899, 11, 30)) / 86400000));
   setCell(doc, 'A8', draft.title || '');
   setCell(doc, 'F8', datesText());
-  for (let r = 10; r <= 31; r++) ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(col => setCell(doc, col + r, ''));
-  items.forEach((it, k) => {
-    const r = 10 + k, amt = amountOf(it), hasPrice = it.price !== '' && it.price != null;
+  for (let r = FIRST_ROW; r <= LAST_ROW; r++) ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach(col => setCell(doc, col + r, ''));
+  const leftS = +(getCell(doc, 'A' + FIRST_ROW).getAttribute('s') || 0);
+  let centerS = null;
+  rows.forEach((it, k) => {
+    const r = FIRST_ROW + k;
+    if (it.type === 'blank') return;
+    if (it.type === 'discount') {
+      setCell(doc, 'A' + r, '値引き'); setCell(doc, 'E' + r, it.amount);
+      if (centerS === null) centerS = alignedStyle(styles, +(getCell(doc, 'A' + r).getAttribute('s') || 0), 'center');
+      getCell(doc, 'A' + r).setAttribute('s', centerS);
+      return;
+    }
+    getCell(doc, 'A' + r).setAttribute('s', leftS); // 原紙で行ごとに揃えが違うので、品名は左寄せにそろえる
     setCell(doc, 'A' + r, it.name || '');
+    if (it.type === 'note') return;
+    const amt = amountOf(it), hasPrice = isSet(it.price);
     if (num(it.qty)) setCell(doc, 'B' + r, num(it.qty));
     setCell(doc, 'C' + r, it.unit || '');
     if (hasPrice) { setCell(doc, 'D' + r, num(it.price)); setCell(doc, 'E' + r, { f: `B${r}*D${r}`, v: amt }); }
     else if (amt) setCell(doc, 'E' + r, amt);
     setCell(doc, 'F' + r, it.note || '');
     if (num(it.cost)) setCell(doc, 'G' + r, num(it.cost));
+    if (it.who) setCell(doc, 'H' + r, it.who);
   });
   // 合計欄の式はそのまま。スマホのプレビューでも数字が出るよう、計算済みの値だけ入れ直す
   setCell(doc, 'E32', { f: 'SUM(E8:E31)', v: c.sub });
@@ -429,9 +473,10 @@ async function buildExcel(tplBytes) {
   setCell(doc, 'G32', { f: 'SUM(G8:G31)', v: c.cost });
   setCell(doc, 'G33', { f: 'SUM(G8:G31)*0.1', v: c.cost * 0.1 });
   setCell(doc, 'G34', { f: 'SUM(G32:G33)', v: c.cost * 1.1 });
-  if (c.cost) { setCell(doc, 'H34', { f: 'E34/G34', v: c.total / (c.cost * 1.1) }); }
-  if (c.sub) { setCell(doc, 'I34', { f: '(E34-G34)/E34', v: c.gp }); }
+  if (c.cost) setCell(doc, 'H34', { f: 'E34/G34', v: c.total / (c.cost * 1.1) });
+  if (c.sub) setCell(doc, 'I34', { f: '(E34-G34)/E34', v: c.gp });
   zip.file(sheetPath, new XMLSerializer().serializeToString(doc));
+  zip.file('xl/styles.xml', styles.xml);
 
   // 原紙(.xltx)を普通のブック(.xlsx)にする＋開いた時に再計算させる
   let ct = await zip.file('[Content_Types].xml').async('string');
@@ -447,9 +492,9 @@ async function buildExcel(tplBytes) {
   zip.file('xl/workbook.xml', wb);
   return zip.generateAsync({ type: 'blob', compression: 'DEFLATE', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 }
-function fileName() { // 今のファイル名の付け方「工事名＋年月(2508)」
+function fileName() { // 今のファイル名の付け方「工事名＋年月(2610)」
   const d = dObj(draft.estDate || today());
-  return `${(draft.title || draft.client || '見積').replace(/[\\/:*?"<>|]/g, '')}${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, '0')}.xlsx`;
+  return `${(draft.title || draft.client || '見積').replace(/[\\/:*?"<>|\s　]/g, '')}${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, '0')}.xlsx`;
 }
 // 原紙: この端末で別の原紙を選んでいればそれ、なければアプリに入っている標準の原紙
 const BUILTIN_TPL = 'genshi.local.xltx';
@@ -471,53 +516,50 @@ async function exportExcel() {
 }
 
 /* ===== イベント ===== */
-$('btnCamera').onclick = () => $('camFile').click();
-$('btnPick').onclick = () => $('pickFile').click();
-['camFile', 'pickFile'].forEach(id => $(id).onchange = e => {
-  for (const f of e.target.files) readFile(f).catch(err => alert('読み込みに失敗しました：' + err.message));
-  e.target.value = '';
-});
-['client', 'honor', 'title', 'estDate'].forEach(k => $(k).oninput = e => { draft[k] = e.target.value; save(); });
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; } catch {}
+  const ta = document.createElement('textarea'); ta.value = t; document.body.append(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch {} ta.remove(); return ok;
+}
+$('btnCopyPrompt').onclick = async () => { $('importMsg').textContent = (await copyText(AI_PROMPT)) ? '頼み方をコピーしました。Claudeアプリに貼ってください。' : 'コピーできませんでした。'; };
+$('btnOpenClaude').onclick = () => { location.href = 'https://claude.ai/new'; };
+$('btnImport').onclick = () => {
+  try { $('importMsg').textContent = importAi(parseAi($('aiPaste').value)); $('importMsg').className = 'note grow ok'; $('aiPaste').value = ''; }
+  catch (e) { $('importMsg').textContent = '取り込めませんでした：' + e.message; $('importMsg').className = 'note grow'; }
+};
+['client', 'honor', 'title', 'estDate', 'laborWho', 'laborManual'].forEach(k => $(k).oninput = e => { draft[k] = e.target.value; save(); renderLaborSummary(); refreshAuto(); });
 $('btnAddDate').onclick = addDates;
-$('btnAddRow').onclick = () => { draft.items.push({ name: '', qty: 1, unit: '式', price: '', amount: '', cost: '', note: '' }); save(); render(); };
-document.querySelectorAll('[data-quick]').forEach(b => b.onclick = () => {
-  draft.items.push({ name: b.dataset.quick, qty: b.dataset.quick === '出精値引き' ? '' : 1, unit: b.dataset.quick === '出精値引き' ? '' : '式', price: '', amount: '', cost: '', note: '' });
-  save(); render();
-});
+$('btnAddRow').onclick = () => { draft.items.push({ name: '', qty: 1, unit: '式', price: '', amount: '', cost: '', who: '', note: '' }); save(); render(); };
+$('btnAddNote').onclick = () => { draft.notes.push('※'); save(); render(); };
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset.k) {
     const i = +t.dataset.i, it = draft.items[i], k = t.dataset.k;
-    if (k === 'amount') { it.amount = t.value; it.price = ''; }
-    else it[k] = t.value;
+    if (k === 'amount') { it.amount = t.value; it.price = ''; } else it[k] = t.value;
+    if (it.check && ['qty', 'price', 'amount', 'cost'].includes(k)) { it.check = false; t.closest('.card').classList.remove('check'); }
     save(); refreshCard(i);
-  } else if (t.dataset.di !== undefined) {
-    draft.dates[+t.dataset.di].people = t.value; save(); renderLaborSummary(); updateLaborCard();
-  } else if (t.id === 'laborPriceIn') {
-    draft.laborPrice = t.value === '' ? null : t.value; save(); renderLaborSummary(); updateLaborCard();
-  }
+  } else if (t.dataset.di !== undefined) { draft.dates[+t.dataset.di].people = t.value; save(); renderLaborSummary(); refreshAuto(); }
+  else if (t.dataset.ni !== undefined) { draft.notes[+t.dataset.ni] = t.value; save(); }
+  else if (t.id === 'ovAmt') { draft.overheadAmt = t.value === '' ? null : t.value; save(); refreshAuto(); }
+  else if (t.id === 'ovCost') { draft.overheadCost = t.value; save(); refreshAuto(); }
+  else if (t.id === 'ovWho') { draft.overheadWho = t.value; save(); }
+  else if (t.id === 'discIn') { draft.discount = t.value === '' ? null : t.value; save(); refreshAuto(); }
 });
-function updateLaborCard() {
-  const l = laborItem(); if (!l) return;
-  const a = document.querySelector('[data-amt="L"]'); if (a) a.textContent = `${yen(amountOf(l))} 円`;
-  const card = a && a.closest('.card'); if (card) { card.querySelector('input.num').value = l.qty; card.querySelector('.note').textContent = `${datesText()}（${draft.dates.length}日・延べ${l.qty}人工）`; }
-  const g = document.querySelector('[data-gp="L"]'); const amt = amountOf(l);
-  if (g) g.textContent = amt && num(l.cost) ? `粗利 ${yen(amt - num(l.cost))}円（${((amt - num(l.cost)) / amt * 100).toFixed(1)}%）` : '';
-  renderTotals();
-}
+document.addEventListener('focusout', e => { if (['ovAmt', 'ovCost', 'discIn'].includes(e.target.id)) setTimeout(() => { if (!['ovAmt', 'ovCost', 'discIn', 'ovWho'].includes(document.activeElement?.id)) renderAuto(); }, 0); });
 document.addEventListener('click', e => {
   const t = e.target;
   if (t.dataset.del !== undefined) { draft.items.splice(+t.dataset.del, 1); save(); render(); }
   if (t.dataset.ddel !== undefined) { draft.dates.splice(+t.dataset.ddel, 1); save(); render(); }
+  if (t.dataset.ndel !== undefined) { draft.notes.splice(+t.dataset.ndel, 1); save(); render(); }
   if (t.dataset.mk !== undefined) { applyMarkup(draft.items[+t.dataset.mk]); save(); refreshCard(+t.dataset.mk); }
 });
 
-const sIds = { sDayRate: 'dayRate', sDayCost: 'dayCost', sDefaultPeople: 'defaultPeople', sMarkup: 'markup', sMinGp: 'minGp' };
+const sIds = { sMarkup: 'markup', sOverheadPct: 'overheadPct', sDayRate: 'dayRate', sDayCost: 'dayCost', sTargetGp: 'targetGp', sRoundUnit: 'roundUnit', sDefaultPeople: 'defaultPeople' };
 function showTplName() { const t = lsGet(LS.tpl, null); $('tplName').textContent = t ? `この端末だけ：${t.name}` : '標準の原紙'; $('btnTplReset').hidden = !t; }
 $('btnTplReset').onclick = () => { try { localStorage.removeItem(LS.tpl); } catch {} showTplName(); };
 $('btnSettings').onclick = () => { for (const [id, k] of Object.entries(sIds)) $(id).value = settings[k]; showTplName(); $('settings').hidden = false; window.scrollTo({ top: 0, behavior: 'smooth' }); };
 $('btnSettingsClose').onclick = () => { $('settings').hidden = true; render(); };
-for (const [id, k] of Object.entries(sIds)) $(id).oninput = e => { settings[k] = e.target.value === '' && k === 'dayCost' ? '' : num(e.target.value); lsSet(LS.settings, settings); };
+for (const [id, k] of Object.entries(sIds)) $(id).oninput = e => { settings[k] = num(e.target.value); lsSet(LS.settings, settings); };
 $('btnTpl').onclick = () => $('tplFile').click();
 $('tplFile').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
@@ -527,8 +569,9 @@ $('tplFile').onchange = async e => {
   showTplName(); $('tplWarn').hidden = true; e.target.value = '';
 };
 $('btnExcel').onclick = () => exportExcel().catch(err => alert('Excelの作成に失敗しました：' + err.message));
-$('btnClear').onclick = () => { if (!confirm('宛先・作業日・明細を消します。設定と原紙は残ります。よろしいですか？')) return; draft = blankDraft(); save(); $('srcs').innerHTML = ''; render(); };
+$('btnClear').onclick = () => { if (!confirm('宛先・作業日・明細を消します。設定と原紙は残ります。よろしいですか？')) return; draft = blankDraft(); save(); render(); };
 
+const UNITS = ['式', 'ヶ所', '㎡', 'm', 'm3', 't', 'kg', '本', '個', '枚', '台', '組', 'セット', '人工', '日', '回', '基', '缶', '袋', '坪'];
 document.body.insertAdjacentHTML('beforeend', `<datalist id="unitList">${UNITS.map(u => `<option value="${u}">`).join('')}</datalist>`);
 render();
 </script>
