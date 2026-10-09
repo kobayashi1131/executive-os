@@ -194,7 +194,8 @@ const amountOf = it => isSet(it.price) ? num(it.qty) * num(it.price) : num(it.am
 function applyMarkup(it) {
   if (!num(it.cost)) return;
   const sell = num(it.cost) * num(settings.markup);
-  if (it.unit !== '式' && num(it.qty) > 1) { it.price = Math.ceil(sell / num(it.qty) / 10) * 10; it.amount = ''; }
+  // unitCost: 職人見積の単価（数量を切り上げる前の 原価÷数量）
+  if (it.unit !== '式' && num(it.qty) > 1) { it.price = Math.ceil((num(it.unitCost) || num(it.cost) / num(it.qty)) * num(settings.markup) / 10) * 10; it.amount = ''; }
   else { it.price = ''; it.amount = Math.ceil(sell / 100) * 100; }
 }
 function laborDays() { return draft.dates.length ? draft.dates.reduce((s, x) => s + num(x.people), 0) : num(draft.laborManual); }
@@ -285,7 +286,9 @@ function importAi(j) {
   let added = 0, keihi = 0;
   rows.forEach((r, i) => {
     if (r.kind === 'keihi') { keihi += costs[i]; return; }
-    const it = { name: String(r.name), qty: num(r.qty) || 1, unit: String(r.unit || '式'), price: '', amount: '', cost: costs[i], who: vendor, note: '', check: !!r.check };
+    // 数量の小数は切り上げ（56.4m → 57m）。単価は職人見積の単価から出す
+    const q = num(r.qty) || 1;
+    const it = { name: String(r.name), qty: Math.ceil(q), unit: String(r.unit || '式'), price: '', amount: '', cost: costs[i], unitCost: costs[i] / q, who: vendor, note: '', check: !!r.check };
     applyMarkup(it); draft.items.push(it); added++;
   });
   if (keihi) {
@@ -420,6 +423,25 @@ function alignedStyle(styles, baseIdx, horizontal) {
   styles.xml = styles.xml.replace(m[0], `<cellXfs count="${xfs.length + 1}">${m[2]}${x}</cellXfs>`);
   return xfs.length;
 }
+// 小数の数量（56.4m など）が原紙の整数書式で「56」と出ないよう、小数も出る書式を足して番号を返す
+function decimalStyle(styles, baseIdx) {
+  const code = '#,##0.0#', esc = code.replace(/"/g, '&quot;');
+  let id;
+  const found = styles.xml.match(new RegExp(`<numFmt numFmtId="(\\d+)" formatCode="${esc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"/>`));
+  if (found) id = +found[1];
+  else {
+    const ids = [...styles.xml.matchAll(/numFmtId="(\d+)"/g)].map(m => +m[1]);
+    id = Math.max(200, ...ids) + 1;
+    const nf = `<numFmt numFmtId="${id}" formatCode="${esc}"/>`;
+    if (/<numFmts count="\d+">/.test(styles.xml)) styles.xml = styles.xml.replace(/<numFmts count="(\d+)">/, (m, n) => `<numFmts count="${+n + 1}">${nf}`);
+    else styles.xml = styles.xml.replace(/(<styleSheet\b[^>]*>)/, `$1<numFmts count="1">${nf}</numFmts>`);
+  }
+  const m = styles.xml.match(/<cellXfs count="(\d+)">([\s\S]*?)<\/cellXfs>/);
+  const xfs = m[2].match(/<xf\b[^>]*\/>|<xf\b[^>]*>[\s\S]*?<\/xf>/g);
+  const x = xfs[baseIdx].replace(/numFmtId="\d+"/, `numFmtId="${id}"`).replace(/\s*applyNumberFormat="\d"/, '').replace(/^<xf\b/, '<xf applyNumberFormat="1"');
+  styles.xml = styles.xml.replace(m[0], `<cellXfs count="${xfs.length + 1}">${m[2]}${x}</cellXfs>`);
+  return xfs.length;
+}
 function b64ToBytes(b64) { const s = atob(b64), a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
 function sheetRows() { // 原紙に書く行の並び
   const c = calc(), rows = draft.items.map(it => ({ ...it }));
@@ -444,7 +466,7 @@ async function buildExcel(tplBytes) {
   setCell(doc, 'F8', datesText());
   for (let r = FIRST_ROW; r <= LAST_ROW; r++) ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach(col => setCell(doc, col + r, ''));
   const leftS = +(getCell(doc, 'A' + FIRST_ROW).getAttribute('s') || 0);
-  let centerS = null;
+  let centerS = null; const decS = {};
   rows.forEach((it, k) => {
     const r = FIRST_ROW + k;
     if (it.type === 'blank') return;
@@ -459,6 +481,7 @@ async function buildExcel(tplBytes) {
     if (it.type === 'note') return;
     const amt = amountOf(it), hasPrice = isSet(it.price);
     if (num(it.qty)) setCell(doc, 'B' + r, num(it.qty));
+    if (num(it.qty) % 1) { const bs = +(getCell(doc, 'B' + r).getAttribute('s') || 0); decS[bs] ??= decimalStyle(styles, bs); getCell(doc, 'B' + r).setAttribute('s', decS[bs]); }
     setCell(doc, 'C' + r, it.unit || '');
     if (hasPrice) { setCell(doc, 'D' + r, num(it.price)); setCell(doc, 'E' + r, { f: `B${r}*D${r}`, v: amt }); }
     else if (amt) setCell(doc, 'E' + r, amt);
@@ -536,6 +559,7 @@ document.addEventListener('input', e => {
   if (t.dataset.k) {
     const i = +t.dataset.i, it = draft.items[i], k = t.dataset.k;
     if (k === 'amount') { it.amount = t.value; it.price = ''; } else it[k] = t.value;
+    if (k === 'cost') it.unitCost = ''; // 原価を手で直したら、職人見積の単価は使わない
     if (it.check && ['qty', 'price', 'amount', 'cost'].includes(k)) { it.check = false; t.closest('.card').classList.remove('check'); }
     save(); refreshCard(i);
   } else if (t.dataset.di !== undefined) { draft.dates[+t.dataset.di].people = t.value; save(); renderLaborSummary(); refreshAuto(); }
