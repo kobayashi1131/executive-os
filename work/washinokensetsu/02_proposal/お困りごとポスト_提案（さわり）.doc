@@ -1,0 +1,48 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+<meta charset="utf-8">
+<style>
+body { font-family: "Meiryo UI", "Yu Gothic", sans-serif; font-size: 12pt; color: #222; line-height: 1.5; }
+p { margin: 0 0 4pt 0; }
+h1 { font-size: 22pt; color: #1F4E79; margin: 0 0 4pt 0; }
+.sub { font-size: 12pt; color: #555; margin: 0 0 14pt 0; }
+h2 { font-size: 14pt; color: #1F4E79; border-bottom: 1.5pt solid #1F4E79; margin: 16pt 0 6pt 0; padding-bottom: 2pt; }
+table { border-collapse: collapse; width: 100%; }
+td { vertical-align: middle; padding: 8pt 10pt; font-size: 12pt; border: 1pt solid #9DB7D5; }
+.step { background: #EAF1F8; font-weight: bold; color: #1F4E79; width: 28%; text-align: center; }
+.arrow { text-align: center; color: #1F4E79; font-size: 13pt; padding: 1pt; border: none; }
+.ask { background: #FFF6E5; border: 1.5pt solid #E0A030; padding: 10pt 12pt; font-size: 13pt; text-align: center; }
+.foot { font-size: 10pt; color: #555; margin-top: 18pt; text-align: right; }
+</style>
+</head>
+<body>
+
+<h1>社員の「困った」を、社長に届ける。</h1>
+<p class="sub">お困りごとポスト（仮）　ご意見をお聞かせください</p>
+
+<h2>こんなことはありませんか</h2>
+<p>・社員が困っていることが、社長のところまで上がってこない</p>
+<p>・「何か困ってる？」と聞いても「特にないです」で終わってしまう</p>
+<p>・不便な所や危ない所に、みんな慣れてしまっている</p>
+
+<h2>こんな仕組みを考えています</h2>
+<table>
+<tr><td class="step">① 社員が書く</td><td>QRコードをスマホで読んで書く。用紙に書いて投函箱へ入れてもOK</td></tr>
+<tr><td class="arrow" colspan="2">▼</td></tr>
+<tr><td class="step">② わしの建設がまとめる</td><td>集まった声を月1回、一覧にまとめます。建物や設備のことは、直し方と費用も一緒に</td></tr>
+<tr><td class="arrow" colspan="2">▼</td></tr>
+<tr><td class="step">③ 社長にお届け</td><td>月1回、一覧をお持ちします。職場には「受け付けました・対応しました」だけを貼り出します</td></tr>
+</table>
+<p style="margin-top:8pt">人間関係やお給料の声は、社長だけに届きます。わしの建設は中身を見ません。</p>
+
+<h2>社長のよいところ</h2>
+<p>・社員の本音が、月1回まとめて分かる</p>
+<p>・危ない所や不便な所に、早く気づける</p>
+<p>・「言えば聞いてもらえる」風通しのよい会社に</p>
+
+<p class="ask" style="margin-top:20pt">こんな仕組みがあったら、使ってみたいと思いますか？<br>率直なご意見をお聞かせください。</p>
+
+<p class="foot">有限会社わしの建設　担当：小林</p>
+
+</body>
+</html>
