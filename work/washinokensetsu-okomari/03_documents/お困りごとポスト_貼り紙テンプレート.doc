@@ -1,0 +1,64 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+<meta charset="utf-8">
+<style>
+@page Section1 { size: 595.3pt 841.9pt; margin: 50pt 50pt 40pt 50pt; }
+div.Section1 { page: Section1; }
+body { font-family: "Meiryo UI", "Yu Gothic", sans-serif; color: #222; }
+h1 { font-size: 26pt; color: #1F4E79; text-align: center; margin: 0 0 4pt 0; }
+.sub { font-size: 11pt; color: #666; text-align: center; margin: 0 0 22pt 0; }
+.big { font-size: 20pt; text-align: center; margin: 0 0 6pt 0; }
+.line { font-size: 20pt; text-align: center; margin: 0 0 20pt 0; }
+.box { border: 2pt solid #1F4E79; padding: 14pt; text-align: center; font-size: 20pt; margin: 0 0 22pt 0; }
+table { border-collapse: collapse; width: 100%; }
+th { background: #EAF1F8; color: #1F4E79; font-size: 13pt; border: 1pt solid #9DB7D5; padding: 6pt; }
+td { border: 1pt solid #9DB7D5; height: 40pt; font-size: 14pt; padding: 6pt; }
+h2 { font-size: 15pt; color: #1F4E79; margin: 0 0 6pt 0; }
+.thanks { font-size: 12pt; color: #555; text-align: center; margin-top: 18pt; }
+</style>
+</head>
+<body>
+<div class="Section1">
+
+<h1>お困りごとポスト　回収のお知らせ</h1>
+<p class="sub">S＝スマホ　K＝用紙</p>
+
+<p class="big"><b>　　　年　　月　　日（　）　　時　　分</b></p>
+<p class="line">投函箱の用紙を回収しました。</p>
+
+<p class="box">スマホからの声は<br><b>S - 　　　　　</b>　まで受け付けています。</p>
+
+<h2>わしの建設で直しました</h2>
+<table>
+<tr><th style="width:30%">受付番号</th><th>場所</th></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+</table>
+
+<p class="thanks">受け付けた声は、すべて社長にお届けします。ありがとうございます。<br>有限会社わしの建設</p>
+
+<br style="page-break-before:always" clear="all">
+
+<h1>お困りごとポスト　社内で対応しました</h1>
+<p class="sub">記入：社長・経理担当</p>
+
+<p class="big" style="margin-bottom:20pt"><b>　　　年　　月　　日</b></p>
+
+<table>
+<tr><th style="width:30%">受付番号</th><th>対応したこと（書ける範囲で）</th></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+</table>
+
+<p class="thanks">人間関係・お給料の声は、番号だけでもかまいません。</p>
+
+</div>
+</body>
+</html>
