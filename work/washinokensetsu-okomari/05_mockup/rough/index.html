@@ -75,6 +75,7 @@ textarea { min-height:90px; }
   <button data-tab="s2">② わしの建設のリスト</button>
   <button data-tab="s3">③ 社長への月末報告</button>
   <button data-tab="s4">④ 職場の貼り出し</button>
+  <button data-tab="s5">⑤ 社内用の貼り紙ひな形</button>
 </nav>
 <main>
 
@@ -157,7 +158,6 @@ textarea { min-height:90px; }
   <div class="card noprint">
     <div class="row">
       <label>回収日時 <input type="datetime-local" id="colAt" style="width:auto"></label>
-      <label class="row" style="font-size:13px"><input type="checkbox" id="showDone"> 「対応しました」の番号も載せる</label>
       <button class="btn sub" onclick="window.print()">印刷</button>
     </div>
   </div>
@@ -168,6 +168,24 @@ textarea { min-height:90px; }
     <p style="text-align:center;font-size:22px;margin:0 0 22px;border:2px solid var(--main);border-radius:8px;padding:14px">スマホからの声は<br><b style="font-size:30px;color:var(--main)" id="bS"></b> まで受け付けています。</p>
     <div id="bDone"></div>
     <p class="mini" style="margin-top:14px;text-align:center">受け付けた声は、すべて社長にお届けします。ありがとうございます。</p>
+  </div>
+</section>
+
+<!-- ⑤ 社内用ひな形 -->
+<section id="s5">
+  <p class="note">社内で直したもの（人間関係・お給料を含む）は、社長や経理の方が記入して貼る。わしの建設はこのひな形を渡すだけ。<button class="btn sub noprint" onclick="window.print()">印刷</button></p>
+  <div class="board">
+    <h2>お困りごとポスト　社内で対応しました</h2>
+    <p class="mini" style="text-align:center">記入：社長・経理担当　　　　年　　月　　日</p>
+    <table class="tbl" style="margin-top:16px">
+      <tr><th style="width:24%">受付番号</th><th>対応したこと（書ける範囲で）</th></tr>
+      <tr><td style="height:52px"></td><td></td></tr>
+      <tr><td style="height:52px"></td><td></td></tr>
+      <tr><td style="height:52px"></td><td></td></tr>
+      <tr><td style="height:52px"></td><td></td></tr>
+      <tr><td style="height:52px"></td><td></td></tr>
+    </table>
+    <p class="mini" style="margin-top:14px;text-align:center">人間関係・お給料の声は、番号だけでもかまいません。</p>
   </div>
 </section>
 
@@ -186,12 +204,12 @@ const SEED = [
   {no:'S-0012', cat:'作業場・道具', place:'検査場', body:'検査台が低くて腰が痛い', name:'鈴木', st:0, est:true, memo:'台のかさ上げ'},
   {no:'K-0004', cat:'その他', place:'休憩所', body:'夏、休憩所が暑すぎる', name:'田中', st:0, est:false, memo:'エアコン増設なら見積可'},
   {no:'K-0005', cat:'お給料・待遇', priv:true, st:0},
-  {no:'S-0008', cat:'建物・設備', place:'事務所', body:'ドアが閉まりにくい', name:'伊藤', st:2, est:true, memo:'9月対応済み'}
+  {no:'S-0008', cat:'建物・設備', place:'事務所', body:'ドアが閉まりにくい', name:'伊藤', st:2, est:true, memo:'9月対応済み', by:'わし'}
 ];
 let data;
-try { data = JSON.parse(localStorage.getItem('okomari-mock')) || null; } catch(e) { data = null; }
+try { data = JSON.parse(localStorage.getItem('okomari-mock2')) || null; } catch(e) { data = null; }
 if (!data) data = JSON.parse(JSON.stringify(SEED));
-function save(){ try { localStorage.setItem('okomari-mock', JSON.stringify(data)); } catch(e) {} }
+function save(){ try { localStorage.setItem('okomari-mock2', JSON.stringify(data)); } catch(e) {} }
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const isPriv = cat => CATS.find(c => c.k === cat)?.priv;
@@ -258,15 +276,16 @@ function render(){
   $('monthLbl').textContent = MONTH; $('rMonth').textContent = MONTH;
   $('sum2').innerHTML = summary(); $('sum3').innerHTML = summary();
   const sorted = [...data].sort((a,b) => a.no.localeCompare(b.no));
-  $('list').innerHTML = `<tr><th>番号</th><th>分類</th><th>場所</th><th>内容</th><th>名前</th><th>見積</th><th>状況</th><th>メモ</th></tr>` +
+  $('list').innerHTML = `<tr><th>番号</th><th>分類</th><th>場所</th><th>内容</th><th>名前</th><th>見積</th><th>状況</th><th>直した所</th><th>メモ</th></tr>` +
     sorted.map(d => d.priv
-      ? `<tr class="masked"><td><span class="tag ${d.no[0]==='K'?'k':''}">${d.no}</span></td><td>${esc(d.cat)}</td><td colspan="4">社長に直送（中身は見られません）</td><td>${stSel(d)}</td><td></td></tr>`
+      ? `<tr class="masked"><td><span class="tag ${d.no[0]==='K'?'k':''}">${d.no}</span></td><td>${esc(d.cat)}</td><td colspan="4">社長に直送（中身は見られません）</td><td>${stSel(d)}</td><td>社内</td><td></td></tr>`
       : `<tr><td><span class="tag ${d.no[0]==='K'?'k':''}">${d.no}</span></td><td>${esc(d.cat)}</td><td>${esc(d.place)}</td><td>${esc(d.body)}</td><td>${esc(d.name)}</td>
-         <td><input type="checkbox" data-est="${d.no}" ${d.est?'checked':''}></td><td>${stSel(d)}</td>
+         <td><input type="checkbox" data-est="${d.no}" ${d.est?'checked':''}></td><td>${stSel(d)}</td><td>${bySel(d)}</td>
          <td><input type="text" data-memo="${d.no}" value="${esc(d.memo)}" style="min-width:120px"></td></tr>`).join('');
   document.querySelectorAll('[data-est]').forEach(c => c.onchange = () => { data.find(d=>d.no===c.dataset.est).est = c.checked; save(); });
   document.querySelectorAll('[data-memo]').forEach(c => c.onchange = () => { data.find(d=>d.no===c.dataset.memo).memo = c.value; save(); });
   document.querySelectorAll('[data-st]').forEach(c => c.onchange = () => { data.find(d=>d.no===c.dataset.st).st = +c.value; save(); });
+  document.querySelectorAll('[data-by]').forEach(c => c.onchange = () => { data.find(d=>d.no===c.dataset.by).by = c.value; save(); });
 
   const priv = data.filter(d => d.priv);
   $('privLine').innerHTML = `人間関係・お給料など「社長だけ」の声が <b>${priv.length}件</b> ありました（${priv.map(d=>d.no).join('、') || 'なし'}）。中身は社長にメールで直接お届けしています。ご確認ください。`;
@@ -279,11 +298,16 @@ function render(){
   $('bK').textContent = ks.length ? `回収した用紙：${ks[0]}${ks.length > 1 ? '〜' + ks[ks.length-1] : ''}（${ks.length}枚）` : '';
   const ss = sorted.filter(d => d.no.startsWith('S-')).map(d => d.no);
   $('bS').textContent = ss.length ? ss[ss.length-1] : 'S-0000';
-  const done = sorted.filter(d => d.st === 2).map(d => d.no);
-  $('bDone').innerHTML = $('showDone').checked && done.length
-    ? `<p style="text-align:center;font-size:18px">対応しました：${done.join('、')}</p>` : '';
+  const done = sorted.filter(d => d.st === 2 && d.by === 'わし');
+  $('bDone').innerHTML = done.length
+    ? `<p style="text-align:center;font-size:18px;margin:0 0 4px"><b>わしの建設で直しました</b></p>` +
+      done.map(d => `<p style="text-align:center;font-size:18px;margin:0">${d.no}　${esc(d.place)}</p>`).join('') : '';
 }
-$('colAt').onchange = render; $('showDone').onchange = render;
+$('colAt').onchange = render;
+function bySel(d){
+  return `<select data-by="${d.no}">` + [['','—'],['わし','わしの建設'],['社内','社内']]
+    .map(([v,t]) => `<option value="${v}" ${(d.by||'')===v?'selected':''}>${t}</option>`).join('') + `</select>`;
+}
 function stSel(d){ return `<select data-st="${d.no}">${STATUS.map((s,i)=>`<option value="${i}" ${i===d.st?'selected':''}>${s}</option>`).join('')}</select>`; }
 updForm(); render();
 </script>
