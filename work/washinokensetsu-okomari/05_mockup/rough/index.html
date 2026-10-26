@@ -153,12 +153,21 @@ textarea { min-height:90px; }
 
 <!-- ④ 職場の貼り出し -->
 <section id="s4">
-  <p class="note">印刷して、投函箱の横に貼る。中身と名前は載せない。<button class="btn sub noprint" onclick="window.print()">印刷</button></p>
+  <p class="note">月1回の回収日に、投函箱の横に貼る。中身と名前は載せない。</p>
+  <div class="card noprint">
+    <div class="row">
+      <label>回収日時 <input type="datetime-local" id="colAt" style="width:auto"></label>
+      <label class="row" style="font-size:13px"><input type="checkbox" id="showDone"> 「対応しました」の番号も載せる</label>
+      <button class="btn sub" onclick="window.print()">印刷</button>
+    </div>
+  </div>
   <div class="board">
-    <h2>お困りごとポスト　受付状況</h2>
-    <p class="mini" style="text-align:center">S＝スマホ　K＝用紙　／　<span id="bMonth"></span>更新</p>
-    <table class="tbl" id="board"></table>
-    <p class="mini" style="margin-top:14px;text-align:center">書いてくれた声は、すべて社長に届いています。ありがとうございます。</p>
+    <h2>お困りごとポスト　回収のお知らせ</h2>
+    <p style="text-align:center;font-size:22px;margin:22px 0 8px"><b id="bAt"></b><br>投函箱の用紙を回収しました。</p>
+    <p style="text-align:center;font-size:16px;color:var(--gray);margin:0 0 18px" id="bK"></p>
+    <p style="text-align:center;font-size:22px;margin:0 0 22px;border:2px solid var(--main);border-radius:8px;padding:14px">スマホからの声は<br><b style="font-size:30px;color:var(--main)" id="bS"></b> まで受け付けています。</p>
+    <div id="bDone"></div>
+    <p class="mini" style="margin-top:14px;text-align:center">受け付けた声は、すべて社長にお届けします。ありがとうございます。</p>
   </div>
 </section>
 
@@ -246,7 +255,7 @@ function summary(){
   return `<div>全部 ${data.length}件</div><div>中身が見える分 ${pub.length}件</div><div>社長に直送 ${priv.length}件</div><div>見積できそう ${pub.filter(d=>d.est).length}件</div>`;
 }
 function render(){
-  $('monthLbl').textContent = MONTH; $('rMonth').textContent = MONTH; $('bMonth').textContent = MONTH;
+  $('monthLbl').textContent = MONTH; $('rMonth').textContent = MONTH;
   $('sum2').innerHTML = summary(); $('sum3').innerHTML = summary();
   const sorted = [...data].sort((a,b) => a.no.localeCompare(b.no));
   $('list').innerHTML = `<tr><th>番号</th><th>分類</th><th>場所</th><th>内容</th><th>名前</th><th>見積</th><th>状況</th><th>メモ</th></tr>` +
@@ -264,8 +273,17 @@ function render(){
   $('rep').innerHTML = `<tr><th>番号</th><th>分類</th><th>場所</th><th>内容</th><th>わしの建設より</th></tr>` +
     sorted.filter(d => !d.priv && d.st < 2).map(d => `<tr><td>${d.no}</td><td>${esc(d.cat)}</td><td>${esc(d.place)}</td><td>${esc(d.body)}</td>
       <td>${d.est ? '<span class="est">わしの建設で対応できます</span><br>' : ''}${esc(d.memo)}</td></tr>`).join('');
-  $('board').innerHTML = `<tr><th>受付番号</th><th>状況</th></tr>` + sorted.map(d => `<tr><td>${d.no}</td><td>${STATUS[d.st]}</td></tr>`).join('');
+  const at = $('colAt').value ? new Date($('colAt').value) : new Date();
+  $('bAt').textContent = `${at.getFullYear()}年${at.getMonth()+1}月${at.getDate()}日 ${at.getHours()}時${String(at.getMinutes()).padStart(2,'0')}分`;
+  const ks = sorted.filter(d => d.no.startsWith('K-')).map(d => d.no);
+  $('bK').textContent = ks.length ? `回収した用紙：${ks[0]}${ks.length > 1 ? '〜' + ks[ks.length-1] : ''}（${ks.length}枚）` : '';
+  const ss = sorted.filter(d => d.no.startsWith('S-')).map(d => d.no);
+  $('bS').textContent = ss.length ? ss[ss.length-1] : 'S-0000';
+  const done = sorted.filter(d => d.st === 2).map(d => d.no);
+  $('bDone').innerHTML = $('showDone').checked && done.length
+    ? `<p style="text-align:center;font-size:18px">対応しました：${done.join('、')}</p>` : '';
 }
+$('colAt').onchange = render; $('showDone').onchange = render;
 function stSel(d){ return `<select data-st="${d.no}">${STATUS.map((s,i)=>`<option value="${i}" ${i===d.st?'selected':''}>${s}</option>`).join('')}</select>`; }
 updForm(); render();
 </script>
