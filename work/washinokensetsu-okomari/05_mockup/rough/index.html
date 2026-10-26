@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>お困りごとポスト（ラフモック）</title>
+<style>
+:root { --main:#1F4E79; --light:#EAF1F8; --line:#C9D6E3; --warn:#FFF6E5; --warnline:#E0A030; --gray:#666; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Meiryo UI","Yu Gothic",sans-serif; color:#222; background:#F5F7FA; font-size:15px; }
+header { background:var(--main); color:#fff; padding:10px 16px; }
+header h1 { font-size:17px; margin:0; }
+header p { margin:2px 0 0; font-size:12px; opacity:.85; }
+nav { display:flex; flex-wrap:wrap; gap:6px; padding:10px 16px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+nav button { border:1px solid var(--main); background:#fff; color:var(--main); padding:7px 12px; border-radius:18px; font-size:14px; cursor:pointer; }
+nav button.on { background:var(--main); color:#fff; }
+main { padding:16px; max-width:980px; margin:0 auto; }
+section { display:none; }
+section.on { display:block; }
+.note { font-size:12px; color:var(--gray); margin:4px 0 12px; }
+.phone { max-width:390px; margin:0 auto; background:#fff; border:8px solid #333; border-radius:28px; padding:18px 16px 24px; }
+.phone h2 { font-size:18px; color:var(--main); margin:0 0 4px; }
+label.f { display:block; font-weight:bold; margin:14px 0 6px; font-size:14px; }
+.req { color:#C00; font-size:12px; margin-left:4px; }
+.opt { color:var(--gray); font-size:12px; margin-left:4px; font-weight:normal; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; }
+.chips label { border:1px solid var(--line); border-radius:16px; padding:6px 10px; font-size:13px; cursor:pointer; background:#fff; }
+.chips input { display:none; }
+.chips input:checked + span { color:#fff; }
+.chips label:has(input:checked) { background:var(--main); border-color:var(--main); color:#fff; }
+input[type=text], textarea, select { width:100%; border:1px solid #BBB; border-radius:6px; padding:9px; font-size:15px; font-family:inherit; }
+textarea { min-height:90px; }
+.private { background:var(--warn); border:1px solid var(--warnline); border-radius:8px; padding:10px; font-size:13px; margin-top:12px; display:none; }
+.btn { display:inline-block; background:var(--main); color:#fff; border:none; border-radius:8px; padding:11px 16px; font-size:15px; cursor:pointer; }
+.btn.wide { width:100%; margin-top:18px; }
+.btn.sub { background:#fff; color:var(--main); border:1px solid var(--main); }
+.done { text-align:center; padding:30px 10px; }
+.done .no { font-size:34px; font-weight:bold; color:var(--main); margin:10px 0; letter-spacing:2px; }
+.card { background:#fff; border:1px solid var(--line); border-radius:8px; padding:14px; margin-bottom:14px; }
+.card h3 { margin:0 0 8px; font-size:15px; color:var(--main); }
+.tbl { width:100%; border-collapse:collapse; font-size:13px; }
+.tbl th, .tbl td { border:1px solid var(--line); padding:6px 7px; text-align:left; vertical-align:top; }
+.tbl th { background:var(--light); color:var(--main); white-space:nowrap; }
+.tbl select { padding:4px; font-size:13px; }
+.tag { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px; background:var(--light); color:var(--main); white-space:nowrap; }
+.tag.k { background:#EEE; color:#444; }
+.masked { color:var(--gray); background:#FAFAFA; }
+.row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.scroll { overflow-x:auto; }
+.paper { background:#fff; max-width:794px; margin:0 auto; padding:36px 40px; border:1px solid #DDD; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.paper h2 { color:var(--main); font-size:20px; margin:0 0 4px; }
+.sum { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+.sum div { border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:13px; background:var(--light); }
+.est { color:#B35C00; font-weight:bold; font-size:12px; }
+.board { background:#fff; max-width:794px; margin:0 auto; padding:36px 40px; border:1px solid #DDD; }
+.board h2 { text-align:center; font-size:26px; color:var(--main); margin:0 0 6px; }
+.board .tbl { font-size:20px; }
+.board .tbl td, .board .tbl th { padding:10px 14px; }
+.mini { font-size:12px; color:var(--gray); }
+@media print {
+  header, nav, .noprint, .note { display:none !important; }
+  body { background:#fff; }
+  main { padding:0; max-width:none; }
+  .paper, .board { border:none; box-shadow:none; padding:0; max-width:none; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>お困りごとポスト（ラフモック）</h1>
+  <p>サンプル工業 様（架空）／ 有限会社わしの建設　※見た目と流れの確認用。データはこのブラウザの中だけ</p>
+</header>
+<nav>
+  <button data-tab="s1" class="on">① 社員のスマホ</button>
+  <button data-tab="s2">② わしの建設のリスト</button>
+  <button data-tab="s3">③ 社長への月末報告</button>
+  <button data-tab="s4">④ 職場の貼り出し</button>
+</nav>
+<main>
+
+<!-- ① 社員のスマホ -->
+<section id="s1" class="on">
+  <p class="note">職場に貼ったQRコードを読むと、この画面が開く想定。</p>
+  <div class="phone">
+    <div id="form">
+      <h2>お困りごとポスト</h2>
+      <p class="mini">困っていること・気になることを教えてください。月に1回、社長にお届けします。</p>
+      <label class="f">どんなこと？<span class="req">必須</span></label>
+      <div class="chips" id="cats"></div>
+      <div class="private" id="privNote">この内容は<b>社長だけ</b>に届きます。わしの建設は中身を見ません。</div>
+      <label class="f">どこで？<span class="opt">任意</span></label>
+      <input type="text" id="place" placeholder="例）2工場の入口">
+      <label class="f">困っていること<span class="req">必須</span></label>
+      <textarea id="body" placeholder="例）雨の日に入口に水がたまって、台車が通りにくい"></textarea>
+      <label class="f">写真<span class="opt">任意</span></label>
+      <input type="file" accept="image/*" id="photo">
+      <label class="f">名前<span class="req" id="nameReq">必須</span><span class="opt" id="nameOpt" style="display:none">書かなくてもOK</span></label>
+      <input type="text" id="name" placeholder="例）山田">
+      <p class="mini" id="nameWhy">直す場所などを確認するために使います。</p>
+      <label class="row" style="margin-top:12px;font-size:13px"><input type="checkbox" id="onlyBoss"> 社長だけに見せる</label>
+      <button class="btn wide" id="send">送る</button>
+    </div>
+    <div id="done" class="done" style="display:none">
+      <p>受け付けました。ありがとうございます。</p>
+      <p class="mini">受付番号</p>
+      <div class="no" id="doneNo">S-0000</div>
+      <p class="mini">状況は、投函箱の横の貼り紙で確認できます。<br>この番号を控えておいてください。</p>
+      <button class="btn sub" id="again">もう1件書く</button>
+    </div>
+  </div>
+</section>
+
+<!-- ② わしの建設のリスト -->
+<section id="s2">
+  <p class="note">わしの建設だけが見る画面。人間関係・お給料と「社長だけ」の分は、中身が残らず社長にメールで直接届く想定。ここには件数だけ出る。</p>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <h3 style="margin:0">今月の声（<span id="monthLbl"></span>）</h3>
+      <div class="row">
+        <button class="btn sub" id="toPaper">用紙を手入力する</button>
+        <button class="btn" id="bulk">報告後：まとめて「社長に届けました」にする</button>
+      </div>
+    </div>
+    <div class="sum" id="sum2"></div>
+    <div class="scroll"><table class="tbl" id="list"></table></div>
+  </div>
+  <div class="card" id="paperForm" style="display:none">
+    <h3>用紙の手入力（月1回回収した分）</h3>
+    <div class="row">
+      <input type="text" id="kNo" placeholder="控えの番号 例）K-0005" style="max-width:180px">
+      <select id="kCat" style="max-width:200px"></select>
+      <input type="text" id="kPlace" placeholder="場所" style="max-width:180px">
+      <input type="text" id="kName" placeholder="名前" style="max-width:140px">
+    </div>
+    <textarea id="kBody" placeholder="書いてある内容" style="margin-top:8px"></textarea>
+    <p class="mini">人間関係・お給料・「社長だけ」の用紙は、手入力せず封筒のまま社長へ渡す想定（件数だけ入れる）。</p>
+    <button class="btn" id="kAdd">追加</button>
+  </div>
+</section>
+
+<!-- ③ 社長への月末報告 -->
+<section id="s3">
+  <p class="note">印刷して、訪問時に社長へ渡す（A4）。<button class="btn sub noprint" onclick="window.print()">印刷</button></p>
+  <div class="paper">
+    <h2>お困りごとポスト　<span id="rMonth"></span>のご報告</h2>
+    <p class="mini">サンプル工業 様　／　有限会社わしの建設</p>
+    <div class="sum" id="sum3"></div>
+    <p id="privLine" style="background:var(--warn);border:1px solid var(--warnline);border-radius:6px;padding:8px 10px;font-size:13px"></p>
+    <table class="tbl" id="rep"></table>
+    <p class="mini" style="margin-top:12px">「わしの建設で対応できます」の印があるものは、直し方とおおよその費用を別紙でお持ちしています。どれをどう進めるかは、社長がお決めください。</p>
+  </div>
+</section>
+
+<!-- ④ 職場の貼り出し -->
+<section id="s4">
+  <p class="note">印刷して、投函箱の横に貼る。中身と名前は載せない。<button class="btn sub noprint" onclick="window.print()">印刷</button></p>
+  <div class="board">
+    <h2>お困りごとポスト　受付状況</h2>
+    <p class="mini" style="text-align:center">S＝スマホ　K＝用紙　／　<span id="bMonth"></span>更新</p>
+    <table class="tbl" id="board"></table>
+    <p class="mini" style="margin-top:14px;text-align:center">書いてくれた声は、すべて社長に届いています。ありがとうございます。</p>
+  </div>
+</section>
+
+</main>
+<script>
+const CATS = [
+  {k:'建物・設備', priv:false}, {k:'作業場・道具', priv:false}, {k:'危ない所', priv:false},
+  {k:'人間関係', priv:true}, {k:'お給料・待遇', priv:true}, {k:'その他', priv:false}
+];
+const STATUS = ['受け付けました','社長に届けました','対応しました'];
+const MONTH = '2026年10月';
+const SEED = [
+  {no:'S-0009', cat:'建物・設備', place:'2工場の入口', body:'雨の日に入口に水がたまって、台車が通りにくい', name:'山田', st:0, est:true, memo:'排水溝の追加で対応できそう'},
+  {no:'S-0010', cat:'危ない所', place:'3工場の階段', body:'手すりがぐらぐらしている', name:'佐藤', st:0, est:true, memo:''},
+  {no:'S-0011', cat:'人間関係', priv:true, st:0},
+  {no:'S-0012', cat:'作業場・道具', place:'検査場', body:'検査台が低くて腰が痛い', name:'鈴木', st:0, est:true, memo:'台のかさ上げ'},
+  {no:'K-0004', cat:'その他', place:'休憩所', body:'夏、休憩所が暑すぎる', name:'田中', st:0, est:false, memo:'エアコン増設なら見積可'},
+  {no:'K-0005', cat:'お給料・待遇', priv:true, st:0},
+  {no:'S-0008', cat:'建物・設備', place:'事務所', body:'ドアが閉まりにくい', name:'伊藤', st:2, est:true, memo:'9月対応済み'}
+];
+let data;
+try { data = JSON.parse(localStorage.getItem('okomari-mock')) || null; } catch(e) { data = null; }
+if (!data) data = JSON.parse(JSON.stringify(SEED));
+function save(){ try { localStorage.setItem('okomari-mock', JSON.stringify(data)); } catch(e) {} }
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isPriv = cat => CATS.find(c => c.k === cat)?.priv;
+
+// tabs
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+  render();
+});
+
+// ① form
+$('cats').innerHTML = CATS.map((c,i) => `<label><input type="radio" name="cat" value="${c.k}"><span>${c.k}</span></label>`).join('');
+function updForm(){
+  const cat = document.querySelector('input[name=cat]:checked')?.value;
+  const priv = (cat && isPriv(cat)) || $('onlyBoss').checked;
+  $('privNote').style.display = priv ? 'block' : 'none';
+  const anon = cat && isPriv(cat);
+  $('nameReq').style.display = anon ? 'none' : '';
+  $('nameOpt').style.display = anon ? '' : 'none';
+  $('nameWhy').textContent = anon ? '書かなくても届きます。' : '直す場所などを確認するために使います。';
+}
+document.querySelectorAll('input[name=cat]').forEach(r => r.onchange = updForm);
+$('onlyBoss').onchange = updForm;
+function nextNo(prefix){
+  const n = data.filter(d => d.no.startsWith(prefix)).map(d => +d.no.slice(2));
+  return prefix + String((n.length ? Math.max(...n) : 0) + 1).padStart(4,'0');
+}
+$('send').onclick = () => {
+  const cat = document.querySelector('input[name=cat]:checked')?.value;
+  if (!cat) return alert('「どんなこと？」を選んでください');
+  if (!$('body').value.trim()) return alert('困っていることを書いてください');
+  if (!isPriv(cat) && !$('name').value.trim()) return alert('名前を書いてください');
+  const no = nextNo('S-');
+  const priv = isPriv(cat) || $('onlyBoss').checked;
+  data.push(priv ? {no, cat, priv:true, st:0} : {no, cat, place:$('place').value, body:$('body').value, name:$('name').value, st:0, est:false, memo:''});
+  save();
+  $('doneNo').textContent = no;
+  $('form').style.display = 'none'; $('done').style.display = 'block';
+};
+$('again').onclick = () => {
+  ['place','body','name'].forEach(i => $(i).value = ''); $('photo').value = ''; $('onlyBoss').checked = false;
+  document.querySelectorAll('input[name=cat]').forEach(r => r.checked = false); updForm();
+  $('form').style.display = 'block'; $('done').style.display = 'none';
+};
+
+// ② list
+$('kCat').innerHTML = CATS.map(c => `<option>${c.k}</option>`).join('');
+$('toPaper').onclick = () => { const f = $('paperForm'); f.style.display = f.style.display === 'none' ? 'block' : 'none'; };
+$('kAdd').onclick = () => {
+  let no = $('kNo').value.trim().toUpperCase(); if (!no) return alert('控えの番号を入れてください');
+  if (!no.startsWith('K-')) no = 'K-' + no.replace(/\D/g,'').padStart(4,'0');
+  if (data.some(d => d.no === no)) return alert(no + ' はもう入っています');
+  const cat = $('kCat').value;
+  data.push(isPriv(cat) ? {no, cat, priv:true, st:0} : {no, cat, place:$('kPlace').value, body:$('kBody').value, name:$('kName').value, st:0, est:false, memo:''});
+  save(); ['kNo','kPlace','kName','kBody'].forEach(i => $(i).value = ''); render();
+};
+$('bulk').onclick = () => { data.forEach(d => { if (d.st === 0) d.st = 1; }); save(); render(); };
+function summary(){
+  const pub = data.filter(d => !d.priv), priv = data.filter(d => d.priv);
+  return `<div>全部 ${data.length}件</div><div>中身が見える分 ${pub.length}件</div><div>社長に直送 ${priv.length}件</div><div>見積できそう ${pub.filter(d=>d.est).length}件</div>`;
+}
+function render(){
+  $('monthLbl').textContent = MONTH; $('rMonth').textContent = MONTH; $('bMonth').textContent = MONTH;
+  $('sum2').innerHTML = summary(); $('sum3').innerHTML = summary();
+  const sorted = [...data].sort((a,b) => a.no.localeCompare(b.no));
+  $('list').innerHTML = `<tr><th>番号</th><th>分類</th><th>場所</th><th>内容</th><th>名前</th><th>見積</th><th>状況</th><th>メモ</th></tr>` +
+    sorted.map(d => d.priv
+      ? `<tr class="masked"><td><span class="tag ${d.no[0]==='K'?'k':''}">${d.no}</span></td><td>${esc(d.cat)}</td><td colspan="4">社長に直送（中身は見られません）</td><td>${stSel(d)}</td><td></td></tr>`
+      : `<tr><td><span class="tag ${d.no[0]==='K'?'k':''}">${d.no}</span></td><td>${esc(d.cat)}</td><td>${esc(d.place)}</td><td>${esc(d.body)}</td><td>${esc(d.name)}</td>
+         <td><input type="checkbox" data-est="${d.no}" ${d.est?'checked':''}></td><td>${stSel(d)}</td>
+         <td><input type="text" data-memo="${d.no}" value="${esc(d.memo)}" style="min-width:120px"></td></tr>`).join('');
+  document.querySelectorAll('[data-est]').forEach(c => c.onchange = () => { data.find(d=>d.no===c.dataset.est).est = c.checked; save(); });
+  document.querySelectorAll('[data-memo]').forEach(c => c.onchange = () => { data.find(d=>d.no===c.dataset.memo).memo = c.value; save(); });
+  document.querySelectorAll('[data-st]').forEach(c => c.onchange = () => { data.find(d=>d.no===c.dataset.st).st = +c.value; save(); });
+
+  const priv = data.filter(d => d.priv);
+  $('privLine').innerHTML = `人間関係・お給料など「社長だけ」の声が <b>${priv.length}件</b> ありました（${priv.map(d=>d.no).join('、') || 'なし'}）。中身は社長にメールで直接お届けしています。ご確認ください。`;
+  $('rep').innerHTML = `<tr><th>番号</th><th>分類</th><th>場所</th><th>内容</th><th>わしの建設より</th></tr>` +
+    sorted.filter(d => !d.priv && d.st < 2).map(d => `<tr><td>${d.no}</td><td>${esc(d.cat)}</td><td>${esc(d.place)}</td><td>${esc(d.body)}</td>
+      <td>${d.est ? '<span class="est">わしの建設で対応できます</span><br>' : ''}${esc(d.memo)}</td></tr>`).join('');
+  $('board').innerHTML = `<tr><th>受付番号</th><th>状況</th></tr>` + sorted.map(d => `<tr><td>${d.no}</td><td>${STATUS[d.st]}</td></tr>`).join('');
+}
+function stSel(d){ return `<select data-st="${d.no}">${STATUS.map((s,i)=>`<option value="${i}" ${i===d.st?'selected':''}>${s}</option>`).join('')}</select>`; }
+updForm(); render();
+</script>
+</body>
+</html>
