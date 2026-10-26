@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Meiryo UI", "Hiragino Sans", "Yu Gothic", sans-serif; color: #222; background: #F5F7FA; font-size: 16px; }
+  .wrap { max-width: 480px; margin: 0 auto; background: #fff; min-height: 100vh; padding: 18px 16px 32px; }
+  h1 { font-size: 20px; color: #1F4E79; margin: 0 0 2px; }
+  .co { font-size: 13px; color: #666; margin: 0 0 10px; }
+  .mini { font-size: 13px; color: #666; margin: 4px 0; }
+  label.f { display: block; font-weight: bold; margin: 16px 0 6px; font-size: 15px; }
+  .req { color: #C00; font-size: 12px; margin-left: 4px; }
+  .opt { color: #666; font-size: 12px; margin-left: 4px; font-weight: normal; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips label { border: 1px solid #C9D6E3; border-radius: 18px; padding: 8px 12px; font-size: 14px; cursor: pointer; }
+  .chips input { display: none; }
+  .chips label.on { background: #1F4E79; border-color: #1F4E79; color: #fff; }
+  input[type=text], textarea { width: 100%; border: 1px solid #BBB; border-radius: 6px; padding: 10px; font-size: 16px; font-family: inherit; }
+  textarea { min-height: 110px; }
+  .private { background: #FFF6E5; border: 1px solid #E0A030; border-radius: 8px; padding: 10px; font-size: 14px; margin-top: 12px; display: none; }
+  .btn { display: block; width: 100%; background: #1F4E79; color: #fff; border: none; border-radius: 8px; padding: 14px; font-size: 17px; margin-top: 22px; cursor: pointer; }
+  .btn:disabled { opacity: .5; }
+  .btn.sub { background: #fff; color: #1F4E79; border: 1px solid #1F4E79; }
+  .done { text-align: center; padding: 40px 8px; }
+  .no { font-size: 38px; font-weight: bold; color: #1F4E79; letter-spacing: 2px; margin: 10px 0; }
+  .err { color: #C00; font-size: 14px; margin-top: 10px; display: none; }
+  .test { background: #FDECEC; border: 1px solid #E08080; border-radius: 6px; padding: 8px 10px; font-size: 13px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="form">
+    <h1>お困りごとポスト</h1>
+    <p class="co"><?= company ?></p>
+    <p class="test">社内テスト中です。人間関係・お給料は、練習用の内容で試してください。</p>
+    <p class="mini">困っていること・気になることを教えてください。月に1回、社長にお届けします。</p>
+
+    <label class="f">どんなこと？<span class="req">必須</span></label>
+    <div class="chips" id="cats"></div>
+    <div class="private" id="privNote">この内容は<b>社長だけ</b>に届きます。わしの建設のリストには残りません。</div>
+
+    <label class="f">どこで？<span class="opt">任意</span></label>
+    <input type="text" id="place" maxlength="100" placeholder="例）2工場の入口">
+
+    <label class="f">困っていること<span class="req">必須</span></label>
+    <textarea id="body" maxlength="2000" placeholder="例）雨の日に入口に水がたまって、台車が通りにくい"></textarea>
+
+    <label class="f">写真<span class="opt">任意</span></label>
+    <input type="file" id="photo" accept="image/*">
+
+    <label class="f">名前<span class="req" id="nameReq">必須</span><span class="opt" id="nameOpt" style="display:none">書かなくてもOK</span></label>
+    <input type="text" id="name" maxlength="50" placeholder="例）山田">
+    <p class="mini" id="nameWhy">直す場所などを確認するために使います。</p>
+
+    <label style="display:flex;gap:8px;align-items:center;margin-top:14px;font-size:14px"><input type="checkbox" id="onlyBoss"> 社長だけに見せる</label>
+
+    <button class="btn" id="send">送る</button>
+    <p class="err" id="err"></p>
+  </div>
+
+  <div id="done" class="done" style="display:none">
+    <p>受け付けました。ありがとうございます。</p>
+    <p class="mini">受付番号</p>
+    <div class="no" id="doneNo"></div>
+    <p class="mini">状況は、月1回の貼り紙で確認できます。<br>この番号を控えておいてください（スクショでもOK）。</p>
+    <button class="btn sub" id="again">もう1件書く</button>
+  </div>
+</div>
+
+<script>
+  var CODE = <?!= codeJson ?>;
+  var CATS = <?!= catsJson ?>;
+  var PRIVATE = <?!= privateJson ?>;
+  var $ = function (id) { return document.getElementById(id); };
+  var cat = '';
+
+  $('cats').innerHTML = CATS.map(function (c, i) {
+    return '<label data-i="' + i + '"><input type="radio" name="cat">' + c + '</label>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('#cats label'), function (l) {
+    l.addEventListener('click', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('#cats label'), function (x) { x.classList.remove('on'); });
+      l.classList.add('on');
+      cat = CATS[+l.getAttribute('data-i')];
+      upd();
+    });
+  });
+  $('onlyBoss').addEventListener('change', upd);
+
+  function upd() {
+    var priv = PRIVATE.indexOf(cat) >= 0;
+    $('privNote').style.display = (priv || $('onlyBoss').checked) ? 'block' : 'none';
+    $('nameReq').style.display = priv ? 'none' : '';
+    $('nameOpt').style.display = priv ? '' : 'none';
+    $('nameWhy').textContent = priv ? '書かなくても届きます。' : '直す場所などを確認するために使います。';
+  }
+
+  function showErr(msg) { $('err').textContent = msg; $('err').style.display = 'block'; }
+
+  // 写真は長い辺 1280px の JPEG に縮めて送る
+  function readPhoto(cb) {
+    var file = $('photo').files[0];
+    if (!file) return cb('');
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function () {
+      var max = 1280, w = img.width, h = img.height, r = Math.min(1, max / Math.max(w, h));
+      var cv = document.createElement('canvas');
+      cv.width = Math.round(w * r); cv.height = Math.round(h * r);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      cb(cv.toDataURL('image/jpeg', 0.8));
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); cb(''); };
+    img.src = url;
+  }
+
+  $('send').addEventListener('click', function () {
+    $('err').style.display = 'none';
+    if (!cat) return showErr('「どんなこと？」を選んでください。');
+    if (!$('body').value.trim()) return showErr('困っていることを書いてください。');
+    if (PRIVATE.indexOf(cat) < 0 && !$('name').value.trim()) return showErr('名前を書いてください。');
+    $('send').disabled = true; $('send').textContent = '送っています…';
+    readPhoto(function (photo) {
+      google.script.run
+        .withSuccessHandler(function (no) {
+          $('doneNo').textContent = no;
+          $('form').style.display = 'none'; $('done').style.display = 'block';
+          $('send').disabled = false; $('send').textContent = '送る';
+          window.scrollTo(0, 0);
+        })
+        .withFailureHandler(function (e) {
+          showErr((e && e.message) || '送れませんでした。もう一度お試しください。');
+          $('send').disabled = false; $('send').textContent = '送る';
+        })
+        .submit({ code: CODE, cat: cat, place: $('place').value, body: $('body').value, name: $('name').value, onlyBoss: $('onlyBoss').checked, photo: photo });
+    });
+  });
+
+  $('again').addEventListener('click', function () {
+    ['place', 'body', 'name'].forEach(function (i) { $(i).value = ''; });
+    $('photo').value = ''; $('onlyBoss').checked = false; cat = '';
+    Array.prototype.forEach.call(document.querySelectorAll('#cats label'), function (x) { x.classList.remove('on'); });
+    upd();
+    $('form').style.display = 'block'; $('done').style.display = 'none';
+  });
+</script>
+</body>
+</html>
